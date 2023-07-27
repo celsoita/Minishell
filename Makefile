@@ -2,13 +2,15 @@ CC = cc
 
 NAME = minishell
 
-SRC = main.c 
+LIBFT = libft/libft.a
 
-OBJ = $(SRC:.c=.o)
+SRC = main.c ft_utils.c ft_prompt.c ft_clean_input.c
+
+OBJ = $(SRC:.c=.o) $(LIBFT)
 
 HEADER = minishell.h
 
-CFLAGS = -Wall -Wextra -Werror -g 
+CFLAGS = -Wall -Wextra -Werror -g  -lncurses
 
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c  $< -o $@

@@ -1,0 +1,8 @@
+cosa.txt
+libft
+main.c
+main.o
+Makefile
+minishell
+minishell.h
+README.md
