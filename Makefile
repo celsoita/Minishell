@@ -10,7 +10,7 @@ OBJ = $(SRC:.c=.o) $(LIBFT)
 
 HEADER = minishell.h
 
-CFLAGS = -Wall -Wextra -Werror -g  -lncurses
+CFLAGS = -Wall -Wextra -Werror -g
 
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c  $< -o $@

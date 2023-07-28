@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/27 18:38:26 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/28 10:28:21 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void	ft_create_prompt_username(void)
 	printf("\e[1;32m%s\e[0m@%s:~%s$",username, hostname, cwd);
 	//\e[1;34mis sleeping\e[0m
 }
-void	ft_clear_screen(void)
-{
-	char *clear_seq = "\e[H\e[2J";
-	tputs(clear_seq, 1, putchar);
-}
+// void	ft_clear_screen(void)
+// {
+// 	char *clear_seq = "\e[H\e[2J";
+// 	tputs(clear_seq, 1, putchar);
+// }
