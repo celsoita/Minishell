@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/29 16:39:43 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/29 18:46:16 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,21 @@ int	ft_count_malloc_str(char *input)
 	}
 	return (i);	
 }
+/*
+	DA CONTROLLARE IL  CAVOLO DI COSO QUA CHE NON PRENDE LE " COME UNICO ARGOMENTO"
+	ORA SONO STANCO VEDO DOMANI COMUNQUE RICORDATI CHE ORA STA SALVANDO QUALCOSA A META
+	DOMANI PARTI DAL GDB
+*/
+char	**ft_double_quote_control(char *input, char **matrix,int y, int x)
+{
+	y++;
+	while(input[y] !=  '"' && input[y])
+	{
+		matrix[x] = ft_substr(input,y,ft_count_malloc_str(&input[y]));
+		y++;
+	}
+	return(matrix);
+}
 //echo -n ciao mondo| banana
 char	**ft_tokenize(char *input)
 {
@@ -81,9 +96,18 @@ char	**ft_tokenize(char *input)
 			
 			if (input[y] != 32)
 			{
-				matrix[x] = ft_substr(input, y, ft_count_malloc_str(&input[y]));
-				y += ft_count_malloc_str(&input[y]);
-				break ;
+				if (input[y] == '"')
+				{
+					matrix = ft_double_quote_control(input,matrix,y,x);
+					y += ft_count_malloc_str(&input[y]);
+					break ;
+				}
+				else
+				{
+					matrix[x] = ft_substr(input, y, ft_count_malloc_str(&input[y]));
+					y += ft_count_malloc_str(&input[y]);
+					break ;
+				}
 			}
 			y++;
 		}
@@ -112,6 +136,50 @@ char	**ft_path_splitter()
 	return(paths);
 }
 
+char	*ft_strjoin_path(char const *s1, char const *s2)
+{
+	char	*res;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	res = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2));
+	
+	while(s1[i])
+	{
+		res[i] =s1[i];
+		i++;
+	}
+	res[i] = '/';
+	i++;
+	while(s2[j])
+	{
+		res[i] = s2[j];
+		j++;
+		i++;
+	}
+	res[i] = '\0';
+	return(res);
+}
+
+void	ft_try_path(t_lexer lex, char **env)
+{
+	char *path_try;
+	int	i;
+
+	i = 0;
+	while(1)
+	{
+		path_try = ft_strjoin_path(lex.paths[i],lex.tokens[0]);
+		if (!access(path_try, F_OK))
+		{
+			execve(path_try, lex.tokens, env);
+		}
+		else
+			i++;
+	}
+}
 int main(int argc, char **argv, char **env)
 {
 	char *input;
@@ -130,6 +198,7 @@ int main(int argc, char **argv, char **env)
 			free(input);
 			return (1);
 		}
+		ft_try_path(lex,env);
 		if (input[0])
 			add_history(input);
 		

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/29 15:01:43 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/29 18:46:20 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_lexer
 {
 	char **tokens;
 	char **paths;
+
 }	t_lexer;
 
 //ft_prompt.c
