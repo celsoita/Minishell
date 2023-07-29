@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/28 10:29:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/29 15:01:43 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@
 # include <signal.h>	
 # include <stdbool.h>
 # include <term.h>
+
+typedef struct s_lexer
+{
+	char **tokens;
+	char **paths;
+}	t_lexer;
 
 //ft_prompt.c
 void	ft_create_prompt_username(void);
