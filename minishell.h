@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/30 11:09:13 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/30 15:57:36 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_lexer
 {
 	char **tokens;
 	char **paths;
+	char	*clean_comand;
 
 }	t_lexer;
 

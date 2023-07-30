@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/30 12:23:35 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/30 18:22:09 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,29 +187,110 @@ void	ft_try_path(t_lexer lex, char **env)
 	i = 0;
 	while(1)
 	{
-		path_try = ft_strjoin_path(lex.paths[i],lex.tokens[0]);
+		path_try = ft_strjoin_path(lex.paths[i],lex.clean_comand);
 		if (!access(path_try, F_OK))
-		{
 			execve(path_try, lex.tokens, env);
-		}
 		else
 			i++;
 	}
 }
+
+/*
+	devo fare la copia di env, quindi devo scorrere la matrice e copiare 
+	tutto in una nuova matrice/qalcosa che posso usare poi;
+	ma ha senso copiare env? se hai quello li modificabile mmh
+
+*/
+
+
+/*
+	attualmente sono riuscito a tokenizzare / suddividere le cosine che servono nella matrice,
+	ora dovrei ricontrollare la matrice per capire come assemblare correttamente i pezzi
+	detto cio dovrei andare anche a puttane.
+*/
+
+
+
+/*
+dovrei fare una funzione di pulizia input dove ad esempio 'e'c'h'o tolgo  le single quote,
+vedo se esiste nelle mie built in con una funzione ....se la non ci sta 
+provo con access se esiste se esiste la mando in un processo fork con un altra funzione 
+dove esegue tutto, altrimenti perror "qualcosa" 
+*/
+
+bool	ft_check_command(t_lexer *lex)
+{
+	int	x;
+	int	i;
+	int count_single_quote;
+	char *path_try;
+	int	j;
+
+	x = 0;
+	i = 0;
+	count_single_quote = 1;
+	while(lex->tokens[x][i])
+	{
+		if(lex->tokens[x][i] == 39)
+		{
+			count_single_quote = 0;
+			while(lex->tokens[x][i])
+			{
+				if (lex->tokens[x][i] == 39)
+				{
+					count_single_quote++;
+				}
+				i++;		
+			}
+		}
+		i++;
+	}
+	if(count_single_quote % 2 == 0)
+	{
+		lex->clean_comand = malloc(sizeof(char) * ft_strlen(lex->tokens[x] - count_single_quote) + 1);
+		i = 0;
+		j = 0;
+		while(lex->tokens[x][i])
+		{
+			if(lex->tokens[x][i] != 39)
+			{
+				lex->clean_comand[j] = lex->tokens[x][i];
+				j++;
+			}
+			i++;
+		}
+		lex->clean_comand[j] = '\0';
+	}
+	i = 0;
+	if (count_single_quote % 2 == 0)
+	{
+		i = ft_strlen_matrix(lex->paths);
+		while(i--)
+		{
+			path_try = ft_strjoin_path(lex->paths[i],lex->clean_comand);
+			if (!access(path_try, F_OK))
+				return(ft_perror("trovato"));
+		}
+	}
+	return(ft_perror("non trovato"));
+}
+
 int main(int argc, char **argv, char **env)
 {
 	char *input;
 	t_lexer	lex;
 	
+
 	(void)argc;
-	env =0;
 	input = argv[1];
 	lex.paths = ft_path_splitter();
+	
 	while (1)
 	{
 		ft_create_prompt_username();
 		input = readline("");
 		lex.tokens = ft_tokenize(input);
+		ft_check_command(&lex);
 		if (!strcmp(input, "exit"))
 		{
 			free(input);
