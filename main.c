@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/29 18:46:16 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/30 12:23:35 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,19 @@ int	ft_count_total_string(char *input, char c)
 	{
 		if (input[i] != c)
 		{
-			ns++;
-			while (input[i] != c && input[i] != '\0')
+			if (input[i] == '"')
+			{
 				i++;
+				while(input[i] != '"')
+					i++;	
+				ns++;
+			}
+			else
+			{
+				ns++;
+				while (input[i] != c && input[i] != '\0')
+					i++;
+			}
 		}
 		if (input[i] != '\0')
 			i++;
@@ -56,6 +66,13 @@ int	ft_count_malloc_str(char *input)
 		return (1);
 	while (input[i] != 32 && input[i])
 	{
+		if (input[i] == '"')
+		{
+			i++;
+			while(input[i] != '"')
+				i++;
+			return(i);
+		}
 		if (input[i] == 32)
 			return (i);
 		i++;
@@ -67,15 +84,14 @@ int	ft_count_malloc_str(char *input)
 	ORA SONO STANCO VEDO DOMANI COMUNQUE RICORDATI CHE ORA STA SALVANDO QUALCOSA A META
 	DOMANI PARTI DAL GDB
 */
-char	**ft_double_quote_control(char *input, char **matrix,int y, int x)
+char	*ft_double_quote_control(char *input, char **matrix,int y, int x)
 {
 	y++;
-	while(input[y] !=  '"' && input[y])
+	if(input[y] !=  '"')
 	{
-		matrix[x] = ft_substr(input,y,ft_count_malloc_str(&input[y]));
-		y++;
+		matrix[x] = ft_substr(input,y-1,ft_count_malloc_str(&input[y - 1]));
 	}
-	return(matrix);
+	return(matrix[x]);
 }
 //echo -n ciao mondo| banana
 char	**ft_tokenize(char *input)
@@ -98,7 +114,7 @@ char	**ft_tokenize(char *input)
 			{
 				if (input[y] == '"')
 				{
-					matrix = ft_double_quote_control(input,matrix,y,x);
+					matrix[x] = ft_double_quote_control(input,matrix,y,x);
 					y += ft_count_malloc_str(&input[y]);
 					break ;
 				}
@@ -184,9 +200,10 @@ int main(int argc, char **argv, char **env)
 {
 	char *input;
 	t_lexer	lex;
+	
+	(void)argc;
 	env =0;
 	input = argv[1];
-	argc = 0;
 	lex.paths = ft_path_splitter();
 	while (1)
 	{

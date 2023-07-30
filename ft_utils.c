@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/27 17:54:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/30 11:12:56 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,8 @@ bool	ft_perror(char *str)
 
 void	ft_print_env(char **env)
 {
-	int	x;
 	int	y;
 
-	x = 0;
 	y = 0;
 	while(env[y])
 	{
