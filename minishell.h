@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/30 15:57:36 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/31 19:47:21 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <signal.h>	
 # include <stdbool.h>
 # include <term.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 typedef struct s_lexer
 {
@@ -30,6 +32,13 @@ typedef struct s_lexer
 	char	*clean_comand;
 
 }	t_lexer;
+typedef	struct s_prompt
+{
+	char	*hostname;
+	char	*cwd;
+	char	*username;
+	/* data */
+}t_prompt;
 
 //ft_prompt.c
 void	ft_create_prompt_username(void);

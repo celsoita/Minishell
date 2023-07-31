@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/31 12:37:33 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/31 20:14:01 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,19 +179,46 @@ char	*ft_strjoin_path(char const *s1, char const *s2)
 	return(res);
 }
 
-void	ft_try_path(t_lexer lex, char **env)
+void	ft_try_path(t_lexer *lex, char **env, int n)
 {
 	char *path_try;
 	int	i;
+	// pid_t pid;
+	// pid = fork();
 
 	i = 0;
-	while(1)
+	if (n == 1)
 	{
-		path_try = ft_strjoin_path(lex.paths[i],lex.clean_comand);
-		if (!access(path_try, F_OK))
-			execve(path_try, lex.tokens, env);
-		else
-			i++;
+		i = ft_strlen_matrix(lex->paths);
+		while(i--)
+		{
+			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
+			if (!access(path_try, F_OK))
+			{
+				// if (pid == 0)
+				// {
+					execve(path_try, lex->tokens, env);
+				// 	exit (1);
+				// }
+				// waitpid(pid, 0, 0);
+			}
+		}
+	}
+	else
+	{
+		while(i--)
+		{
+			path_try = ft_strjoin_path(lex->paths[i],lex->clean_comand);
+			if (!access(path_try, F_OK))
+			{
+				// if (pid == 0)
+				// {	
+					execve(path_try, lex->tokens, env);
+				// 	exit (1);
+				// }
+				// waitpid(pid, 0, 0);
+			}
+		}
 	}
 }
 
@@ -269,43 +296,82 @@ bool	ft_check_command(t_lexer *lex)
 		{
 			path_try = ft_strjoin_path(lex->paths[i],lex->clean_comand);
 			if (!access(path_try, F_OK))
-				return(ft_perror("trovato"));
+				return(1);
 		}
 	}
-	return(ft_perror("non trovato"));
+	return(0);
 }
 
 void	sigint_handler()
 {
+	// t_prompt  *prompt;
+	ft_create_prompt_username();
 	rl_on_new_line();
-	rl_replace_line("\n",0);
+	write(1,"\n", 1);
+	// rl_replace_line("\n",0);
+}
+bool ft_path_try(t_lexer *lex)
+{
+	int	i;
+	char *path_try;
+
+	i = 0;
+	i = ft_strlen_matrix(lex->paths);
+	while(i--)
+		{
+			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
+			if (!access(path_try, F_OK))
+				return(1);
+		}
+	return (0);
 }
 int main(int argc, char **argv, char **env)
 {
 	char *input;
 	t_lexer	lex;
-	
-
+	int	flag_input;
 	(void)argc;
 	input = argv[1];
 	lex.paths = ft_path_splitter();
 	
 	signal(SIGINT,sigint_handler);
+	flag_input = 0;
 	while (1)
 	{
 		ft_create_prompt_username();
 		input = readline("");
 		lex.tokens = ft_tokenize(input);
-		ft_check_command(&lex);
-		if (!strcmp(input, "exit"))
+		if(ft_check_command(&lex) == 0 || ft_check_command(&lex) == 1)
 		{
-			free(input);
-			return (1);
+			if (ft_path_try(&lex) == 1)
+			{
+				flag_input = 1;
+				ft_try_path(&lex,env,flag_input); 	
+			}
+			else if (ft_path_try(&lex) == 0)
+			{
+				if (lex.clean_comand == NULL)
+					return (1);
+				ft_try_path(&lex,env,flag_input);
+			}
+			if(!strcmp(input, "exit"))
+			{
+				free(input);
+				return (1);
+			}
+			if (input[0])
+				add_history(input);
 		}
-		ft_try_path(lex,env);
-		if (input[0])
-			add_history(input);
-		
+		else
+			return(ft_perror("ops ho sbagliato"));
+		free(input);
 	}
 	return (0);
 }
+/*
+
+	controlla con il gdb perche' non worka il caso delle single quote domani
+	mi raccomando parti da questo poi decommenta i fork  e a regola dovrebbe andare 
+	almeno tiene un po' con  le pezze la shell ciao
+
+*/
