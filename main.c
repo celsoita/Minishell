@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/30 18:22:09 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/07/31 12:37:33 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	ft_count_malloc_str(char *input)
 		if (input[i] == '"')
 		{
 			i++;
-			while(input[i] != '"')
+			while(input[i] != '"' && input[i])
 				i++;
 			return(i);
 		}
@@ -275,6 +275,11 @@ bool	ft_check_command(t_lexer *lex)
 	return(ft_perror("non trovato"));
 }
 
+void	sigint_handler()
+{
+	rl_on_new_line();
+	rl_replace_line("\n",0);
+}
 int main(int argc, char **argv, char **env)
 {
 	char *input;
@@ -285,6 +290,7 @@ int main(int argc, char **argv, char **env)
 	input = argv[1];
 	lex.paths = ft_path_splitter();
 	
+	signal(SIGINT,sigint_handler);
 	while (1)
 	{
 		ft_create_prompt_username();
