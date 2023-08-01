@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_old.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:56:32 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/28 19:50:16 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:31:06 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ char **ft_path_splitter(void)
 	return (res);
 }
 
-// void	ft_try_exec_path(char *path, char **flag,char **env)
+// void	ft_exec_exec_path(char *path, char **flag,char **env)
 // {
 // 	if (!access(path,F_OK))
 // 	{
@@ -136,9 +136,14 @@ bool	ft_action_terminal(char *input, char **env,char *res)
 			ft_print_env(env);
 			free(input);
 		}
+		if (!strcmp(input,"env"))
+		{
+			ft_print_env();
+			free(input);
+		}
 		// if (!strcmp(input, "ls"))
 		// {
-		// 	ft_try_exec_path(path,flag,env);
+		// 	ft_exec_exec_path(path,flag,env);
 		// }
 		if (input[0])
 			add_history(input);

@@ -6,221 +6,16 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/31 20:14:01 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/01 19:31:08 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
 /*
-	serve una funzione per creare i token/ dividere una stringa in piu'
-	stringhe, stringa-comando, stringhe successive.
-
-*/
-
-
-
-
-//str di es :   echo -n  "ciao mondo"|" banana" 
-int	ft_count_total_string(char *input, char c)
-{
-	int	i;
-	int	ns;
-
-	i = 0;
-	ns = 0;
-	while (input[i] != 0)
-	{
-		if (input[i] != c)
-		{
-			if (input[i] == '"')
-			{
-				i++;
-				while(input[i] != '"')
-					i++;	
-				ns++;
-			}
-			else
-			{
-				ns++;
-				while (input[i] != c && input[i] != '\0')
-					i++;
-			}
-		}
-		if (input[i] != '\0')
-			i++;
-	}
-	return (ns);
-
-}
-
-int	ft_count_malloc_str(char *input)
-{
-	int	i;
-
-	i = 0;
-	while (input[i] == 32)
-		i++;
-	if (input[i] == 124)
-		return (1);
-	while (input[i] != 32 && input[i])
-	{
-		if (input[i] == '"')
-		{
-			i++;
-			while(input[i] != '"' && input[i])
-				i++;
-			return(i);
-		}
-		if (input[i] == 32)
-			return (i);
-		i++;
-	}
-	return (i);	
-}
-/*
-	DA CONTROLLARE IL  CAVOLO DI COSO QUA CHE NON PRENDE LE " COME UNICO ARGOMENTO"
-	ORA SONO STANCO VEDO DOMANI COMUNQUE RICORDATI CHE ORA STA SALVANDO QUALCOSA A META
-	DOMANI PARTI DAL GDB
-*/
-char	*ft_double_quote_control(char *input, char **matrix,int y, int x)
-{
-	y++;
-	if(input[y] !=  '"')
-	{
-		matrix[x] = ft_substr(input,y-1,ft_count_malloc_str(&input[y - 1]));
-	}
-	return(matrix[x]);
-}
-//echo -n ciao mondo| banana
-char	**ft_tokenize(char *input)
-{
-	int	x;
-	int	y;
-	int	num_string;
-	char **matrix;
-
-	x = 0;
-	y = 0;
-	num_string = ft_count_total_string(input, 32);
-	matrix = malloc((num_string + 1) * sizeof(char *));
-	while (num_string--)
-	{
-		while (input[y])
-		{
-			
-			if (input[y] != 32)
-			{
-				if (input[y] == '"')
-				{
-					matrix[x] = ft_double_quote_control(input,matrix,y,x);
-					y += ft_count_malloc_str(&input[y]);
-					break ;
-				}
-				else
-				{
-					matrix[x] = ft_substr(input, y, ft_count_malloc_str(&input[y]));
-					y += ft_count_malloc_str(&input[y]);
-					break ;
-				}
-			}
-			y++;
-		}
-	x++;
-	}
-	matrix[x] = 0;
-	return (matrix);
-}
-/*
 	serve una funzione che controlla la matrice precedentemente creata 
 	e passa a execve tutto tranne | e >> <<  > < 
 */
-
-
-/*
-	serve una funzione per splittare i path e metterli in una
-	 matrix , poi dopo successivamente bisogna aggiungere il path con il comando e testare
-	 con access se il comando esiste e poi in futuro passare tutto a execve
-
-*/
-char	**ft_path_splitter()
-{
-	char	**paths;
-
-	paths = ft_split(getenv("PATH"), ':');
-	return(paths);
-}
-
-char	*ft_strjoin_path(char const *s1, char const *s2)
-{
-	char	*res;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	res = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2));
-	
-	while(s1[i])
-	{
-		res[i] =s1[i];
-		i++;
-	}
-	res[i] = '/';
-	i++;
-	while(s2[j])
-	{
-		res[i] = s2[j];
-		j++;
-		i++;
-	}
-	res[i] = '\0';
-	return(res);
-}
-
-void	ft_try_path(t_lexer *lex, char **env, int n)
-{
-	char *path_try;
-	int	i;
-	// pid_t pid;
-	// pid = fork();
-
-	i = 0;
-	if (n == 1)
-	{
-		i = ft_strlen_matrix(lex->paths);
-		while(i--)
-		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
-			if (!access(path_try, F_OK))
-			{
-				// if (pid == 0)
-				// {
-					execve(path_try, lex->tokens, env);
-				// 	exit (1);
-				// }
-				// waitpid(pid, 0, 0);
-			}
-		}
-	}
-	else
-	{
-		while(i--)
-		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->clean_comand);
-			if (!access(path_try, F_OK))
-			{
-				// if (pid == 0)
-				// {	
-					execve(path_try, lex->tokens, env);
-				// 	exit (1);
-				// }
-				// waitpid(pid, 0, 0);
-			}
-		}
-	}
-}
 
 /*
 	devo fare la copia di env, quindi devo scorrere la matrice e copiare 
@@ -230,14 +25,22 @@ void	ft_try_path(t_lexer *lex, char **env, int n)
 */
 
 
-/*
-	attualmente sono riuscito a tokenizzare / suddividere le cosine che servono nella matrice,
-	ora dovrei ricontrollare la matrice per capire come assemblare correttamente i pezzi
-	detto cio dovrei andare anche a puttane.
-*/
 
+bool	ft_check_is_variable(char	*token)
+{
+	int	x;
 
-
+	x = 0;
+	while(token[x])
+	{
+		if(token[x] == '$')
+			return(0);
+		if(token[x] == '=' && token[x + 1] != 32)
+			return (1);
+		x++;
+	}
+	return (0);
+}
 /*
 dovrei fare una funzione di pulizia input dove ad esempio 'e'c'h'o tolgo  le single quote,
 vedo se esiste nelle mie built in con una funzione ....se la non ci sta 
@@ -245,86 +48,87 @@ provo con access se esiste se esiste la mando in un processo fork con un altra f
 dove esegue tutto, altrimenti perror "qualcosa" 
 */
 
-bool	ft_check_command(t_lexer *lex)
+char	**ft_dup_matrix(char **env, t_lexer *lex)
 {
+	int	num_string;
 	int	x;
+	int	len_env;
+	char	**matrix_env;
 	int	i;
-	int count_single_quote;
-	char *path_try;
-	int	j;
-
-	x = 0;
-	i = 0;
-	count_single_quote = 1;
-	while(lex->tokens[x][i])
+	int	y;
+	int	dimension_token;
+	int	count;
+	matrix_env = 0;
+	y = 1;
+	 dimension_token = ft_strlen_matrix(lex->tokens);
+	count = 0;
+	while(y < dimension_token)
 	{
-		if(lex->tokens[x][i] == 39)
+		if (ft_check_is_variable(lex->tokens[y]) == 1)
+			count++;
+		y++;
+	}
+	y = 1;
+	while(y < dimension_token)
+	{
+		if (ft_check_is_variable(lex->tokens[y]) == 1)
 		{
-			count_single_quote = 0;
-			while(lex->tokens[x][i])
+			num_string = 0;
+			len_env = 0;
+			num_string = ft_strlen_matrix(env);
+			matrix_env = malloc (sizeof(char *) * (num_string + count));
+			i = 0;
+			x = 0;
+			while(i < num_string + count)
 			{
-				if (lex->tokens[x][i] == 39)
+				if (i >= num_string)
 				{
-					count_single_quote++;
+					x = 0;
+					len_env = ft_strlen(lex->tokens[y]);
+					matrix_env[i] = malloc(sizeof(char *) * len_env + 1);
+					while(x < len_env)
+					{
+						matrix_env[i][x] = lex->tokens[y][x];
+						x++;
+					}
+					y++;
+					matrix_env[i][x] = '\0';
 				}
-				i++;		
+				else
+				{
+
+					len_env = ft_strlen(env[i]);
+					matrix_env[i] = malloc(sizeof(char *) * ft_strlen(env[i]) + 1);
+					
+					while(x < len_env)
+					{
+						matrix_env[i][x] = env[i][x];
+						x++;
+					}
+					matrix_env[i][x] = '\0';
+					x = 0;
+				}
+				i++;
 			}
 		}
-		i++;
+		y++;
 	}
-	if(count_single_quote % 2 == 0)
-	{
-		lex->clean_comand = malloc(sizeof(char) * ft_strlen(lex->tokens[x] - count_single_quote) + 1);
-		i = 0;
-		j = 0;
-		while(lex->tokens[x][i])
-		{
-			if(lex->tokens[x][i] != 39)
-			{
-				lex->clean_comand[j] = lex->tokens[x][i];
-				j++;
-			}
-			i++;
-		}
-		lex->clean_comand[j] = '\0';
-	}
-	i = 0;
-	if (count_single_quote % 2 == 0)
-	{
-		i = ft_strlen_matrix(lex->paths);
-		while(i--)
-		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->clean_comand);
-			if (!access(path_try, F_OK))
-				return(1);
-		}
-	}
+	return (matrix_env);
+}
+bool	ft_check_builtin(t_lexer *lex)
+{
+	if (!strcmp(lex->clean_comand, "export") || !strcmp(lex->tokens[0], "export"))
+		return (1);
 	return(0);
+	/*echo with option -n
+◦ $cd with only a relative or absolute path
+◦ pwd with no options
+◦ export with no options
+◦ unset with no options
+◦ env with no options or arguments
+◦ exit w*/
 }
-
-void	sigint_handler()
-{
-	// t_prompt  *prompt;
-	ft_create_prompt_username();
-	rl_on_new_line();
-	write(1,"\n", 1);
-	// rl_replace_line("\n",0);
-}
-bool ft_path_try(t_lexer *lex)
-{
-	int	i;
-	char *path_try;
-
-	i = 0;
-	i = ft_strlen_matrix(lex->paths);
-	while(i--)
-		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
-			if (!access(path_try, F_OK))
-				return(1);
-		}
-	return (0);
-}
+//$cavolo=figlio
 int main(int argc, char **argv, char **env)
 {
 	char *input;
@@ -343,22 +147,30 @@ int main(int argc, char **argv, char **env)
 		lex.tokens = ft_tokenize(input);
 		if(ft_check_command(&lex) == 0 || ft_check_command(&lex) == 1)
 		{
+			if (ft_check_builtin(&lex) == 1)
+			{
+				lex.new_env = ft_dup_matrix(env,&lex);
+			}
+			if (!strcmp(input,"env2"))
+			{
+				ft_print_env(lex.new_env);
+				free(input);
+			}
+
 			if (ft_path_try(&lex) == 1)
 			{
 				flag_input = 1;
-				ft_try_path(&lex,env,flag_input); 	
+				ft_exec_path(&lex,env,flag_input); 	
 			}
 			else if (ft_path_try(&lex) == 0)
 			{
-				if (lex.clean_comand == NULL)
-					return (1);
-				ft_try_path(&lex,env,flag_input);
+				ft_exec_path(&lex,env,flag_input);
 			}
 			if(!strcmp(input, "exit"))
 			{
 				free(input);
 				return (1);
-			}
+			}			
 			if (input[0])
 				add_history(input);
 		}
@@ -369,9 +181,6 @@ int main(int argc, char **argv, char **env)
 	return (0);
 }
 /*
-
-	controlla con il gdb perche' non worka il caso delle single quote domani
-	mi raccomando parti da questo poi decommenta i fork  e a regola dovrebbe andare 
-	almeno tiene un po' con  le pezze la shell ciao
+	devi mettere unset della variabile exportata e fare altri controlli al momento sembra che ;'export funzioni
 
 */

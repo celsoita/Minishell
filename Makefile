@@ -4,7 +4,7 @@ NAME = minishell
 
 LIBFT = libft/libft.a
 
-SRC = main.c ft_utils.c ft_prompt.c ft_clean_input.c
+SRC = main.c ft_utils.c ft_prompt.c ft_clean_input.c ft_lexer.c ft_little_executer.c
 
 OBJ = $(SRC:.c=.o) $(LIBFT)
 
