@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 12:21:57 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 19:06:39 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,23 @@ int	ft_check_builtin(t_lexer *lex)
 }
 //$cavolo=figlio
 
+// int	ft_search_str_in_matrix(char **env,char *str)
+// {
+// 	int	y;
+// 	int	lenght_matrix;
+// 	lenght_matrix = ft_strlen_matrix(env);
+// 	y = 0;
+// 	while(y < lenght_matrix)
+// 	{
+
+// 	}
+
+
+// }
+// char **ft_unset(char **env)
+// {
+
+// }
 int main(int argc, char **argv, char **env)
 {
 	char *input;
@@ -77,6 +94,7 @@ int main(int argc, char **argv, char **env)
 	{
 		input = readline(ft_create_prompt_username());
 		lex.tokens = ft_tokenize(input);
+		// ft_command_split(input);
 		if(ft_check_command(&lex) == 0 || ft_check_command(&lex) == 1)
 		{
 			if (ft_check_builtin(&lex))
@@ -103,12 +121,7 @@ int main(int argc, char **argv, char **env)
 			{
 				free(input);
 				return (1);
-			}
-			// if(!strcmp(input, "clear"))
-			// {
-			// 	free(input);
-			// 	return (1);
-			// }				
+			}			
 			if (input[0])
 				add_history(input);
 		}

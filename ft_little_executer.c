@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 11:37:06 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 18:01:39 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ void	ft_exec_path(t_lexer *lex, char **env, int n)
 		}
 	}
 }
+//"e""c"h"o"ciao "mo'n'd"
+
 bool	ft_check_command(t_lexer *lex)
 {
 	int	x;
@@ -143,7 +145,6 @@ bool	ft_check_command(t_lexer *lex)
 void	sigint_handler()
 {
 	// t_prompt  *prompt;
-	ft_create_prompt_username();
 	rl_on_new_line();
 	write(1,"\n", 1);
 	// rl_replace_line("\n",0);

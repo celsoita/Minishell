@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 12:20:29 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 19:05:53 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_lexer
 	char	*clean_comand;
 	char	**new_env;
 	char	**env_copy;
+	int		lenght;
 }	t_lexer;
 typedef	struct s_prompt
 {
@@ -60,6 +61,7 @@ int	ft_count_malloc_str(char *input);
 int	ft_count_input(char *input);
 //ft_lexer.c
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x);
+char	*ft_command_split(char *input, t_lexer *lex);
 char	**ft_tokenize(char *input);
 char	**ft_path_splitter();
 //ft_little_executer.c
