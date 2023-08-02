@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/01 13:48:35 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 09:14:40 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,12 @@ bool	ft_perror(char *str)
 void	ft_print_env(char **env)
 {
 	int	y;
+	int	i;
 
 	y = 0;
-	while(env[y])
+	i = 0;
+	i = ft_strlen_matrix(env);
+	while(y < i)
 	{
 		printf("%s\n",env[y]);
 		y++;

@@ -6,18 +6,19 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/31 18:47:26 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 12:20:40 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_create_prompt_username(void)
+char	*ft_create_prompt_username(void)
 {
 	char	*username = getenv("USER");
 	// char	cwd[1024];
 	char	*raw_hostname;
 	char	*hostname;
+	char	*res;
 	int	fd;
 	int	i;
 
@@ -35,10 +36,10 @@ void	ft_create_prompt_username(void)
 		i++;
 	}
 	hostname[i] = '\0';
-	//cschiavo@c2r4p11:~/Desktop/Minishell/Minishell$
-	// getcwd(cwd, sizeof(cwd));
-	printf("\e[1;32m%s\e[0m@%s:",username, hostname);
-	//\e[1;34mis sleeping\e[0m
+	res = ft_strjoin("\e[1;32m", username);
+	res =ft_strjoin(res, ft_strjoin("\e[0m@", hostname));
+	res =ft_strjoin(res, ": ");
+	return(res);
 }
 // void	ft_clear_screen(void)
 // {

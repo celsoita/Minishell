@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/01 13:56:31 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 11:37:06 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,10 +156,10 @@ bool ft_path_try(t_lexer *lex)
 	i = 0;
 	i = ft_strlen_matrix(lex->paths);
 	while(i--)
-		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
-			if (!access(path_try, F_OK))
-				return(1);
-		}
+	{
+		path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
+		if (!access(path_try, F_OK))
+			return(1);
+	}
 	return (0);
 }

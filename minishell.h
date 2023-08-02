@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:29:52 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/02 12:20:29 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <stdbool.h>
 # include <term.h>
 # include <sys/types.h>
+# include <curses.h>
 # include <sys/wait.h>
 
 typedef struct s_lexer
@@ -31,6 +32,7 @@ typedef struct s_lexer
 	char **paths;
 	char	*clean_comand;
 	char	**new_env;
+	char	**env_copy;
 }	t_lexer;
 typedef	struct s_prompt
 {
@@ -39,9 +41,12 @@ typedef	struct s_prompt
 	char	*username;
 	/* data */
 }t_prompt;
+//main.c
+void	ft_free_matrix(char **matrix);
+bool	ft_check_is_variable(char	*token);
 
 //ft_prompt.c
-void	ft_create_prompt_username(void);
+char	*ft_create_prompt_username(void);
 // void	ft_clear_screen(void);
 
 //ft_utils.c
@@ -63,6 +68,10 @@ void	ft_exec_path(t_lexer *lex, char **env, int n);
 bool	ft_check_command(t_lexer *lex);
 void	sigint_handler();
 bool ft_path_try(t_lexer *lex);
+//ft_export.c
+char **ft_recreate_matrix(t_lexer *lex);
+char	**ft_dup_matrix(char **env, t_lexer *lex);
+char	**ft_copy_env(char **env);
 
 
 #endif
