@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 15:14:40 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 16:23:40 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char	**ft_copy_env(char **env)
 	char **matrix_env;
 	
 	num_string = ft_strlen_matrix(env);
-	matrix_env = malloc(sizeof(char *) * num_string + 1);
+	matrix_env = malloc(sizeof(char *) * (num_string + 1));
 
 	y = 0;
 	leng_string = 0;

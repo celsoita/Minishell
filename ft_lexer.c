@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 19:19:22 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 16:24:07 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,12 @@ char	*ft_command_split(char *input, t_lexer *lex)
 	return (str);
 }
 
+// char	*ft_split_tokens(char *input)
+// {
+// 	int	i;
+
+// 	i = 0;
+// }
 /*DA FARE LA FUNZIONE PER I ARGOMENTI (DOPO IL COMANDO!)*/
 char	**ft_tokenize(char *input)
 {
@@ -77,13 +83,13 @@ char	**ft_tokenize(char *input)
 	int	y;
 	int	num_string;
 	char **matrix;
-	bool	is_comand;
+	// bool	is_command;
 	t_lexer	lex;
-	is_comand = true;
+	// is_command = true;
 	x = 0;
 	y = 0;
 	num_string = ft_count_total_string(input, 32);
-	matrix = malloc((num_string + 1) * sizeof(char *));
+	matrix = malloc(sizeof(char *) * (num_string + 1));
 	while (num_string--)
 	{
 		while (input[y])
@@ -91,19 +97,9 @@ char	**ft_tokenize(char *input)
 			
 			if (input[y] != 32)
 			{
-				if (is_comand)
-				{
-					matrix[x] = ft_command_split(input, &lex) ;
-					y += lex.lenght;
-					is_comand = false;
-					break ;
-				}
-				else
-				{
-					matrix[x] = ft_substr(input, y, ft_count_malloc_str(&input[y]));
-					y += ft_count_malloc_str(&input[y]);
-					break ;
-				}
+				matrix[x] = ft_command_split(&input[y], &lex) ;
+				y += lex.lenght;
+				break ;
 			}
 			y++;
 		}

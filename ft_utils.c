@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 19:14:27 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 11:16:43 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,16 @@ int	ft_count_total_string(char *input, char c)
 
 	i = 0;
 	ns = 0;
-	//esempio : "c"o""m""a""n"do"
+	//esempio : ""coooo        ma"n"do" 'c"'d"io  "" ""
+	//          ""coooo        ma"n"do""     ''c"'d'"io""0" 
+	//	ns=1
 	while (input[i] != 0)
 	{
-		if (input[i] != c)
+		while (input[i] == c)
+			i++;
+		if (input[i])
+			ns++;
+		while (input[i] && input[i] != c)
 		{
 			if (input[i] == '"')
 			{
@@ -64,8 +70,6 @@ int	ft_count_total_string(char *input, char c)
 					i++;
 				if (input[i])
 					i++;
-				if (input[i] == ' ' || input[i] == 0)
-					ns++;
 			}
 			else if (input[i] == '\'')
 			{
@@ -74,18 +78,10 @@ int	ft_count_total_string(char *input, char c)
 					i++;
 				if (input[i])
 					i++;
-				if (input[i] == ' ' || input[i] == 0)
-					ns++;
 			}
-			else
-			{
-				ns++;
-				while (input[i] != c && input[i] != '\0')
-					i++;
-			}
+			else if (input[i] != '\0')
+				i++;
 		}
-		if (input[i] != '\0')
-			i++;
 	}
 	return (ns);
 

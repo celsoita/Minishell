@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 19:06:39 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 17:21:47 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,22 @@ bool	ft_check_is_variable(char	*token)
 
 int	ft_check_builtin(t_lexer *lex)
 {
-	if (!strcmp(lex->clean_comand, "export") || !strcmp(lex->tokens[0], "export"))
-		return (1);
-	if (!strcmp(lex->clean_comand, "env2") || !strcmp(lex->tokens[0], "env2"))
-		return (2);
-	return(0);
-	/*echo with option -n
-◦ $cd with only a relative or absolute path
-◦ pwd with no options
-◦ export with no options
-◦ unset with no options
-◦ env with no options or arguments
-◦ exit w*/
+	lex->flags = 0;
+	if (!strcmp(lex->tokens[0], "echo"))
+		lex->flags = 1;
+	if (!strcmp(lex->tokens[0], "cd"))
+		lex->flags = 2;
+	if (!strcmp(lex->tokens[0], "pwd"))
+		lex->flags = 3;
+	if (!strcmp(lex->tokens[0], "export"))
+		lex->flags = 4;
+	if (!strcmp(lex->tokens[0], "unset"))
+		lex->flags = 5;
+	if (!strcmp(lex->tokens[0], "env"))
+		lex->flags = 6;
+	if (!strcmp(lex->tokens[0], "exit"))
+		lex->flags = 7;
+	return (lex->flags);
 }
 //$cavolo=figlio
 
@@ -79,9 +83,76 @@ int	ft_check_builtin(t_lexer *lex)
 // {
 
 // }
+bool	ft_check_syntax_error(t_lexer *lex)
+{
+	int	i;
+
+	i = 0;
+	while(lex->tokens[0][i])
+	{
+		if (lex->tokens[0][i] == '\'' || lex->tokens[0][i] == '"')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+bool	ft_check_is_executable(t_lexer *lex)
+{
+	int	i;
+	char	*path_try;
+	
+	i = 0;
+	
+	while (lex->paths[i])
+	{
+		path_try = ft_strjoin_path(lex->paths[i], lex->tokens[0]);
+		if (!access(path_try, F_OK))
+		{
+			free(path_try);
+			return (1);
+		}
+		i++;
+		free(path_try);
+	}
+	return (0);
+}
+int	ft_exec_builtin(t_lexer *lex)
+{
+	int	return_value;
+
+	return_value = 0;
+	//echo
+	if (lex->flags == 1)
+		printf("echo\n");
+	//cd
+	if (lex->flags == 2)
+		printf("cd\n");
+	//pwd
+	if (lex->flags == 3)
+		printf("pwd\n");
+	//export
+	if (lex->flags == 4)
+		lex->env_copy = ft_dup_matrix(lex->env_copy,lex);
+	//unset
+	if (lex->flags == 5)
+		printf("unset\n");
+	//env
+	if (lex->flags == 6)
+		ft_print_env(lex->env_copy);
+	//exit
+	if (lex->flags == 7)
+	{
+		return_value = printf("exit\n");
+		ft_free_matrix(lex->tokens);
+		ft_free_matrix(lex->paths);
+		ft_free_matrix(lex->env_copy);
+	}
+	return (return_value);
+}
 int main(int argc, char **argv, char **env)
 {
 	char *input;
+	char	*prompt;
 	t_lexer	lex;
 	int	flag_input;
 	(void)argc;
@@ -90,44 +161,34 @@ int main(int argc, char **argv, char **env)
 	signal(SIGINT,sigint_handler);
 	flag_input = 0;
 	lex.env_copy = ft_copy_env(env);
+	lex.is_builtin = false;
 	while (1)
 	{
-		input = readline(ft_create_prompt_username());
+		prompt = ft_create_prompt_username();
+		input = readline(prompt);
+		free(prompt);
 		lex.tokens = ft_tokenize(input);
 		// ft_command_split(input);
-		if(ft_check_command(&lex) == 0 || ft_check_command(&lex) == 1)
+		if (ft_check_builtin(&lex))
+			lex.is_builtin = true;
+		else
+			lex.is_builtin = false;
+		if (lex.is_builtin)
 		{
-			if (ft_check_builtin(&lex))
-			{
-				flag_input = ft_check_builtin(&lex);
-				if (flag_input == 1)
-					lex.env_copy = ft_dup_matrix(lex.env_copy,&lex);
-				if (flag_input == 2)
-				{
-					ft_print_env(lex.env_copy);
-					// free(input);
-				}
-			}
-			// if (ft_path_try(&lex) == 1)
-			// {
-			// 	flag_input = 1;
-			// 	ft_exec_path(&lex,env,flag_input); 	
-			// }
-			// else if (ft_path_try(&lex) == 0)
-			// {
-			// 	ft_exec_path(&lex,env,flag_input);
-			// }
-			if(!strcmp(input, "exit"))
+			if (ft_exec_builtin(&lex))
 			{
 				free(input);
 				return (1);
-			}			
-			if (input[0])
-				add_history(input);
+			}
 		}
+		else if(ft_check_is_executable(&lex) && ft_check_syntax_error(&lex))
+			ft_exec_path(&lex); 	
 		else
-			return(ft_perror("ops ho sbagliato"));
+			printf("%s: not a command\n", lex.tokens[0]);
+		if (input[0])
+			add_history(input);
 		free(input);
+		ft_free_matrix(lex.tokens);
 	}
 	return (0);
 }

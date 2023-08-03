@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/02 19:05:53 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 15:50:56 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ typedef struct s_lexer
 {
 	char **tokens;
 	char **paths;
+	bool	is_builtin;
+	int		flags;
 	char	*clean_comand;
 	char	**new_env;
 	char	**env_copy;
@@ -66,8 +68,8 @@ char	**ft_tokenize(char *input);
 char	**ft_path_splitter();
 //ft_little_executer.c
 char	*ft_strjoin_path(char const *s1, char const *s2);
-void	ft_exec_path(t_lexer *lex, char **env, int n);
-bool	ft_check_command(t_lexer *lex);
+void	ft_exec_path(t_lexer *lex);
+// bool	ft_check_command(t_lexer *lex);
 void	sigint_handler();
 bool ft_path_try(t_lexer *lex);
 //ft_export.c
