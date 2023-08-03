@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 17:21:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 19:34:14 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,27 @@ int	ft_check_builtin(t_lexer *lex)
 }
 //$cavolo=figlio
 
-// int	ft_search_str_in_matrix(char **env,char *str)
-// {
-// 	int	y;
-// 	int	lenght_matrix;
-// 	lenght_matrix = ft_strlen_matrix(env);
-// 	y = 0;
-// 	while(y < lenght_matrix)
-// 	{
+//search(lex, "ciao")
+//ciao=qualcosa
+char	**ft_search_str_in_matrix(t_lexer *lex,char *str)
+{
+	int	y;
+	int	x;
+	int	lenght_matrix;
+	lenght_matrix = ft_strlen_matrix(lex->env_copy);
+	y = 0;
+	while (y < lenght_matrix)
+	{	
+		x = 0;
+		while (str[x] == lex->env_copy[y][x] && lex->env_copy[y][x] != '=' && lex->env_copy[y][x])
+			x++;
+		if (lex->env_copy[y][x] == '=')
+			return (&lex->env_copy[y]);
+		y++;
+	}
+	return (NULL);
+}
 
-// 	}
-
-
-// }
-// char **ft_unset(char **env)
-// {
-
-// }
 bool	ft_check_syntax_error(t_lexer *lex)
 {
 	int	i;
@@ -126,23 +130,23 @@ int	ft_exec_builtin(t_lexer *lex)
 		printf("echo\n");
 	//cd
 	if (lex->flags == 2)
-		printf("cd\n");
+		return_value += ft_chdir(lex);
 	//pwd
 	if (lex->flags == 3)
-		printf("pwd\n");
+		printf("%s\n", lex->cwd);
 	//export
 	if (lex->flags == 4)
 		lex->env_copy = ft_dup_matrix(lex->env_copy,lex);
 	//unset
 	if (lex->flags == 5)
-		printf("unset\n");
+		lex->env_copy = ft_unset(lex);
 	//env
 	if (lex->flags == 6)
 		ft_print_env(lex->env_copy);
 	//exit
 	if (lex->flags == 7)
 	{
-		return_value = printf("exit\n");
+		return_value += printf("exit\n");
 		ft_free_matrix(lex->tokens);
 		ft_free_matrix(lex->paths);
 		ft_free_matrix(lex->env_copy);
@@ -162,6 +166,7 @@ int main(int argc, char **argv, char **env)
 	flag_input = 0;
 	lex.env_copy = ft_copy_env(env);
 	lex.is_builtin = false;
+	lex.cwd = getcwd(NULL, 0);
 	while (1)
 	{
 		prompt = ft_create_prompt_username();
@@ -193,6 +198,7 @@ int main(int argc, char **argv, char **env)
 	return (0);
 }
 /*
-	devi mettere unset della variabile exportata e fare altri controlli al momento sembra che ;'export funzioni
+	squando si exporta una variabile con lo stesso nome bisogna unsettarla e riscrivere
+	task per domani sistemare questa cosa, controllare meglio gli altri comandi, e iniziare a capire i fork
 
 */

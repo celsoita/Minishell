@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 15:50:56 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 19:10:58 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_lexer
 	char	**new_env;
 	char	**env_copy;
 	int		lenght;
+	char	*cwd;
 }	t_lexer;
 typedef	struct s_prompt
 {
@@ -45,6 +46,7 @@ typedef	struct s_prompt
 	/* data */
 }t_prompt;
 //main.c
+char	**ft_search_str_in_matrix(t_lexer *lex,char *str);
 void	ft_free_matrix(char **matrix);
 bool	ft_check_is_variable(char	*token);
 
@@ -76,6 +78,9 @@ bool ft_path_try(t_lexer *lex);
 char **ft_recreate_matrix(t_lexer *lex);
 char	**ft_dup_matrix(char **env, t_lexer *lex);
 char	**ft_copy_env(char **env);
+char **ft_unset(t_lexer *lex);
+//ft_builtin.c
+int	ft_chdir(t_lexer *lex);
 
 
 #endif

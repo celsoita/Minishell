@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 16:23:40 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/03 18:49:10 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,18 @@
 //funzione che duplica matrice e aggiunge stringhe passate
 char	**ft_dup_matrix(char **env, t_lexer *lex)
 {
-	int	num_string;
-	int	x;
-	int	len_env;
 	char	**matrix_env;
-	int	i;
-	int	y;
-	int	dimension_token;
-	int	count;
+	int		len_env;
+	int		num_string;
+	int		dimension_token;
+	int		count;
+	int		x;
+	int		i;
+	int		y;
+
 	matrix_env = 0;
 	y = 1;
-	 dimension_token = ft_strlen_matrix(lex->tokens);
+	dimension_token = ft_strlen_matrix(lex->tokens);
 	count = 0; 
 	while(y < dimension_token)
 	{
@@ -63,10 +64,9 @@ char	**ft_dup_matrix(char **env, t_lexer *lex)
 				}
 				else
 				{
-
 					len_env = ft_strlen(env[i]);
 					matrix_env[i] = malloc(sizeof(char *) * ft_strlen(env[i]) + 1);
-					
+
 					while(x < len_env)
 					{
 						matrix_env[i][x] = env[i][x];
@@ -88,11 +88,11 @@ char	**ft_dup_matrix(char **env, t_lexer *lex)
 //funzione che mi copia una matrice
 char	**ft_copy_env(char **env)
 {
-	int	num_string;
-	int	x;
-	int	leng_string;
-	int	y;
-	char **matrix_env;
+	char	**matrix_env;
+	int		num_string;
+	int		leng_string;
+	int		x;
+	int		y;
 	
 	num_string = ft_strlen_matrix(env);
 	matrix_env = malloc(sizeof(char *) * (num_string + 1));
@@ -114,4 +114,49 @@ char	**ft_copy_env(char **env)
 	}
 	matrix_env[y] = NULL;
 	return(matrix_env);
+}
+
+char **ft_unset(t_lexer *lex)
+{
+	int	lenght;
+	int	y;
+	int	x;
+	char	**return_search;
+	int	num_token;
+	int	unset_variables;
+	char	**matrix;
+
+	if (!lex->tokens[1])
+		return (lex->env_copy);
+	lenght = 0;
+	lenght = ft_strlen_matrix(lex->env_copy);
+	num_token = ft_strlen_matrix(lex->tokens);
+	y = 1;
+	unset_variables = 0;
+	while (y < num_token)
+	{
+		return_search = ft_search_str_in_matrix(lex,lex->tokens[y]);
+		if (return_search)
+		{
+			free(*return_search);
+			*return_search = NULL;
+			unset_variables++;
+		}
+		y++;
+	}
+	if (!unset_variables)
+		return (NULL);
+	matrix = malloc(sizeof(char *) * (lenght - unset_variables + 1));
+	y = 0;
+	x = 0;
+	while (y < lenght - unset_variables)
+	{
+		while (!lex->env_copy[y + x] && y + x < lenght)
+			x++;
+		matrix[y] = ft_strdup(lex->env_copy[y + x]);
+		y++;
+	}
+	matrix[y] = NULL;
+	ft_free_matrix(lex->env_copy);
+	return (matrix);
 }
