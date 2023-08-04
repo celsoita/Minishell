@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cschiavo <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 11:46:15 by cschiavo          #+#    #+#              #
-#    Updated: 2022/12/09 10:03:47 by cschiavo         ###   ########.fr        #
+#    Updated: 2023/08/04 10:37:59 by cschiavo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,15 +58,17 @@ PTF :=	ft_printf/ft_printstring.c\
 	ft_printf/ft_printfu.c\
 	ft_printf/ft_printfp.c\
 
+PER := ft_perror/ft_perror.c
+
 GNL :=	get_next_line/get_next_line_bonus.c\
 
 
 BNS :=	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c \
 	ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c
 
-OBJ_S = $(SRC:.c=.o) $(GNL:.c=.o) $(PTF:.c=.o)
+OBJ_S = $(SRC:.c=.o) $(GNL:.c=.o) $(PTF:.c=.o) $(PER:.c=.o)
 
-OBJ_B = $(BNS:.c=.o) $(GNL:.c=.o) $(PTF:.c=.o)
+OBJ_B = $(BNS:.c=.o) $(GNL:.c=.o) $(PTF:.c=.o) $(PER:.c=.o)
 
 CFLAG = -Wall -Werror -Wextra
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 11:09:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/03/26 11:14:00 by marvin           ###   ########.fr       */
+/*   Updated: 2023/08/04 12:19:46 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 # include <unistd.h>
 # include <stdarg.h>
 # include <fcntl.h>
-# include <stdio.h>
+# include <stdio.h>	
+# include <stdbool.h>
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
@@ -82,4 +83,7 @@ int		ft_printfu(unsigned int n);
 int		ft_printfp(unsigned long int n);
 //function get_next_line
 char	*get_next_line(int fd);
+//functions ft_perror
+bool	ft_charinstring(char c, char *string);
+void	ft_perror(char *string, ...);
 #endif

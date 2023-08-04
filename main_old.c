@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:56:32 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/01 19:31:06 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 11:54:36 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,15 @@ questa funzione deve splittare il path per darmi i path
  da testare all'interno di acces
  che poi andranno passatti al execve
 */
-char **ft_path_splitter(void)
-{
-	char *path;
-	char **res;
+// char **ft_path_splitter(void)
+// {
+// 	char *path;
+// 	char **res;
 
-	path = getenv("PATH");
-	res = ft_split(path, ':');
-	return (res);
-}
+// 	path = getenv("PATH");
+// 	res = ft_split(path, ':');
+// 	return (res);
+// }
 
 // void	ft_exec_exec_path(char *path, char **flag,char **env)
 // {

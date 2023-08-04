@@ -6,17 +6,11 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 11:16:43 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 11:36:20 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	ft_perror(char *str)
-{
-	printf("%s\n", str);
-	return (1);
-}
 
 void	ft_print_env(char **env)
 {
@@ -111,28 +105,13 @@ int	ft_count_malloc_str(char *input)
 	}
 	return (i);	
 }
-/*
-// int	ft_count_clean_input (char *input)
-// {
-// 	int	i;
-// 	int	space_extra;
-
-// 	i = 0;
-// 	space_extra = 0;
-// 	while(input[i] == ' ')
-// 		i++;
-// 	while (input[i] != ' ' && input[i] != '\0')
-// 	{
-// 		if(input[i] == '"')
-// 		{
-// 			i++;
-// 			while(input[i] != '"' && input[i] != '\0')
-// 				i++;
-// 		}
-// 		if (input[i] == ' ')
-// 			space_extra++;
-// 		i++;
-// 	}
-// 	return (i - space_extra);
-// }
-*/
+char **ft_path_splitter(t_lexer *lex)
+{
+	char *path;
+	char **res;
+	
+	path = ft_expander(lex, "PATH");
+	res = ft_split(path, ':');
+	free(path);
+	return (res);
+}

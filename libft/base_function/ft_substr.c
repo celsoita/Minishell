@@ -6,10 +6,11 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 18:40:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/07/30 12:14:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 10:39:15 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../libft.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {

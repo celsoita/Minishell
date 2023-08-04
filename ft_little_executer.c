@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 17:20:01 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 12:32:03 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ void	sigint_handler()
 	write(1,"\n", 1);
 	// rl_replace_line("\n",0);
 }
+
 bool ft_path_try(t_lexer *lex)
 {
 	int	i;

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 16:24:07 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 11:55:14 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,18 +107,4 @@ char	**ft_tokenize(char *input)
 	}
 	matrix[x] = 0;
 	return (matrix);
-}
-
-/*
-	serve una funzione per splittare i path e metterli in una
-	 matrix , poi dopo successivamente bisogna aggiungere il path con il comando e testare
-	 con access se il comando esiste e poi in futuro passare tutto a execve
-
-*/
-char	**ft_path_splitter()
-{
-	char	**paths;
-
-	paths = ft_split(getenv("PATH"), ':');
-	return(paths);
 }

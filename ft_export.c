@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 18:49:10 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 10:00:21 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,17 +135,18 @@ char **ft_unset(t_lexer *lex)
 	unset_variables = 0;
 	while (y < num_token)
 	{
-		return_search = ft_search_str_in_matrix(lex,lex->tokens[y]);
-		if (return_search)
+		return_search = ft_search_str_in_matrix(lex,lex->tokens[y], lenght);
+		if (return_search && *return_search)
 		{
 			free(*return_search);
 			*return_search = NULL;
 			unset_variables++;
 		}
+		return_search = 0;
 		y++;
 	}
 	if (!unset_variables)
-		return (NULL);
+		return (lex->env_copy);
 	matrix = malloc(sizeof(char *) * (lenght - unset_variables + 1));
 	y = 0;
 	x = 0;

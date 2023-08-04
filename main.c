@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/03 19:34:14 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 12:32:15 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,24 @@ int	ft_check_builtin(t_lexer *lex)
 
 //search(lex, "ciao")
 //ciao=qualcosa
-char	**ft_search_str_in_matrix(t_lexer *lex,char *str)
+char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix)
 {
 	int	y;
 	int	x;
-	int	lenght_matrix;
-	lenght_matrix = ft_strlen_matrix(lex->env_copy);
+
+	if (lenght_matrix == 0)
+		lenght_matrix = ft_strlen_matrix(lex->env_copy);
 	y = 0;
 	while (y < lenght_matrix)
-	{	
-		x = 0;
-		while (str[x] == lex->env_copy[y][x] && lex->env_copy[y][x] != '=' && lex->env_copy[y][x])
-			x++;
-		if (lex->env_copy[y][x] == '=')
-			return (&lex->env_copy[y]);
+	{
+		if (lex->env_copy[y])
+		{
+			x = 0;
+			while (str[x] == lex->env_copy[y][x] && lex->env_copy[y][x] != '=' && lex->env_copy[y][x])
+				x++;
+			if (str[x] == '\0' && lex->env_copy[y][x] == '=')
+				return (&lex->env_copy[y]);
+		}
 		y++;
 	}
 	return (NULL);
@@ -127,10 +131,10 @@ int	ft_exec_builtin(t_lexer *lex)
 	return_value = 0;
 	//echo
 	if (lex->flags == 1)
-		printf("echo\n");
+		ft_echo(lex);
 	//cd
 	if (lex->flags == 2)
-		return_value += ft_chdir(lex);
+		ft_chdir(lex);
 	//pwd
 	if (lex->flags == 3)
 		printf("%s\n", lex->cwd);
@@ -153,6 +157,7 @@ int	ft_exec_builtin(t_lexer *lex)
 	}
 	return (return_value);
 }
+
 int main(int argc, char **argv, char **env)
 {
 	char *input;
@@ -161,18 +166,26 @@ int main(int argc, char **argv, char **env)
 	int	flag_input;
 	(void)argc;
 	input = argv[1];
-	lex.paths = ft_path_splitter();
 	signal(SIGINT,sigint_handler);
+	signal(SIGQUIT,NULL);
 	flag_input = 0;
 	lex.env_copy = ft_copy_env(env);
+	lex.paths = ft_path_splitter(&lex);
 	lex.is_builtin = false;
 	lex.cwd = getcwd(NULL, 0);
 	while (1)
 	{
 		prompt = ft_create_prompt_username();
 		input = readline(prompt);
+		if (!input)
+		{
+			printf("\n");
+			free(input);
+			return (1);
+		}
 		free(prompt);
 		lex.tokens = ft_tokenize(input);
+		ft_token_expander(&lex);
 		// ft_command_split(input);
 		if (ft_check_builtin(&lex))
 			lex.is_builtin = true;
@@ -198,7 +211,7 @@ int main(int argc, char **argv, char **env)
 	return (0);
 }
 /*
-	squando si exporta una variabile con lo stesso nome bisogna unsettarla e riscrivere
+	quando si exporta una variabile con lo stesso nome bisogna unsettarla e riscrivere
 	task per domani sistemare questa cosa, controllare meglio gli altri comandi, e iniziare a capire i fork
 
 */
