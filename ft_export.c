@@ -6,14 +6,14 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 10:00:21 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 19:33:19 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 //funzione che duplica matrice e aggiunge stringhe passate
-char	**ft_dup_matrix(char **env, t_lexer *lex)
+void	ft_export(char **env, t_lexer *lex)
 {
 	char	**matrix_env;
 	int		len_env;
@@ -24,6 +24,11 @@ char	**ft_dup_matrix(char **env, t_lexer *lex)
 	int		i;
 	int		y;
 
+	if (lex->tokens[1] == NULL)
+	{
+		ft_print_env(lex->env_copy, true);
+		return ;
+	}
 	matrix_env = 0;
 	y = 1;
 	dimension_token = ft_strlen_matrix(lex->tokens);
@@ -83,7 +88,18 @@ char	**ft_dup_matrix(char **env, t_lexer *lex)
 	matrix_env[i] = NULL;
 	ft_free_matrix(lex->env_copy);
 	lex->env_copy = NULL;
-	return (matrix_env);
+	lex->env_copy = matrix_env;
+
+	x = 0;
+	while (lex->tokens[x])
+	{
+		if (!ft_strncmp(lex->tokens[x], "PATH", 4))
+		{
+			ft_free_matrix(lex->paths);
+			lex->paths = ft_path_splitter(lex);
+		}
+		x++;
+	}
 }
 //funzione che mi copia una matrice
 char	**ft_copy_env(char **env)
@@ -159,5 +175,15 @@ char **ft_unset(t_lexer *lex)
 	}
 	matrix[y] = NULL;
 	ft_free_matrix(lex->env_copy);
+	x = 0;
+	while (lex->tokens[x])
+	{
+		if (!ft_strncmp(lex->tokens[x], "PATH", 4))
+		{
+			ft_free_matrix(lex->paths);
+			lex->paths = 0;
+		}
+		x++;
+	}
 	return (matrix);
 }

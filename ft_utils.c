@@ -6,15 +6,16 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 11:36:20 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 17:25:42 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_print_env(char **env)
+void	ft_print_env(char **env, bool exp)
 {
 	int	y;
+	int	x;
 	int	i;
 
 	y = 0;
@@ -22,7 +23,19 @@ void	ft_print_env(char **env)
 	i = ft_strlen_matrix(env);
 	while(y < i)
 	{
-		printf("%s\n",env[y]);
+		if (exp)
+			printf("declare -x ");
+		x = 0;
+		while (env[y][x])
+		{
+			if (exp && env[y][x - 1] == '=')
+				printf("\"");
+			printf("%c",env[y][x]);
+			x++;
+		}
+		if (exp)
+			printf("\"");
+		printf("\n");
 		y++;
 	}
 }
