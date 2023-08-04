@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 12:32:15 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 16:05:50 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix)
 			x = 0;
 			while (str[x] == lex->env_copy[y][x] && lex->env_copy[y][x] != '=' && lex->env_copy[y][x])
 				x++;
-			if (str[x] == '\0' && lex->env_copy[y][x] == '=')
+			if (!ft_isalnum(str[x]) && lex->env_copy[y][x] == '=')
 				return (&lex->env_copy[y]);
 		}
 		y++;
@@ -165,9 +165,9 @@ int main(int argc, char **argv, char **env)
 	t_lexer	lex;
 	int	flag_input;
 	(void)argc;
-	input = argv[1];
+	(void)argv;
 	signal(SIGINT,sigint_handler);
-	signal(SIGQUIT,NULL);
+	signal(SIGQUIT,SIG_IGN);
 	flag_input = 0;
 	lex.env_copy = ft_copy_env(env);
 	lex.paths = ft_path_splitter(&lex);
@@ -176,16 +176,21 @@ int main(int argc, char **argv, char **env)
 	while (1)
 	{
 		prompt = ft_create_prompt_username();
-		input = readline(prompt);
-		if (!input)
+		input = NULL;
+		while (!input || input[0] == '\0')
 		{
-			printf("\n");
 			free(input);
-			return (1);
+			input = readline(prompt);
+			if (!input)
+			{
+				printf("\n");
+				free(input);
+				return (1);
+			}
 		}
 		free(prompt);
-		lex.tokens = ft_tokenize(input);
-		ft_token_expander(&lex);
+		lex.tokens = ft_tokenize(input, &lex);
+		// ft_token_expander(&lex);
 		// ft_command_split(input);
 		if (ft_check_builtin(&lex))
 			lex.is_builtin = true;
@@ -205,7 +210,6 @@ int main(int argc, char **argv, char **env)
 			printf("%s: not a command\n", lex.tokens[0]);
 		if (input[0])
 			add_history(input);
-		free(input);
 		ft_free_matrix(lex.tokens);
 	}
 	return (0);

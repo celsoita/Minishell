@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 12:06:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 14:36:35 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,11 @@ void	ft_echo(t_lexer *lex)
 {
 	int	i;
 
+	if (!lex->tokens[1])
+	{
+		printf("\n");
+		return ;
+	}
 	i = 1;
 	if (!ft_strncmp(lex->tokens[1], "-n", 3))
 		i++;
@@ -62,7 +67,7 @@ char	*ft_expander(t_lexer *lex, char *str)
 	char	*res;
 	int	lenght;
 	int	i;
-//$ciao $mondo
+	//$ciao$mondo
 	lenght = ft_strlen_matrix(lex->env_copy);
 	raw_pointer = ft_search_str_in_matrix(lex, str, lenght);
 	if (!raw_pointer || !*raw_pointer)

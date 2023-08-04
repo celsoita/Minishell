@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 12:32:07 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/04 15:26:59 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	ft_count_input(char *input);
 //ft_lexer.c
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x);
 char	*ft_command_split(char *input, t_lexer *lex);
-char	**ft_tokenize(char *input);
+char	**ft_tokenize(char *input, t_lexer *lex);
 char	**ft_path_splitter();
 //ft_little_executer.c
 char	*ft_strjoin_path(char const *s1, char const *s2);
