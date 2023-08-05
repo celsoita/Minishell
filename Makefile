@@ -1,19 +1,27 @@
-CC = cc
-
 NAME = minishell
 
-LIBFT = libft/libft.a
+CC = cc
 
-SRC = main.c \
-ft_utils.c ft_prompt.c ft_clean_input.c \
-ft_lexer.c ft_little_executer.c ft_export.c \
-ft_builtin.c
+CFLAGS = -Wall -Wextra -Werror -g
+SRC 		= 			./src/main.c \
+						./src/ft_utils.c\
+						./src/ft_prompt.c\
+						./src/ft_clean_input.c\
+						./src/ft_lexer.c\
+						./src/ft_free.c\
+						./src/ft_matrix_support.c \
+						./src/ft_checks.c\
+						./src/ft_little_executer.c\
+						./src/builtin/ft_unset.c\
+						./src/builtin/ft_export.c \
+						./src/builtin/ft_builtin.c\
 
-OBJ = $(SRC:.c=.o) $(LIBFT)
+LIB			= ./libft/libft.a
+
+OBJ = $(SRC:.c=.o)
 
 HEADER = minishell.h
 
-CFLAGS = -Wall -Wextra -Werror -g
 
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c  $< -o $@
@@ -21,14 +29,22 @@ CFLAGS = -Wall -Wextra -Werror -g
 all : $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -lreadline $(CFLAGS) $(OBJ) -o $(NAME)
+	@make -sC ./libft 
+	@$(CC) $(CFLAGS) $(OBJ) -lreadline -o $(NAME) $(LIB)
 
 clean:
-	/bin/rm -f $(OBJ)
+	@make -sC ./libft clean 
+	@rm -rf $(OBJ)
 
 fclean: clean
-	/bin/rm -f $(NAME)
+	@rm -rf $(OBJ)
+	@make -sC ./libft fclean
+	@rm -f $(NAME)
+
+cmp:
+	@make -sC ./libft
 
 re: fclean all
+
 
 .PHONY: all clean fclean re bonus

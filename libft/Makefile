@@ -6,7 +6,7 @@
 #    By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 11:46:15 by cschiavo          #+#    #+#              #
-#    Updated: 2023/08/04 10:37:59 by cschiavo         ###   ########.fr        #
+#    Updated: 2023/08/05 19:34:27 by cschiavo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,7 +72,7 @@ OBJ_B = $(BNS:.c=.o) $(GNL:.c=.o) $(PTF:.c=.o) $(PER:.c=.o)
 
 CFLAG = -Wall -Werror -Wextra
 
-all: $(NAME) status
+all: $(NAME)
 
 $(NAME): $(OBJ_S)
 	ar -rcs $@ $^ 
@@ -80,9 +80,7 @@ $(NAME): $(OBJ_S)
 
 %.o:%.c
 	@$(CC) -c $(CFLAG) -I. $< -o $@
-status:
-	echo "\033[5;1;92mcompleted\033[0m"
-clean: status
+clean:
 	/bin/rm -f base_function/*.o
 	/bin/rm -f ft_printf/*.o
 	/bin/rm -f get_next_line/*.o

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 19:34:13 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/05 19:09:21 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ typedef enum s_colors
 }	t_colors;
 
 //main.c
-char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);
-void	ft_free_matrix(char **matrix);
 bool	ft_check_is_variable(char	*token);
 
 //ft_prompt.c
@@ -70,7 +68,6 @@ char	*ft_create_prompt_username(t_lexer *lex, char *color);
 
 //ft_utils.c
 void	ft_print_env(char **env, bool exp);
-int		ft_strlen_matrix (char **matrix);
 int		ft_count_total_string(char *input, char c);
 int		ft_count_malloc_str(char *input);
 char	**ft_path_splitter(t_lexer *lex);
@@ -88,7 +85,6 @@ void	ft_exec_path(t_lexer *lex);
 void	sigint_handler();
 bool	ft_path_try(t_lexer *lex);
 //ft_export.c
-char	**ft_recreate_matrix(t_lexer *lex);
 void	ft_export(char **env, t_lexer *lex);
 char	**ft_copy_env(char **env);
 char	**ft_unset(t_lexer *lex);
@@ -97,5 +93,18 @@ void	ft_chdir(t_lexer *lex);
 void	ft_echo(t_lexer *lex);
 char	*ft_expander(t_lexer *lex, char *str);
 void	ft_token_expander(t_lexer *lex);
+//ft_free.c
+void	ft_free_matrix(char **matrix);
+//ft_matrix_support.c
+char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);
+int		ft_strlen_matrix (char **matrix);
+//ft_unset.c
+char **ft_unset(t_lexer *lex);
+//ft_checks.c
+bool	ft_check_syntax_error(t_lexer *lex);
+bool	ft_check_is_executable(t_lexer *lex);
+bool	ft_check_is_variable(char	*token);
+int	ft_check_builtin(t_lexer *lex);
+
 
 #endif
