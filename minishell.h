@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:09:21 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/06 12:43:38 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_lexer
 	char	**env_copy;
 	int		lenght;
 	char	*cwd;
+	int		new_fd;
 }	t_lexer;
 
 typedef	struct s_prompt
@@ -104,7 +105,7 @@ char **ft_unset(t_lexer *lex);
 bool	ft_check_syntax_error(t_lexer *lex);
 bool	ft_check_is_executable(t_lexer *lex);
 bool	ft_check_is_variable(char	*token);
-int	ft_check_builtin(t_lexer *lex);
+int		ft_check_builtin(t_lexer *lex);
 
 
 #endif

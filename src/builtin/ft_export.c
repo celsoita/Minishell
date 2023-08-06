@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:31:06 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/06 16:36:55 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_export(char **env, t_lexer *lex)
 	matrix_env = 0;
 	y = 1;
 	dimension_token = ft_strlen_matrix(lex->tokens);
-	count = 0; 
+	count = 0;
 	while(y < dimension_token)
 	{
 		if (ft_check_is_variable(lex->tokens[y]) == 1)

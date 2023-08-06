@@ -18,6 +18,11 @@ SRC 		= 			./src/main.c \
 
 LIB			= ./libft/libft.a
 
+ASCII_ART_FILE := name_shell.txt
+
+ascii_art: $(ASCII_ART_FILE)
+		@echo "$$(cat $(ASCII_ART_FILE))"
+
 OBJ = $(SRC:.c=.o)
 
 HEADER = minishell.h
@@ -26,7 +31,7 @@ HEADER = minishell.h
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c  $< -o $@
 
-all : $(NAME)
+all : $(NAME)  $(ascii_art)
 
 $(NAME): $(OBJ)
 	@make -sC ./libft 
