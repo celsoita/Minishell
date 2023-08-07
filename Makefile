@@ -12,6 +12,7 @@ SRC 		= 			./src/main.c \
 						./src/ft_matrix_support.c \
 						./src/ft_checks.c\
 						./src/ft_little_executer.c\
+						./src/ft_pipe.c\
 						./src/builtin/ft_unset.c\
 						./src/builtin/ft_export.c \
 						./src/builtin/ft_builtin.c\
@@ -30,7 +31,7 @@ all : $(NAME) ascii_art
 	$(CC) $(CFLAGS) -c  $< -o $@
 
 $(NAME): $(OBJ)
-	@make -sC ./libft 
+	@make -sC ./libft
 	@$(CC) $(CFLAGS) $(OBJ) -lreadline -o $(NAME) $(LIB)
 
 ascii_art: $(ASCII_ART_FILE)

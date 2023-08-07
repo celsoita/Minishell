@@ -5,6 +5,7 @@
 		"minishell.h": "c",
 		"libft.h": "c",
 		"stdbool.h": "c",
-		"stdio.h": "c"
+		"stdio.h": "c",
+		"string.h": "c"
 	}
 }

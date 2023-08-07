@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 12:30:37 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 16:47:36 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,9 @@ int main(int argc, char **argv, char **env)
 	lex.env_copy = ft_copy_env(env);
 	lex.paths = ft_path_splitter(&lex);
 	lex.is_builtin = false;
+	lex.absolute_path = false;
 	lex.cwd = getcwd(NULL, 0);
-	lex.new_fd = dup(1);
+	lex.pipe_num = 1;
 	while (1)
 	{
 		prompt = ft_create_prompt_username(&lex, argv[1]);

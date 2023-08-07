@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 12:30:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 16:46:47 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,24 @@
 # include <curses.h>
 # include <sys/wait.h>
 
+typedef struct s_stds
+{
+	int	stdin;
+	int	stdout;
+}	t_stds;
+
 typedef struct s_lexer
 {
 	char 	**tokens;
 	char 	**paths;
 	bool	is_builtin;
 	int		flags;
-	char	*clean_comand;
-	char	**new_env;
 	char	**env_copy;
 	int		lenght;
 	char	*cwd;
-	int		new_fd;
+	bool	absolute_path;
+	int		pipe_num;
+	t_stds	stds;
 }	t_lexer;
 
 typedef	struct s_prompt
@@ -45,7 +51,6 @@ typedef	struct s_prompt
 	char	*hostname;
 	char	*username;
 	char	*color;
-	/* data */
 }	t_prompt;
 
 typedef enum s_colors
@@ -104,6 +109,7 @@ bool	ft_check_syntax_error(t_lexer *lex);
 bool	ft_check_is_executable(t_lexer *lex);
 bool	ft_check_is_variable(char	*token);
 int		ft_check_builtin(t_lexer *lex);
-
+//ft_pipe.c
+void	ft_pipe(t_lexer *lex);
 
 #endif

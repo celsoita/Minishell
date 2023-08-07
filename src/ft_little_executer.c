@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:31:54 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 17:03:58 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,30 +46,42 @@ void	ft_exec_path(t_lexer *lex)
 	char *path_try;
 	int	i;
 	pid_t pid;
-	pid = fork();
 
+	pid = fork();
 	i = 0;
 	i = ft_strlen_matrix(lex->paths);
 	/*
 	se uno dei token == '|'
 		allora tu fai dup2 di
 	*/
-	while(i--)
+	if (pid != 0 && lex->pipe_num > 0)
+		ft_pipe(lex);
+	if (pid != 0)
 	{
-		path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
-		if (!access(path_try, F_OK))
+		waitpid(pid, 0, 0);
+		return ;
+	}
+	if (!lex->absolute_path)
+	{
+		while(i--)
 		{
-			if (pid == 0)
+			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
+			if (!access(path_try, F_OK))
 			{
 				execve(path_try, lex->tokens, lex->env_copy);
 				free(path_try);
-				exit (1);
+				exit (0);
 			}
-			waitpid(pid, 0, 0);
+			free(path_try);
 		}
-		free(path_try);
+	}
+	else
+	{
+		execve(lex->tokens[0], lex->tokens, lex->env_copy);
+		exit (0);
 	}
 }
+
 void	sigint_handler()
 {
 	rl_on_new_line();

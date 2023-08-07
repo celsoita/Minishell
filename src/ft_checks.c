@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:32:00 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 16:04:57 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ bool	ft_check_is_executable(t_lexer *lex)
 		ft_perror("%s: No such file or directory\n", lex->tokens[0]);
 		return (0);
 	}
+	lex->absolute_path = false;
 	i = 0;
 	while (lex->paths[i])
 	{
@@ -47,6 +48,11 @@ bool	ft_check_is_executable(t_lexer *lex)
 		}
 		i++;
 		free(path_try);
+	}
+	if (!access(lex->tokens[0], F_OK))
+	{
+		lex->absolute_path = true;
+		return (1);
 	}
 	return (0);
 }
