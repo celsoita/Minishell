@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:30:55 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 13:01:18 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	ft_chdir(t_lexer *lex)
 {
 	char	*old_cwd;
+	char	**old_pwd;
 
 	if (ft_strlen_matrix(lex->tokens) - 1 > 1)
 		return (ft_perror("cd: too many arguments\n"));
@@ -33,6 +34,12 @@ void	ft_chdir(t_lexer *lex)
 	if (chdir(lex->cwd) == -1)
 		ft_perror("cd: %s: Not a directory\n", lex->tokens[1]);
 	lex->cwd = getcwd(NULL, 0);
+	old_pwd = ft_search_str_in_matrix(lex, "PWD", ft_strlen_matrix(lex->env_copy));	// TO ADD EXPORT FOR NEW $PWD
+	free(*old_pwd);
+	*old_pwd = malloc(sizeof(char) * (4 + ft_strlen(lex->cwd)) + 1);
+	ft_strcpy(*old_pwd, "PWD=");
+	ft_strcpy(&(*old_pwd)[4], lex->cwd);
+	
 }
 
 void	ft_echo(t_lexer *lex)

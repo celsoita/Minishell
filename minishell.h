@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/06 12:43:38 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:30:17 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,11 @@ int		ft_count_total_string(char *input, char c);
 int		ft_count_malloc_str(char *input);
 char	**ft_path_splitter(t_lexer *lex);
 //ft_clean_input.c
-int	ft_count_input(char *input);
+int		ft_count_input(char *input);
 //ft_lexer.c
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x);
 char	*ft_command_split(char *input, t_lexer *lex);
 char	**ft_tokenize(char *input, t_lexer *lex);
-char	**ft_path_splitter();
 //ft_little_executer.c
 char	*ft_strjoin_path(char const *s1, char const *s2);
 void	ft_exec_path(t_lexer *lex);
@@ -86,9 +85,8 @@ void	ft_exec_path(t_lexer *lex);
 void	sigint_handler();
 bool	ft_path_try(t_lexer *lex);
 //ft_export.c
-void	ft_export(char **env, t_lexer *lex);
+void	ft_export(t_lexer *lex);
 char	**ft_copy_env(char **env);
-char	**ft_unset(t_lexer *lex);
 //ft_builtin.c
 void	ft_chdir(t_lexer *lex);
 void	ft_echo(t_lexer *lex);
@@ -100,7 +98,7 @@ void	ft_free_matrix(char **matrix);
 char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);
 int		ft_strlen_matrix (char **matrix);
 //ft_unset.c
-char **ft_unset(t_lexer *lex);
+void	ft_unset(t_lexer *lex, bool exp);
 //ft_checks.c
 bool	ft_check_syntax_error(t_lexer *lex);
 bool	ft_check_is_executable(t_lexer *lex);

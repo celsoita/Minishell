@@ -6,14 +6,14 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/06 16:36:55 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:36:19 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
 //funzione che duplica matrice e aggiunge stringhe passate
-void	ft_export(char **env, t_lexer *lex)
+void	ft_export(t_lexer *lex)
 {
 	char	**matrix_env;
 	int		len_env;
@@ -29,7 +29,10 @@ void	ft_export(char **env, t_lexer *lex)
 		ft_print_env(lex->env_copy, true);
 		return ;
 	}
+	ft_unset(lex, true);
 	matrix_env = 0;
+	i = 0;
+	x = 0;
 	y = 1;
 	dimension_token = ft_strlen_matrix(lex->tokens);
 	count = 0;
@@ -46,7 +49,7 @@ void	ft_export(char **env, t_lexer *lex)
 		{
 			num_string = 0;
 			len_env = 0;
-			num_string = ft_strlen_matrix(env);
+			num_string = ft_strlen_matrix(lex->env_copy);
 			matrix_env = malloc (sizeof(char *) * (num_string + count + 1));
 			i = 0;
 			x = 0;
@@ -69,12 +72,12 @@ void	ft_export(char **env, t_lexer *lex)
 				}
 				else
 				{
-					len_env = ft_strlen(env[i]);
-					matrix_env[i] = malloc(sizeof(char *) * ft_strlen(env[i]) + 1);
+					len_env = ft_strlen(lex->env_copy[i]);
+					matrix_env[i] = malloc(sizeof(char *) * ft_strlen(lex->env_copy[i]) + 1);
 
 					while(x < len_env)
 					{
-						matrix_env[i][x] = env[i][x];
+						matrix_env[i][x] = lex->env_copy[i][x];
 						x++;
 					}
 					matrix_env[i][x] = '\0';
@@ -85,11 +88,14 @@ void	ft_export(char **env, t_lexer *lex)
 		}
 		y++;
 	}
-	matrix_env[i] = NULL;
-	ft_free_matrix(lex->env_copy);
-	lex->env_copy = NULL;
-	lex->env_copy = matrix_env;
-
+	if (matrix_env)
+	{
+		matrix_env[i] = NULL;
+		ft_free_matrix(lex->env_copy);
+		lex->env_copy = NULL;
+		lex->env_copy = matrix_env;
+	}
+	
 	x = 0;
 	while (lex->tokens[x])
 	{

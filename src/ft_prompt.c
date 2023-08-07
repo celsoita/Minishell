@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:31:37 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:00:11 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,20 @@ char	*ft_create_prompt(t_prompt *prompt)
 
 char	*ft_create_prompt_username(t_lexer *lex, char *color)
 {
-	t_prompt	prompt;
+	t_prompt	*prompt;
 
+	prompt = malloc(sizeof(t_prompt));
 	if (!color)
 		color = ft_itoa(GREEN);
 	else
 		color = ft_itoa(ft_colors(color));
-	prompt.color = color;
-	prompt.username = ft_expander(lex, "USER");
-	ft_create_hostname(&prompt);
-	return(ft_create_prompt(&prompt));
+	prompt->color = color;
+	prompt->username = ft_expander(lex, "USER");
+	if (!prompt->username)
+	{
+		prompt->username = malloc(1);
+		prompt->username[0] = '\0';
+	}
+	ft_create_hostname(prompt);
+	return(ft_create_prompt(prompt));
 }

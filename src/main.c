@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/06 16:52:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:30:37 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	ft_exec_builtin(t_lexer *lex)
 		printf("%s\n", lex->cwd);
 	//export
 	if (lex->flags == 4)
-		ft_export(lex->env_copy, lex);
+		ft_export(lex);
 	//unset
 	if (lex->flags == 5)
-		lex->env_copy = ft_unset(lex);
+		ft_unset(lex, false);
 	//env
 	if (lex->flags == 6)
 		ft_print_env(lex->env_copy, false);

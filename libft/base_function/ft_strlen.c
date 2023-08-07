@@ -3,19 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 10:11:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2022/10/07 15:00:32 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:10:58 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+
+#include "../libft.h"
 
 size_t	ft_strlen(const char *str)
 
 {
 	int	i;
 
+	if (!str)
+		return (0);
 	i = 0;
 	while (str[i] != '\0')
 	{
