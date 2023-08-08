@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 17:05:45 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 10:28:42 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	ft_pipe(t_lexer *lex)
 {
 	int		pipedes[2];
-	int		pid;
 	char	*temp;
 
 	lex->pipe_num -= 1;
@@ -24,27 +23,16 @@ void	ft_pipe(t_lexer *lex)
 
 	if (pipe(pipedes) == -1)
 		ft_perror("ERROR: pipe can't store fds\n");
-	pid = fork();
-	if (!pid)
+	close(pipedes[0]);
+	dup2(pipedes[1], STDOUT_FILENO);
+	int	i = 1;
+	temp = ft_strchr(lex->tokens[i], '|');
+	while (lex->tokens[i] && !temp)
 	{
-		close(pipedes[0]);
-		dup2(pipedes[1], STDOUT_FILENO);
-		printf("FIGLIO: Sono qui!\n");
-		int	i = 1;
 		temp = ft_strchr(lex->tokens[i], '|');
-		while (lex->tokens[i] && !temp)
-		{
-			temp = ft_strchr(lex->tokens[i], '|');
-			i++;
-		}
-		free(lex->tokens[0]);
-		lex->tokens[0] = lex->tokens[i];
+		i++;
 	}
-	else
-	{
-		close(lex->stds.stdin);
-		close(lex->stds.stdout);
-		printf("PADRE: Sono qui!\n");
-		waitpid(pid, 0, 0);
-	}
+	free(lex->tokens[0]);
+	lex->tokens[0] = lex->tokens[i];
 }
+

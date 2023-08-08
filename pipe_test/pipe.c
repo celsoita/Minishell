@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 15:17:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 20:35:48 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 13:02:01 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <string.h>
+#include "../minishell.h"
 
 int	ft_code_vault(void)
 {
@@ -50,11 +51,11 @@ int	ft_code_vault(void)
 	return (0);
 }
 
-typedef struct s_stds
+typedef struct s_std
 {
 	int	in;
 	int	out;
-}	t_stds;
+}	t_std;
 
 int	ft_len_cmatrix(char **tokens, char c)
 {
@@ -67,6 +68,8 @@ int	ft_len_cmatrix(char **tokens, char c)
 		while (tokens[i][++j])
 			if (tokens[i][j] == c)
 				break ;
+		if (tokens[i][j] == c)
+			break ;
 		i++;
 	}
 	return (i);
@@ -77,7 +80,9 @@ char	**ft_cmatrix(char **tokens, char c)
 	char	**matrix;
 	int		i, j;
 
-	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c) + 1);
+	if (!tokens)
+		return (NULL);
+	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c));
 	i = 0;
 	while (tokens[i])
 	{
@@ -95,23 +100,31 @@ char	**ft_cmatrix(char **tokens, char c)
 			break ;
 		i++;
 	}
-	// if (tokens[i][0] == '\0')
-	// {
-	// 	free(tokens[i]);
-	// 	tokens[i] = NULL;
-	// }
-	tokens[i + 1] = NULL;
+	if (matrix[i] && matrix[i][0] == '\0')
+		free(matrix[i]);
+	matrix[i] = NULL;
 	return (matrix);
 }
 
-int	ft_our_code(char **tokens, char **env, t_stds stds)
+char	**ft_new_matrix(char **args, int fd)
+{
+	// Fai cose
+	// CIoe' cose
+	// si, leggi dal fd e aggiungilo alle vecchie args
+	return (matrix);
+}
+
+int	ft_our_code(char **tokens, char **env, t_std std, bool more)
 {
 	char	**args;
 	int	pipe_fd[2];
 	int	pid1;
-	int	i, j;
+	int	i;
+	int	j;
 
-	args = ft_cmatrix(&tokens[1], '|');
+	if (!tokens || !tokens[0] || !env)
+		return (0);
+	args = ft_cmatrix(tokens, '|');
 	if (pipe(pipe_fd) == -1)
 		return (1);
 	pid1 = fork();
@@ -119,46 +132,69 @@ int	ft_our_code(char **tokens, char **env, t_stds stds)
 		return (2);
 	if (pid1 == 0)
 	{
-		printf("FIGLIO DENTRO!\n");
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+		i = open("out", 777, O_WRONLY);
+		if (dup2(i, STDOUT_FILENO) < 0)
+			return (3);
+		close(i);
+		// if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
+		// 	return (3);
+		// close(pipe_fd[0]);
+		// close(pipe_fd[1]);
+		if (more)
+			args = ft_new_matrix(args, pipe_fd[0]);
 		execve(tokens[0], args, env);
+		(void)env;
+		exit(0);
 	}
 	waitpid(pid1, 0, 0);
+
+	// char *line;
+	// line = get_next_line(pipe_fd[1]);
+	// while (line)
+	// {
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(pipe_fd[1]);
+	// }
+	// printf("\n");
+	
 	printf("PADRE OK!\n");
 	free(args);
-
-	dup2(stds.in, STDIN_FILENO);
-	dup2(stds.out, STDOUT_FILENO);
-	i = 1;
-	while (tokens[i])
-	{
-		j = -1;
-		while (tokens[i][++j])
-			if (tokens[i][j] == '|')
-				return (ft_our_code(&tokens[i + 1], env, stds));
-		i++;
-	}
+	dup2(std.in, STDIN_FILENO);
+	dup2(std.out, STDOUT_FILENO);
+	(void)j;
+	i = ft_len_cmatrix(tokens, '|') + 1;
+	if (tokens[i - 1] && tokens[i])
+		return (ft_our_code(&tokens[i], env, std, true));
 	return (0);
+	// i = 1;
+	// while (tokens[i])
+	// {
+	// 	j = -1;
+	// 	while (tokens[i][++j])
+	// 		if (tokens[i][j] == '|')
+	// 			return (ft_our_code(&tokens[i + 1], env, std));
+	// 	i++;
+	// }
+	// return (0);
 }
 
 int main (int argc, char *argv[], char **env)
 {
 	int		retval;
 	char	*tokens[5];
-	t_stds	stds;
+	t_std	std;
 
 	(void)argc;
 	(void)argv;
-	stds.in = dup(STDIN_FILENO);
-	stds.out = dup(STDOUT_FILENO);
+	std.in = dup(STDIN_FILENO);
+	std.out = dup(STDOUT_FILENO);
 	tokens[0] = "/usr/bin/cat";
 	tokens[1] = "file.txt";
 	tokens[2] = "|";
 	tokens[3] = "/usr/bin/less";
 	tokens[4] = NULL;
-	retval = ft_our_code(tokens, env, stds);
+	retval = ft_our_code(tokens, env, std, false);
 	printf("RETURN: %d\n", retval);
 	return (retval);
 }
