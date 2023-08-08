@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 16:46:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 19:21:30 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include "libft/libft.h"
-# include <signal.h>	
+# include <signal.h>
 # include <stdbool.h>
 # include <term.h>
 # include <sys/types.h>
@@ -32,6 +32,14 @@ typedef struct s_stds
 	int	stdout;
 }	t_stds;
 
+typedef struct s_ops
+{
+	int	n_pipe;
+	int	**pipe;
+	int	n_redirect;
+	int	**redirect;
+}	t_ops;
+
 typedef struct s_lexer
 {
 	char 	**tokens;
@@ -43,6 +51,7 @@ typedef struct s_lexer
 	char	*cwd;
 	bool	absolute_path;
 	int		pipe_num;
+	t_ops	op;
 	t_stds	stds;
 }	t_lexer;
 
@@ -81,6 +90,7 @@ char	**ft_path_splitter(t_lexer *lex);
 int		ft_count_input(char *input);
 //ft_lexer.c
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x);
+int		ft_count_operators(char *string, char c);
 char	*ft_command_split(char *input, t_lexer *lex);
 char	**ft_tokenize(char *input, t_lexer *lex);
 //ft_little_executer.c

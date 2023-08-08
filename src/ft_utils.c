@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:32:10 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 20:22:39 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ int	ft_count_total_string(char *input, char c)
 
 	i = 0;
 	ns = 0;
-	//esempio : ""coooo        ma"n"do" 'c"'d"io  "" ""
-	//          ""coooo        ma"n"do""     ''c"'d'"io""0" 
-	//	ns=1
 	while (input[i] != 0)
 	{
 		while (input[i] == c)
@@ -74,6 +71,15 @@ int	ft_count_total_string(char *input, char c)
 					i++;
 				if (input[i])
 					i++;
+			}
+			else if (ft_charinstring(input[i], "|<>"))
+			{
+				if (i > 0 && input[i - 1] != ' ')
+					ns++;
+				while (input[i] == input[i + 1])
+					i++;
+				i++;	// ||ciao||
+				break ;
 			}
 			else if (input[i] != '\0')
 				i++;

@@ -6,11 +6,11 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 11:53:49 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/03/26 11:22:36 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 14:45:27 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 static	void	ft_numb(int n)
 {	

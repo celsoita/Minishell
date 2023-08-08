@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 10:58:50 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 14:35:40 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int main(int argc, char **argv, char **env)
 			}
 		}
 		else if(ft_check_is_executable(&lex) && ft_check_syntax_error(&lex))
-			ft_exec_path(&lex); 	
+			ft_exec_path(&lex);
 		else
 			printf("%s: not a command\n", lex.tokens[0]);
 		if (input[0])

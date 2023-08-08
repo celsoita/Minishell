@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 15:17:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 13:02:01 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 18:26:23 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,10 @@ char	**ft_cmatrix(char **tokens, char c)
 
 	if (!tokens)
 		return (NULL);
-	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c));
+	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c) + 1);
+	// i = 0;
+	// while (i < ft_len_cmatrix(tokens, c))
+	// 	matrix[i++] = NULL;
 	i = 0;
 	while (tokens[i])
 	{
@@ -106,45 +109,51 @@ char	**ft_cmatrix(char **tokens, char c)
 	return (matrix);
 }
 
-char	**ft_new_matrix(char **args, int fd)
-{
-	// Fai cose
-	// CIoe' cose
-	// si, leggi dal fd e aggiungilo alle vecchie args
-	return (matrix);
-}
-
-int	ft_our_code(char **tokens, char **env, t_std std, bool more)
+int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int *commands_index[2])
 {
 	char	**args;
 	int	pipe_fd[2];
 	int	pid1;
 	int	i;
-	int	j;
 
 	if (!tokens || !tokens[0] || !env)
 		return (0);
 	args = ft_cmatrix(tokens, '|');
 	if (pipe(pipe_fd) == -1)
 		return (1);
+	if (more)
+		if (dup2(old_fd, STDIN_FILENO) < 0)
+			return (2);
+	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
+		return (3);
+	// close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	if (!commands_index[more])
+	{
+		dup2(std.out, STDOUT_FILENO);
+	}
 	pid1 = fork();
 	if (pid1 < 0)
-		return (2);
+		return (4);
 	if (pid1 == 0)
 	{
-		i = open("out", 777, O_WRONLY);
-		if (dup2(i, STDOUT_FILENO) < 0)
-			return (3);
-		close(i);
-		// if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
+		// i = open("out", 777, O_RDWR);
+		// if (dup2(i, STDIN_FILENO) < 0)
 		// 	return (3);
-		// close(pipe_fd[0]);
-		// close(pipe_fd[1]);
-		if (more)
-			args = ft_new_matrix(args, pipe_fd[0]);
+		// if (dup2(i, STDOUT_FILENO) < 0)
+		// 	return (3);
+		// close(i);
+		// if (more)
+		// 	args = ft_new_matrix(args, pipe_fd[0]);
+		// char line[11];
+		// line[10] = 0;
+		// if (more)
+		// {
+		// 	read(0, line, 10);
+		// 	write(std.out, line, 10);
+		// }
 		execve(tokens[0], args, env);
-		(void)env;
-		exit(0);
+		exit(5);
 	}
 	waitpid(pid1, 0, 0);
 
@@ -158,31 +167,21 @@ int	ft_our_code(char **tokens, char **env, t_std std, bool more)
 	// }
 	// printf("\n");
 	
-	printf("PADRE OK!\n");
-	free(args);
 	dup2(std.in, STDIN_FILENO);
 	dup2(std.out, STDOUT_FILENO);
-	(void)j;
+	printf("PADRE OK!\n");
+	ft_free_matrix(args);
 	i = ft_len_cmatrix(tokens, '|') + 1;
 	if (tokens[i - 1] && tokens[i])
-		return (ft_our_code(&tokens[i], env, std, true));
+		return (ft_our_code(&tokens[i], env, std, pipe_fd[0], more + 1, commands_index));
 	return (0);
-	// i = 1;
-	// while (tokens[i])
-	// {
-	// 	j = -1;
-	// 	while (tokens[i][++j])
-	// 		if (tokens[i][j] == '|')
-	// 			return (ft_our_code(&tokens[i + 1], env, std));
-	// 	i++;
-	// }
-	// return (0);
 }
 
 int main (int argc, char *argv[], char **env)
 {
 	int		retval;
 	char	*tokens[5];
+	int		**commans_index;
 	t_std	std;
 
 	(void)argc;
@@ -194,7 +193,14 @@ int main (int argc, char *argv[], char **env)
 	tokens[2] = "|";
 	tokens[3] = "/usr/bin/less";
 	tokens[4] = NULL;
-	retval = ft_our_code(tokens, env, std, false);
+	commans_index = malloc(sizeof(int *) * 2);
+	commans_index[0] = malloc(sizeof(int) * 2);
+	commans_index[0][0] = 2;
+	commans_index[0][1] = 0;
+	commans_index[1] = NULL;
+	retval = ft_our_code(tokens, env, std, 0, 0, commans_index);
+	free(commans_index[0]);
+	free(commans_index);
 	printf("RETURN: %d\n", retval);
 	return (retval);
 }

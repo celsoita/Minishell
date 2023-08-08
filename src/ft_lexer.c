@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:32:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/08 20:29:37 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,29 @@ char	*ft_double_quote_control(char *input, char **matrix,int y, int x)
 		matrix[x] = ft_substr(input,y-1,ft_count_malloc_str(&input[y - 1]));
 	}
 	return(matrix[x]);
+}
+
+int	ft_count_operators(char *string, char c)
+{
+	int		i;
+	int		ops_found;
+	bool	in_quote[2];
+
+	in_quote[0] = false;	// "
+	in_quote[1] = false;	// '
+	i = 0;
+	ops_found = 0;
+	while (string[i])
+	{
+		if (!in_quote[1] && !in_quote[0] && string[i] == c)
+			ops_found++;
+		if (string[i] == '\"' && !in_quote[1])
+			in_quote[0] = !in_quote[0];
+		else if (string[i] == '\'' && !in_quote[0])
+			in_quote[1] = !in_quote[1];
+		i++;
+	}
+	return (ops_found);
 }
 
 int	ft_count_variables(char *string)
@@ -94,6 +117,18 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			i--;
 			nvar++;
 		}
+		else if (ft_charinstring(input[i], "|<>"))
+		{
+			if (i == 0)
+			{
+				while (input[i] == input[i + 1])
+					i++;
+				i++;	//|| ciao||
+			}
+			// else
+			// 	i--;
+			break ;
+		}
 		else if (input[i] == '\"' && !in_quote[1])
 			in_quote[0] = !in_quote[0];
 		else if (input[i] == '\'' && !in_quote[0])
@@ -121,6 +156,16 @@ char	*ft_command_split(char *input, t_lexer *lex)
 				i++;
 			i--;
 			nvar++;
+		}
+		else if (ft_charinstring(input[i], "|<>"))
+		{
+			if (i == 0)
+			{
+				str[lenght++] = input[i];
+				while (input[i] && input[i] == input[i + 1])
+					str[lenght++] = input[i++];
+			}// ciao| | |||||||||
+			break ;
 		}
 		else if (input[i] == '\"' && !in_quote[1])
 			in_quote[0] = !in_quote[0];
@@ -154,8 +199,17 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	// is_command = true;
 	x = 0;
 	y = 0;
+	lex->op.n_pipe = ft_count_operators(input, '|');
+	lex->op.n_redirect = ft_count_operators(input, '>');
+	lex->op.n_redirect += ft_count_operators(input, '<');
+	lex->op.pipe = malloc(sizeof(int *) * lex->op.n_pipe + 1);
+	lex->op.pipe[lex->op.n_pipe] = NULL;
+	lex->op.redirect = malloc(sizeof(int *) * lex->op.n_redirect + 1);
+	lex->op.redirect[lex->op.n_redirect] = NULL;
+	printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);
 	num_string = ft_count_total_string(input, 32);
-	matrix = malloc(sizeof(char *) * (num_string + 1));
+	printf("Strings: %d\n", num_string);
+	matrix = malloc(sizeof(char *) * (num_string + 1)); // lex->op.n_pipe + (lex->op.n_redirect)?
 	while (num_string--)
 	{
 		while (input[y])
@@ -174,3 +228,4 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	matrix[x] = 0;
 	return (matrix);
 }
+//bash: syntax error near unexpected token `>' or `<' or `|'
