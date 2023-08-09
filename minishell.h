@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 19:21:30 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:49:36 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef	struct s_prompt
 
 typedef enum s_colors
 {
+	DEFAULT	= 0,
 	GRAY	= 30,
 	RED		= 31,
 	GREEN	= 32,
@@ -83,11 +84,9 @@ char	*ft_create_prompt_username(t_lexer *lex, char *color);
 
 //ft_utils.c
 void	ft_print_env(char **env, bool exp);
-int		ft_count_total_string(char *input, char c);
+int		ft_count_total_string(char *input);
 int		ft_count_malloc_str(char *input);
 char	**ft_path_splitter(t_lexer *lex);
-//ft_clean_input.c
-int		ft_count_input(char *input);
 //ft_lexer.c
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x);
 int		ft_count_operators(char *string, char c);

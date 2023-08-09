@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 15:17:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 18:26:23 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 13:20:30 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,107 +18,182 @@
 #include <string.h>
 #include "../minishell.h"
 
-int	ft_code_vault(void)
-{
-	int	fd[2];
-
-	if (pipe(fd) == -1)
-		return (1);
-	int	pid1= fork();
-	if (pid1 < 0)
-		return (2);
-	if (pid1 == 0)
-	{	//child process 1
-		dup2(fd[1],STDOUT_FILENO);
-		close(fd[0]);
-		close(fd[1]);
-		execlp("ping", "ping", "-c", "5", "google.com",NULL);
-	}
-	int	pid2 = fork();
-	if (pid2 < 0)
-		return (3);
-	if (pid2 == 0)
-	{
-			dup2(fd[0], STDIN_FILENO);
-			close(fd[0]);
-			close(fd[1]);
-			execlp("grep", "grep", "rtt", NULL);
-	}
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
-	return (0);
-}
-
 typedef struct s_std
 {
 	int	in;
 	int	out;
 }	t_std;
 
-int	ft_len_cmatrix(char **tokens, char c)
-{
-	int	i, j;
+// int	ft_len_cmatrix(char **tokens, char c)
+// {
+// 	int	i, j;
+//
+// 	i = 0;
+// 	while (tokens[i])
+// 	{
+// 		j = -1;
+// 		while (tokens[i][++j])
+// 			if (tokens[i][j] == c)
+// 				break ;
+// 		if (tokens[i][j] == c)
+// 			break ;
+// 		i++;
+// 	}
+// 	return (i);
+// }
 
+/*
+	echo ciao sono fabio io >> qualcosa |
+	len = 1
+	len == minore(pipe[i] {7, 1} redirects[i] {5, 0})
+*/
+int	ft_len_matrix_shell(t_lexer *lex)
+{
+	int	i;
+	int	lenght;
+	int	n_temp;
+
+	lenght = 0;
 	i = 0;
-	while (tokens[i])
+	while (lex->tokens[i])
 	{
-		j = -1;
-		while (tokens[i][++j])
-			if (tokens[i][j] == c)
+		// echo ciao > out mondo][ echo ciao ">" out 
+		if (lex->tokens[i][0] == '|') // | => "|" // || => "||"
+		{
+			n_temp = 0;
+			while (lex->op.pipe[n_temp])
+			{
+				if (i + lex->lenght == lex->op.pipe[n_temp][0])
+					break ;
+				n_temp++;
+			}
+			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp][0])
 				break ;
-		if (tokens[i][j] == c)
-			break ;
+
+		}
+		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
+		{
+			n_temp = 0;
+			while (lex->op.redirect[n_temp])
+			{
+				if (i + lex->lenght == lex->op.redirect[n_temp][0])
+				{
+					lenght -= 1;
+					if (lex->tokens[i + 1] != NULL)
+						lenght -= 1;
+					break ;
+				}
+				n_temp++;
+			}
+		}
 		i++;
 	}
-	return (i);
+	lenght += i;
+	printf("%d\n", lenght);
+	return (lenght);
 }
 
-char	**ft_cmatrix(char **tokens, char c)
+// char	**ft_cmatrix(char **tokens, char c)
+// {
+// 	char	**matrix;
+// 	int		i, j;
+//
+// 	if (!tokens)
+// 		return (NULL);
+// 	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c) + 1);
+// 	i = 0;
+// 	while (tokens[i])
+// 	{
+// 		matrix[i] = malloc(sizeof(char) * strlen(tokens[i]) + 1);
+// 		j = 0;
+// 		while (tokens[i][j])
+// 		{
+// 			if (tokens[i][j] == c)
+// 				break ;
+// 			matrix[i][j] = tokens[i][j];
+// 			j++;
+// 		}
+// 		matrix[i][j] = '\0';
+// 		if (tokens[i][j] == c)
+// 			break ;
+// 		i++;
+// 	}
+// 	if (matrix[i] && matrix[i][0] == '\0')
+// 		free(matrix[i]);
+// 	matrix[i] = NULL;
+// 	return (matrix);
+// }
+
+char	**ft_matrix_shell(t_lexer *lex)
 {
 	char	**matrix;
-	int		i, j;
+	int		i;
+	int		len_matrix;
+	int		n_temp;
 
-	if (!tokens)
+	if (!lex->tokens)
 		return (NULL);
-	matrix = malloc(sizeof(char *) * ft_len_cmatrix(tokens, c) + 1);
-	// i = 0;
-	// while (i < ft_len_cmatrix(tokens, c))
-	// 	matrix[i++] = NULL;
+	matrix = malloc(sizeof(char *) * ft_len_matrix_shell(lex) + 1);
+	len_matrix = 0;
 	i = 0;
-	while (tokens[i])
+	while (lex->tokens[i])	// echo ciao >> ciao < text qualcosa
 	{
-		matrix[i] = malloc(sizeof(char) * strlen(tokens[i]) + 1);
-		j = 0;
-		while (tokens[i][j])
+		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
 		{
-			if (tokens[i][j] == c)
-				break ;
-			matrix[i][j] = tokens[i][j];
-			j++;
+			n_temp = 0;
+			while (lex->op.redirect[n_temp])
+			{
+				if (i + lex->lenght == lex->op.redirect[n_temp][0])
+					i += 2;
+				n_temp++;
+			}
 		}
-		matrix[i][j] = '\0';
-		if (tokens[i][j] == c)
+		if (lex->tokens[i] == NULL)
 			break ;
+		if (lex->tokens[i][0] == '|')
+		{
+			n_temp = 0;
+			while (lex->op.pipe[n_temp])
+			{
+				if (i + lex->lenght == lex->op.pipe[n_temp][0])
+					break ;
+				n_temp++;
+			}
+			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp][0])
+				break ;
+		}
+		matrix[len_matrix] = ft_strdup(lex->tokens[i]);
+		len_matrix++;
 		i++;
 	}
-	if (matrix[i] && matrix[i][0] == '\0')
-		free(matrix[i]);
-	matrix[i] = NULL;
+	matrix[len_matrix] = NULL;
 	return (matrix);
 }
 
-int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int *commands_index[2])
+int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int *commands_index[2], int lenght)
 {
 	char	**args;
 	int	pipe_fd[2];
 	int	pid1;
 	int	i;
+	t_lexer	lex;
+
+	lex.tokens = tokens;
+	lex.lenght = lenght;
+	lex.op.redirect = malloc(sizeof(int **) * 2);
+	lex.op.redirect[0] = malloc(sizeof(int *) * 2);
+	lex.op.redirect[0][0] = 1;
+	lex.op.redirect[0][1] = 0;
+	lex.op.redirect[1] = NULL;
+	lex.op.pipe = malloc(sizeof(int **) * 2);
+	lex.op.pipe[0] = malloc(sizeof(int *) * 2);
+	lex.op.pipe[0][0] = 3;
+	lex.op.pipe[0][1] = 0;
+	lex.op.pipe[1] = NULL;
 
 	if (!tokens || !tokens[0] || !env)
 		return (0);
-	args = ft_cmatrix(tokens, '|');
+	args = ft_matrix_shell(&lex);
 	if (pipe(pipe_fd) == -1)
 		return (1);
 	if (more)
@@ -126,7 +201,6 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 			return (2);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
 		return (3);
-	// close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	if (!commands_index[more])
 	{
@@ -137,68 +211,43 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 		return (4);
 	if (pid1 == 0)
 	{
-		// i = open("out", 777, O_RDWR);
-		// if (dup2(i, STDIN_FILENO) < 0)
-		// 	return (3);
-		// if (dup2(i, STDOUT_FILENO) < 0)
-		// 	return (3);
-		// close(i);
-		// if (more)
-		// 	args = ft_new_matrix(args, pipe_fd[0]);
-		// char line[11];
-		// line[10] = 0;
-		// if (more)
-		// {
-		// 	read(0, line, 10);
-		// 	write(std.out, line, 10);
-		// }
 		execve(tokens[0], args, env);
 		exit(5);
 	}
 	waitpid(pid1, 0, 0);
-
-	// char *line;
-	// line = get_next_line(pipe_fd[1]);
-	// while (line)
-	// {
-	// 	printf("%s", line);
-	// 	free(line);
-	// 	line = get_next_line(pipe_fd[1]);
-	// }
-	// printf("\n");
-	
 	dup2(std.in, STDIN_FILENO);
 	dup2(std.out, STDOUT_FILENO);
 	printf("PADRE OK!\n");
 	ft_free_matrix(args);
-	i = ft_len_cmatrix(tokens, '|') + 1;
+	i = ft_len_matrix_shell(&lex) + 1;
 	if (tokens[i - 1] && tokens[i])
-		return (ft_our_code(&tokens[i], env, std, pipe_fd[0], more + 1, commands_index));
+		return (ft_our_code(&tokens[i], env, std, pipe_fd[0], more + 1, commands_index, lenght + i));
 	return (0);
 }
 
 int main (int argc, char *argv[], char **env)
 {
 	int		retval;
-	char	*tokens[5];
+	char	*tokens[6];
 	int		**commans_index;
 	t_std	std;
 
 	(void)argc;
 	(void)argv;
-	std.in = dup(STDIN_FILENO);
-	std.out = dup(STDOUT_FILENO);
-	tokens[0] = "/usr/bin/cat";
-	tokens[1] = "file.txt";
-	tokens[2] = "|";
-	tokens[3] = "/usr/bin/less";
-	tokens[4] = NULL;
+	std.in = dup(STDIN_FILENO);	//.
+	std.out = dup(STDOUT_FILENO);	//.
+	tokens[0] = "/usr/bin/ls";
+	tokens[1] = ">";
+	tokens[2] = "file.txt";
+	tokens[3] = "|";
+	tokens[4] = "/usr/bin/wc";
+	tokens[5] = NULL;
 	commans_index = malloc(sizeof(int *) * 2);
 	commans_index[0] = malloc(sizeof(int) * 2);
 	commans_index[0][0] = 2;
 	commans_index[0][1] = 0;
 	commans_index[1] = NULL;
-	retval = ft_our_code(tokens, env, std, 0, 0, commans_index);
+	retval = ft_our_code(tokens, env, std, 0, 0, commans_index, 0);
 	free(commans_index[0]);
 	free(commans_index);
 	printf("RETURN: %d\n", retval);

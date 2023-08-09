@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 20:29:37 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:41:48 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,15 +96,15 @@ char	*ft_command_split(char *input, t_lexer *lex)
 
 	in_quote[0] = false;	// "
 	in_quote[1] = false;	// '
-	lenght = 0;
-	i = 0;
 	variables_found = ft_count_variables(input);
 	printf("variables_found: %d\t", variables_found);
+	/* COUNT FUNCTION */
 	variables = malloc(sizeof(char *) * (variables_found + 1));
 	variables[variables_found] = NULL;
 	nvar = 0;
-
-	while (input[i] && (input[i] != ' ' || in_quote[0] || in_quote[1]))
+	lenght = 0;
+	i = 0;
+	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
 	{
 		if (!in_quote[1] && input[i] == '$')
 		{
@@ -117,7 +117,7 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			i--;
 			nvar++;
 		}
-		else if (ft_charinstring(input[i], "|<>"))
+		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
 		{
 			if (i == 0)
 			{
@@ -126,7 +126,7 @@ char	*ft_command_split(char *input, t_lexer *lex)
 				i++;	//|| ciao||
 			}
 			// else
-			// 	i--;
+			// 	i--;echo ciao |ci|ao |><<>|ciao|
 			break ;
 		}
 		else if (input[i] == '\"' && !in_quote[1])
@@ -138,13 +138,14 @@ char	*ft_command_split(char *input, t_lexer *lex)
 		i++;
 	}
 	lex->lenght = i;
+	/* WRITE FUNCTION */
 	str = malloc(sizeof(char) * lenght + 1);
 	nvar = 0;
 	in_quote[0] = false;
 	in_quote[1] = false;
 	lenght = 0;
 	i = 0;
-	while (input[i] && (input[i] != ' ' || in_quote[0] || in_quote[1]))
+	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
 	{
 		if (!in_quote[1] && input[i] == '$')
 		{
@@ -157,7 +158,7 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			i--;
 			nvar++;
 		}
-		else if (ft_charinstring(input[i], "|<>"))
+		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
 		{
 			if (i == 0)
 			{
@@ -207,7 +208,7 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	lex->op.redirect = malloc(sizeof(int *) * lex->op.n_redirect + 1);
 	lex->op.redirect[lex->op.n_redirect] = NULL;
 	printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);
-	num_string = ft_count_total_string(input, 32);
+	num_string = ft_count_total_string(input);
 	printf("Strings: %d\n", num_string);
 	matrix = malloc(sizeof(char *) * (num_string + 1)); // lex->op.n_pipe + (lex->op.n_redirect)?
 	while (num_string--)
@@ -215,7 +216,7 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 		while (input[y])
 		{
 			
-			if (input[y] != 32)
+			if (input[y] != 32 && input[y] != '\t')
 			{
 				matrix[x] = ft_command_split(&input[y], lex);
 				y += lex->lenght;

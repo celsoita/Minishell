@@ -6,7 +6,6 @@ CFLAGS = -Wall -Wextra -Werror -g
 SRC 		= 			./src/main.c \
 						./src/ft_utils.c\
 						./src/ft_prompt.c\
-						./src/ft_clean_input.c\
 						./src/ft_lexer.c\
 						./src/ft_free.c\
 						./src/ft_matrix_support.c \

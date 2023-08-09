@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 12:00:11 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 11:01:04 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_colors	ft_colors(char *color)
 		return (CYAN);
 	if (!ft_strncmp(color, "WHITE", 5))
 		return (WHITE);
-	return (GREEN);
+	return (DEFAULT);
 }
 
 void	ft_create_hostname(t_prompt *prompt)
@@ -77,14 +77,26 @@ char	*ft_create_prompt(t_prompt *prompt)
 	char	*temp;
 
 	if (!prompt->color)
-		prompt->color = ft_itoa(GREEN);
-	temp = ft_strjoin("\e[1;", prompt->color);
-	free(prompt->color);
-	prompt->color = ft_strjoin(temp, "m");
-	free(temp);
-	temp = prompt->hostname;
-	prompt->hostname = ft_strjoin("\e[0m@", temp);
-	free(temp);
+		prompt->color = ft_itoa(DEFAULT);
+	if (ft_strncmp(prompt->color, "0", 2))
+	{
+		temp = ft_strjoin("\e[1;", prompt->color);
+		free(prompt->color);
+		prompt->color = ft_strjoin(temp, "m");
+		free(temp);
+		temp = prompt->hostname;
+		prompt->hostname = ft_strjoin("\e[0m@", temp);
+		free(temp);
+	}
+	else
+	{
+		free(prompt->color);
+		prompt->color = malloc(1);
+		prompt->color[0] = 0;
+		temp = prompt->hostname;
+		prompt->hostname = ft_strjoin("@", temp);
+		free(temp);
+	}
 	temp = ft_strjoin(prompt->color, prompt->username);
 	free(prompt->color);
 	free(prompt->username);
@@ -102,7 +114,7 @@ char	*ft_create_prompt_username(t_lexer *lex, char *color)
 
 	prompt = malloc(sizeof(t_prompt));
 	if (!color)
-		color = ft_itoa(GREEN);
+		color = ft_itoa(DEFAULT);
 	else
 		color = ft_itoa(ft_colors(color));
 	prompt->color = color;
