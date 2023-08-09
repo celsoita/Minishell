@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 10:47:41 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 21:25:30 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int argc, char **argv, char **env)
 	lex.is_builtin = false;
 	lex.absolute_path = false;
 	lex.cwd = getcwd(NULL, 0);
-	lex.pipe_num = 1;
+	lex.pipe_num = 0;
 	while (1)
 	{
 		prompt = ft_create_prompt_username(&lex, argv[1]);
@@ -79,26 +79,31 @@ int main(int argc, char **argv, char **env)
 		lex.tokens = ft_tokenize(input, &lex);
 		// ft_token_expander(&lex);
 		// ft_command_split(input);
-		if (ft_check_builtin(&lex))
-			lex.is_builtin = true;
-		else
-			lex.is_builtin = false;
-		if (lex.is_builtin)
+		if (lex.tokens)
 		{
-			if (ft_exec_builtin(&lex))
+			if (ft_check_builtin(&lex))
+				lex.is_builtin = true;
+			else
+				lex.is_builtin = false;
+			if (lex.is_builtin)
 			{
-				free(input);
-				free(lex.cwd);
-				ft_free_matrix(lex.tokens);
-				ft_free_matrix(lex.paths);
-				ft_free_matrix(lex.env_copy);
-				return (1);
+				if (ft_exec_builtin(&lex))
+				{
+					free(input);
+					free(lex.cwd);
+					free(lex.op.pipe);
+					free(lex.op.redirect);
+					ft_free_matrix(lex.tokens);
+					ft_free_matrix(lex.paths);
+					ft_free_matrix(lex.env_copy);
+					return (1);
+				}
 			}
+			else if(ft_check_is_executable(&lex) && ft_check_syntax_error(&lex))
+				ft_exec_path(&lex);
+			else
+				printf("%s: not a command\n", lex.tokens[0]);
 		}
-		else if(ft_check_is_executable(&lex) && ft_check_syntax_error(&lex))
-			ft_exec_path(&lex);
-		else
-			printf("%s: not a command\n", lex.tokens[0]);
 		if (input[0])
 			add_history(input);
 		ft_free_matrix(lex.tokens);

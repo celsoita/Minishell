@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 10:28:42 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 20:19:56 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_pipe(t_lexer *lex)
 	int		pipedes[2];
 	char	*temp;
 
-	lex->pipe_num -= 1;
+	lex->pipe_num = 0;
 	lex->stds.stdin = dup(STDIN_FILENO);
 	lex->stds.stdout = dup(STDOUT_FILENO);
 

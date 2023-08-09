@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 10:41:48 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 21:37:29 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ int	ft_count_operators(char *string, char c)
 	while (string[i])
 	{
 		if (!in_quote[1] && !in_quote[0] && string[i] == c)
+		{
 			ops_found++;
+			while (string[i] == string[i + 1])
+				i++;
+		}
 		if (string[i] == '\"' && !in_quote[1])
 			in_quote[0] = !in_quote[0];
 		else if (string[i] == '\'' && !in_quote[0])
@@ -83,7 +87,7 @@ int	ft_count_variables(char *string)
 //echo "$PATH"ciao				-> /bin/...ciao
 //echo $PATH(ft_alphanum())		-> 
 //echo $PATH(!ft_alphanum())	-> /bin/...(!ft_alphanum())
-char	*ft_command_split(char *input, t_lexer *lex)
+char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 {
 	int		lenght;
 	int		i;
@@ -110,10 +114,19 @@ char	*ft_command_split(char *input, t_lexer *lex)
 		{
 			i++;
 			variables[nvar] = ft_expander(lex, &input[i]);
-			if (variables[nvar] != NULL)
+			if (variables[nvar] && variables[nvar][0])
+			{
 				lenght += ft_strlen(variables[nvar]);
-			while (ft_isalnum(input[i]))
-				i++;
+				while (ft_isalnum(input[i]))
+					i++;
+			}
+			else
+			{
+				while (ft_isalnum(input[i]))
+					i++;
+				while (ft_charinstring(input[i], " \t"))
+					i++;
+			}
 			i--;
 			nvar++;
 		}
@@ -122,11 +135,13 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			if (i == 0)
 			{
 				while (input[i] == input[i + 1])
+				{
+					lenght++;
 					i++;
-				i++;	//|| ciao||
+				}
+				lenght++;
+				i++;
 			}
-			// else
-			// 	i--;echo ciao |ci|ao |><<>|ciao|
 			break ;
 		}
 		else if (input[i] == '\"' && !in_quote[1])
@@ -135,7 +150,8 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			in_quote[1] = !in_quote[1];
 		else if ((input[i] != '\"' && input[i] != '\'') || in_quote[0] || in_quote[1])
 			lenght++;
-		i++;
+		if (input[i])
+			i++;
 	}
 	lex->lenght = i;
 	/* WRITE FUNCTION */
@@ -149,19 +165,33 @@ char	*ft_command_split(char *input, t_lexer *lex)
 	{
 		if (!in_quote[1] && input[i] == '$')
 		{
-			j = 0;
-			while (variables[nvar] && variables[nvar][j])
-				str[lenght++] = variables[nvar][j++];
 			i++;
-			while (ft_isalnum(input[i]))
-				i++;
+			if (variables[nvar] && variables[nvar][0])
+			{
+				j = 0;
+				while (variables[nvar] && variables[nvar][j])
+					str[lenght++] = variables[nvar][j++];
+				while (ft_isalnum(input[i]))
+					i++;
+			}
+			else
+			{
+				while (ft_isalnum(input[i]))
+					i++;
+				while (ft_charinstring(input[i], " \t"))
+					i++;
+			}
 			i--;
 			nvar++;
 		}
 		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
 		{
 			if (i == 0)
-			{
+			{	// echo ciao|grep "ciao" | wc
+				if (input[i] == '|')
+					lex->op.pipe[lex->current_pipe++] = current_pos;
+				else
+					lex->op.redirect[lex->current_redirect++] = current_pos;
 				str[lenght++] = input[i];
 				while (input[i] && input[i] == input[i + 1])
 					str[lenght++] = input[i++];
@@ -174,7 +204,8 @@ char	*ft_command_split(char *input, t_lexer *lex)
 			in_quote[1] = !in_quote[1];
 		else if ((input[i] != '\"' && input[i] != '\'') || in_quote[0] || in_quote[1])
 			str[lenght++] = input[i];
-		i++;
+		if (input[i])
+			i++;
 	}
 	str[lenght] = 0;
 	ft_free_matrix(variables);
@@ -203,14 +234,18 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	lex->op.n_pipe = ft_count_operators(input, '|');
 	lex->op.n_redirect = ft_count_operators(input, '>');
 	lex->op.n_redirect += ft_count_operators(input, '<');
-	lex->op.pipe = malloc(sizeof(int *) * lex->op.n_pipe + 1);
-	lex->op.pipe[lex->op.n_pipe] = NULL;
-	lex->op.redirect = malloc(sizeof(int *) * lex->op.n_redirect + 1);
-	lex->op.redirect[lex->op.n_redirect] = NULL;
+	lex->op.pipe = malloc(sizeof(int) * (lex->op.n_pipe + 1));
+	lex->op.pipe[lex->op.n_pipe] = -1;
+	lex->op.redirect = malloc(sizeof(int) * (lex->op.n_redirect + 1));
+	lex->op.redirect[lex->op.n_redirect] = -1;
+	lex->current_pipe = 0;
+	lex->current_redirect = 0;
+	num_string = ft_count_total_string(lex, input);	/* TODO: "a$USERa a" DA FARE IN MODO CHE LA PRIMA STRINGA E' STACCATA DALLA SECONDA!*/
+	if (num_string == 0)
+		return (NULL);
 	printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);
-	num_string = ft_count_total_string(input);
 	printf("Strings: %d\n", num_string);
-	matrix = malloc(sizeof(char *) * (num_string + 1)); // lex->op.n_pipe + (lex->op.n_redirect)?
+	matrix = malloc(sizeof(char *) * (num_string + 1));
 	while (num_string--)
 	{
 		while (input[y])
@@ -218,7 +253,7 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 			
 			if (input[y] != 32 && input[y] != '\t')
 			{
-				matrix[x] = ft_command_split(&input[y], lex);
+				matrix[x] = ft_command_split(&input[y], lex, x);
 				y += lex->lenght;
 				break ;
 			}
@@ -229,4 +264,6 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	matrix[x] = 0;
 	return (matrix);
 }
-//bash: syntax error near unexpected token `>' or `<' or `|'
+/* TODO: QUANDO NON C'E' UN COMANDO DARGLI ERRORE:
+	bash: syntax error near unexpected token `>' or `<' or `|'
+*/

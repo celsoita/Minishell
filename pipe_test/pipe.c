@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 15:17:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 13:20:30 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 20:23:51 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,6 @@
 #include <sys/wait.h>
 #include <string.h>
 #include "../minishell.h"
-
-typedef struct s_std
-{
-	int	in;
-	int	out;
-}	t_std;
-
-// int	ft_len_cmatrix(char **tokens, char c)
-// {
-// 	int	i, j;
-//
-// 	i = 0;
-// 	while (tokens[i])
-// 	{
-// 		j = -1;
-// 		while (tokens[i][++j])
-// 			if (tokens[i][j] == c)
-// 				break ;
-// 		if (tokens[i][j] == c)
-// 			break ;
-// 		i++;
-// 	}
-// 	return (i);
-// }
 
 /*
 	echo ciao sono fabio io >> qualcosa |
@@ -61,22 +37,22 @@ int	ft_len_matrix_shell(t_lexer *lex)
 		if (lex->tokens[i][0] == '|') // | => "|" // || => "||"
 		{
 			n_temp = 0;
-			while (lex->op.pipe[n_temp])
+			while (lex->op.pipe[n_temp] > -1)
 			{
-				if (i + lex->lenght == lex->op.pipe[n_temp][0])
+				if (i + lex->lenght == lex->op.pipe[n_temp])
 					break ;
 				n_temp++;
 			}
-			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp][0])
+			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp])
 				break ;
 
 		}
 		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
 		{
 			n_temp = 0;
-			while (lex->op.redirect[n_temp])
+			while (lex->op.redirect[n_temp] > -1)
 			{
-				if (i + lex->lenght == lex->op.redirect[n_temp][0])
+				if (i + lex->lenght == lex->op.redirect[n_temp])
 				{
 					lenght -= 1;
 					if (lex->tokens[i + 1] != NULL)
@@ -141,9 +117,9 @@ char	**ft_matrix_shell(t_lexer *lex)
 		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
 		{
 			n_temp = 0;
-			while (lex->op.redirect[n_temp])
+			while (lex->op.redirect[n_temp] > -1)
 			{
-				if (i + lex->lenght == lex->op.redirect[n_temp][0])
+				if (i + lex->lenght == lex->op.redirect[n_temp])
 					i += 2;
 				n_temp++;
 			}
@@ -153,13 +129,13 @@ char	**ft_matrix_shell(t_lexer *lex)
 		if (lex->tokens[i][0] == '|')
 		{
 			n_temp = 0;
-			while (lex->op.pipe[n_temp])
+			while (lex->op.pipe[n_temp] > -1)
 			{
-				if (i + lex->lenght == lex->op.pipe[n_temp][0])
+				if (i + lex->lenght == lex->op.pipe[n_temp])
 					break ;
 				n_temp++;
 			}
-			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp][0])
+			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp])
 				break ;
 		}
 		matrix[len_matrix] = ft_strdup(lex->tokens[i]);
@@ -170,7 +146,7 @@ char	**ft_matrix_shell(t_lexer *lex)
 	return (matrix);
 }
 
-int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int *commands_index[2], int lenght)
+int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int *commands_index, int lenght)
 {
 	char	**args;
 	int	pipe_fd[2];
@@ -180,16 +156,15 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 
 	lex.tokens = tokens;
 	lex.lenght = lenght;
-	lex.op.redirect = malloc(sizeof(int **) * 2);
-	lex.op.redirect[0] = malloc(sizeof(int *) * 2);
-	lex.op.redirect[0][0] = 1;
-	lex.op.redirect[0][1] = 0;
-	lex.op.redirect[1] = NULL;
-	lex.op.pipe = malloc(sizeof(int **) * 2);
-	lex.op.pipe[0] = malloc(sizeof(int *) * 2);
-	lex.op.pipe[0][0] = 3;
-	lex.op.pipe[0][1] = 0;
-	lex.op.pipe[1] = NULL;
+	lex.op.redirect = malloc(sizeof(int) * 1);
+	// lex.op.redirect[0] = malloc(sizeof(int *) * 2);
+	// lex.op.redirect[0][0] = 1;
+	// lex.op.redirect[0][1] = 0;
+	lex.op.redirect[0] = -1;
+	lex.op.pipe = malloc(sizeof(int) * 3);
+	lex.op.pipe[0] = 1;
+	lex.op.pipe[1] = 4;
+	lex.op.pipe[2] = -1;
 
 	if (!tokens || !tokens[0] || !env)
 		return (0);
@@ -202,10 +177,8 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
 		return (3);
 	close(pipe_fd[1]);
-	if (!commands_index[more])
-	{
-		dup2(std.out, STDOUT_FILENO);
-	}
+	if (commands_index[more] > -1 && !(commands_index[more + 1] > -1))
+		dup2(std.stdout, STDOUT_FILENO);
 	pid1 = fork();
 	if (pid1 < 0)
 		return (4);
@@ -215,8 +188,8 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 		exit(5);
 	}
 	waitpid(pid1, 0, 0);
-	dup2(std.in, STDIN_FILENO);
-	dup2(std.out, STDOUT_FILENO);
+	dup2(std.stdin, STDIN_FILENO);
+	dup2(std.stdout, STDOUT_FILENO);
 	printf("PADRE OK!\n");
 	ft_free_matrix(args);
 	i = ft_len_matrix_shell(&lex) + 1;
@@ -228,27 +201,27 @@ int	ft_our_code(char **tokens, char **env, t_std std, int old_fd, int more, int 
 int main (int argc, char *argv[], char **env)
 {
 	int		retval;
-	char	*tokens[6];
-	int		**commans_index;
-	t_std	std;
+	char	*tokens[7];
+	int		*commans_index;
+	t_stds	std;
 
 	(void)argc;
 	(void)argv;
-	std.in = dup(STDIN_FILENO);	//.
-	std.out = dup(STDOUT_FILENO);	//.
+	std.stdin = dup(STDIN_FILENO);	//.
+	std.stdout = dup(STDOUT_FILENO);	//.
 	tokens[0] = "/usr/bin/ls";
-	tokens[1] = ">";
-	tokens[2] = "file.txt";
-	tokens[3] = "|";
-	tokens[4] = "/usr/bin/wc";
-	tokens[5] = NULL;
-	commans_index = malloc(sizeof(int *) * 2);
-	commans_index[0] = malloc(sizeof(int) * 2);
-	commans_index[0][0] = 2;
-	commans_index[0][1] = 0;
-	commans_index[1] = NULL;
+	tokens[1] = "|";
+	tokens[2] = "/usr/bin/cat";
+	tokens[3] = "file.txt";
+	tokens[4] = "|";
+	tokens[5] = "/usr/bin/wc";
+	tokens[6] = NULL;
+	commans_index = malloc(sizeof(int) * 4);
+	commans_index[0] = 0;
+	commans_index[1] = 2;
+	commans_index[2] = 5;
+	commans_index[3] = -1;
 	retval = ft_our_code(tokens, env, std, 0, 0, commans_index, 0);
-	free(commans_index[0]);
 	free(commans_index);
 	printf("RETURN: %d\n", retval);
 	return (retval);

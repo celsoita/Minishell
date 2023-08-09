@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 11:17:18 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 21:33:25 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,11 @@ void	ft_print_env(char **env, bool exp)
 }
 //str di es :   echo -n  "ciao mondo"|" banana" 
 // questa funzione conta il numero totale  di stringhe
-int	ft_count_total_string(char *input)
+int	ft_count_total_string(t_lexer *lex, char *input)
 {
-	int	i;
-	int	ns;
+	char	*temp;
+	int		i;
+	int		ns;
 
 	i = 0;
 	ns = 0;
@@ -56,7 +57,22 @@ int	ft_count_total_string(char *input)
 			ns++;
 		while (input[i] && input[i] != ' ' && input[i] != '\t')
 		{
-			if (input[i] == '"')
+			if (input[i] == '$' && (i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
+			{
+				i++;
+				temp = ft_expander(lex, &input[i]);
+				if (!temp || !temp[0])
+				{
+					while (ft_isalnum(input[i]))
+						i++;
+					while (ft_charinstring(input[i], " \t"))
+						i++;
+				}
+				if (!input[i])
+					ns--;
+				free(temp);
+			}
+			else if (input[i] == '"')
 			{
 				i++;
 				while(input[i] != '"' && input[i])

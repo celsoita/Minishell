@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 11:01:04 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 17:02:35 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ char	*ft_create_prompt(t_prompt *prompt)
 	free(prompt->hostname);
 	completed_prompt = ft_strjoin(prompt->username, ": ");
 	free(prompt->username);
+	free(prompt);
 	return (completed_prompt);
 }
 

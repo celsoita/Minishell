@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 15:50:23 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/09 16:41:23 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,45 @@ void	ft_chdir(t_lexer *lex)
 		return (ft_perror("cd: too many arguments\n"));
 	old_cwd = lex->cwd;
 	if (!lex->tokens[1])
-		lex->cwd = ft_strdup("/nfs/homes/cschiavo");
+		old_cwd = ft_expander(lex, "HOME");
 	else
 	{
 		if (lex->tokens[1][0] == '/')
-			lex->cwd = ft_strdup(lex->tokens[1]);	
+			old_cwd = ft_strdup(lex->tokens[1]);
+		else if (lex->tokens[1][0] == '-')
+		{
+			if (lex->tokens[1][1] == '-')
+				old_cwd = ft_expander(lex, "HOME");
+			else
+			{
+				old_cwd = ft_expander(lex, "OLDPWD");
+				printf("%s\n", old_cwd);
+			}
+		}
 		else
-			lex->cwd = ft_strjoin_path(lex->cwd, lex->tokens[1]);
+			old_cwd = ft_strjoin_path(old_cwd, lex->tokens[1]);
 	}
-	free(old_cwd);
-	old_cwd = NULL;
-	if (chdir(lex->cwd) == -1)
+	if (chdir(old_cwd) == -1)
 		ft_perror("cd: %s: Not a directory\n", lex->tokens[1]);
+	free(old_cwd);
+
+	// Change OLDPWD expansion
+	old_pwd = ft_search_str_in_matrix(lex, "OLDPWD", ft_strlen_matrix(lex->env_copy));
+	free(*old_pwd);
+	*old_pwd = malloc(sizeof(char) * (7 + ft_strlen(lex->cwd)) + 1);
+	ft_strcpy(*old_pwd, "OLDPWD=");
+	ft_strcpy(&(*old_pwd)[7], lex->cwd);
+	free(lex->cwd);
+	lex->cwd = NULL;
+	
 	lex->cwd = getcwd(NULL, 0);
+	
+	// Change PWD expansion
 	old_pwd = ft_search_str_in_matrix(lex, "PWD", ft_strlen_matrix(lex->env_copy));
 	free(*old_pwd);
 	*old_pwd = malloc(sizeof(char) * (4 + ft_strlen(lex->cwd)) + 1);
 	ft_strcpy(*old_pwd, "PWD=");
 	ft_strcpy(&(*old_pwd)[4], lex->cwd);
-	
 }
 
 void	ft_echo(t_lexer *lex)
