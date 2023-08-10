@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 15:17:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 20:23:51 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 15:57:17 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ char	**ft_matrix_shell(t_lexer *lex)
 	return (matrix);
 }
 
-int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int *commands_index, int lenght)
+int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int lenght)
 {
 	char	**args;
 	int	pipe_fd[2];
@@ -161,13 +161,19 @@ int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int
 	// lex.op.redirect[0][0] = 1;
 	// lex.op.redirect[0][1] = 0;
 	lex.op.redirect[0] = -1;
-	lex.op.pipe = malloc(sizeof(int) * 3);
+	lex.op.n_pipe = 1;
+	lex.op.pipe = malloc(sizeof(int) * (lex.op.n_pipe + 1));
 	lex.op.pipe[0] = 1;
-	lex.op.pipe[1] = 4;
-	lex.op.pipe[2] = -1;
+	// lex.op.pipe[1] = 4;
+	lex.op.pipe[1] = -1;
 
-	if (!tokens || !tokens[0] || !env)
+	if (!tokens || !env)
 		return (0);
+	if (!tokens[0])
+	{
+		printf("bash: Missing command\n");
+		return (1);
+	}
 	args = ft_matrix_shell(&lex);
 	if (pipe(pipe_fd) == -1)
 		return (1);
@@ -177,7 +183,7 @@ int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int
 	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
 		return (3);
 	close(pipe_fd[1]);
-	if (commands_index[more] > -1 && !(commands_index[more + 1] > -1))
+	if (lex.op.n_pipe == 0 || lenght > lex.op.pipe[lex.op.n_pipe - 1])
 		dup2(std.stdout, STDOUT_FILENO);
 	pid1 = fork();
 	if (pid1 < 0)
@@ -194,15 +200,14 @@ int	ft_our_code(char **tokens, char **env, t_stds std, int old_fd, int more, int
 	ft_free_matrix(args);
 	i = ft_len_matrix_shell(&lex) + 1;
 	if (tokens[i - 1] && tokens[i])
-		return (ft_our_code(&tokens[i], env, std, pipe_fd[0], more + 1, commands_index, lenght + i));
+		return (ft_our_code(&tokens[i], env, std, pipe_fd[0], more + 1, lenght + i));
 	return (0);
 }
 
 int main (int argc, char *argv[], char **env)
 {
 	int		retval;
-	char	*tokens[7];
-	int		*commans_index;
+	char	*tokens[5];
 	t_stds	std;
 
 	(void)argc;
@@ -213,16 +218,10 @@ int main (int argc, char *argv[], char **env)
 	tokens[1] = "|";
 	tokens[2] = "/usr/bin/cat";
 	tokens[3] = "file.txt";
-	tokens[4] = "|";
-	tokens[5] = "/usr/bin/wc";
-	tokens[6] = NULL;
-	commans_index = malloc(sizeof(int) * 4);
-	commans_index[0] = 0;
-	commans_index[1] = 2;
-	commans_index[2] = 5;
-	commans_index[3] = -1;
-	retval = ft_our_code(tokens, env, std, 0, 0, commans_index, 0);
-	free(commans_index);
+	// tokens[4] = "|";
+	// tokens[5] = "/usr/bin/wc";
+	tokens[4] = NULL;
+	retval = ft_our_code(tokens, env, std, 0, 0, 0);
 	printf("RETURN: %d\n", retval);
 	return (retval);
 }

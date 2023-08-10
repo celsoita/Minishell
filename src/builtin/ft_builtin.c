@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 16:41:23 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 19:23:28 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,25 +66,25 @@ void	ft_echo(t_lexer *lex)
 {
 	int	i;
 
-	if (!lex->tokens[1])
+	if (!lex->args[1])
 	{
 		printf("\n");
 		return ;
 	}
 	i = 1;
-	if (!ft_strncmp(lex->tokens[1], "-n", 3))
+	if (!ft_strncmp(lex->args[1], "-n", 3))
 		i++;
-	if (lex->tokens[i])
+	if (lex->args[i])
 	{
-		printf("%s",lex->tokens[i]);
+		printf("%s",lex->args[i]);
 		i++;
-		while (lex->tokens[i])
+		while (lex->args[i])
 		{
-			printf(" %s",lex->tokens[i]);
+			printf(" %s",lex->args[i]);
 			i++;
 		}
 	}
-	if (ft_strncmp(lex->tokens[1], "-n", 3))
+	if (ft_strncmp(lex->args[1], "-n", 3))
 		printf("\n");
 }
 

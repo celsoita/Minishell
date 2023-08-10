@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 21:37:29 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 14:51:59 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int	ft_count_variables(char *string)
 	variables_found = 0;
 	while (string[i] && (string[i] != ' ' || in_quote[0] || in_quote[1]))
 	{
+		if (!in_quote[0] && !in_quote[1] && ft_charinstring(string[i], "|<>"))
+			break ;
 		if (!in_quote[1] && string[i] == '$')
 			variables_found++;
 		if (string[i] == '\"' && !in_quote[1])
@@ -87,6 +89,12 @@ int	ft_count_variables(char *string)
 //echo "$PATH"ciao				-> /bin/...ciao
 //echo $PATH(ft_alphanum())		-> 
 //echo $PATH(!ft_alphanum())	-> /bin/...(!ft_alphanum())
+char	*ft_expand_exit_status(t_lexer *lex)
+{
+	char *res;
+	res = ft_itoa(lex->return_value);
+	return (res);
+}
 char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 {
 	int		lenght;
@@ -109,23 +117,35 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	lenght = 0;
 	i = 0;
 	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
-	{
+	{	// SBAGLIATO[ echo a$USERa a ] GIUSTI[ echo a$USER | echo $USERa a | echo $USERa ]
 		if (!in_quote[1] && input[i] == '$')
 		{
 			i++;
-			variables[nvar] = ft_expander(lex, &input[i]);
+			if (input[i] == '?')
+				variables[nvar] = ft_expand_exit_status(lex);
+			else
+				variables[nvar] = ft_expander(lex, &input[i]);
 			if (variables[nvar] && variables[nvar][0])
 			{
 				lenght += ft_strlen(variables[nvar]);
-				while (ft_isalnum(input[i]))
+				if (input[i] == '?')
 					i++;
+				else
+					while (ft_isalnum(input[i]))
+						i++;
 			}
 			else
 			{
-				while (ft_isalnum(input[i]))
-					i++;
-				while (ft_charinstring(input[i], " \t"))
-					i++;
+				if (i - 1 == 0 || input[i - 2] == ' ' || input[i - 2] == '\t')
+				{
+					while (ft_isalnum(input[i]))
+						i++;
+					while (ft_charinstring(input[i], " \t"))
+						i++;
+				}
+				else
+					while (ft_isalnum(input[i]))
+						i++;
 			}
 			i--;
 			nvar++;
@@ -154,6 +174,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 	}
 	lex->lenght = i;
+	printf("Lenght: %d\t", lenght);
 	/* WRITE FUNCTION */
 	str = malloc(sizeof(char) * lenght + 1);
 	nvar = 0;
@@ -171,15 +192,24 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 				j = 0;
 				while (variables[nvar] && variables[nvar][j])
 					str[lenght++] = variables[nvar][j++];
-				while (ft_isalnum(input[i]))
+				if (input[i] == '?')
 					i++;
+				else
+					while (ft_isalnum(input[i]))
+						i++;
 			}
 			else
 			{
-				while (ft_isalnum(input[i]))
-					i++;
-				while (ft_charinstring(input[i], " \t"))
-					i++;
+				if (i - 1 == 0 || input[i - 2] == ' ' || input[i - 2] == '\t')
+				{
+					while (ft_isalnum(input[i]))
+						i++;
+					while (ft_charinstring(input[i], " \t"))
+						i++;
+				}
+				else
+					while (ft_isalnum(input[i]))
+						i++;
 			}
 			i--;
 			nvar++;
@@ -187,7 +217,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
 		{
 			if (i == 0)
-			{	// echo ciao|grep "ciao" | wc
+			{
 				if (input[i] == '|')
 					lex->op.pipe[lex->current_pipe++] = current_pos;
 				else
@@ -195,7 +225,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 				str[lenght++] = input[i];
 				while (input[i] && input[i] == input[i + 1])
 					str[lenght++] = input[i++];
-			}// ciao| | |||||||||
+			}
 			break ;
 		}
 		else if (input[i] == '\"' && !in_quote[1])

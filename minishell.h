@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 20:59:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 18:48:39 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ typedef struct s_lexer
 {
 	char 	**tokens;
 	char 	**paths;
-	bool	is_builtin;
 	int		flags;
 	char	**env_copy;
 	int		lenght;
@@ -53,8 +52,12 @@ typedef struct s_lexer
 	int		pipe_num;
 	t_ops	op;
 	t_stds	stds;
+	bool	can_return;
+	int		return_value;
 	int		current_pipe;
 	int		current_redirect;
+	char	**args;
+	bool	is_executing;
 }	t_lexer;
 
 typedef	struct s_prompt
@@ -78,6 +81,7 @@ typedef enum s_colors
 }	t_colors;
 
 //main.c
+int		ft_execute(t_lexer *lex);
 bool	ft_check_is_variable(char	*token);
 
 //ft_prompt.c
@@ -121,6 +125,8 @@ bool	ft_check_is_executable(t_lexer *lex);
 bool	ft_check_is_variable(char	*token);
 int		ft_check_builtin(t_lexer *lex);
 //ft_pipe.c
-void	ft_pipe(t_lexer *lex);
+int		ft_len_matrix_shell(t_lexer *lex);
+char	**ft_matrix_shell(t_lexer *lex);
+int		ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 19:53:22 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 19:09:09 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,43 +40,36 @@ char	*ft_strjoin_path(char const *s1, char const *s2)
 	return(res);
 }
 
-void	ft_prepare_in_and_out()
-{
-	
-}
 // questa funzione prova i path in bruteforce
 void	ft_exec_path(t_lexer *lex)
 {
 	char *path_try;
 	int	i;
-	pid_t pid;
 
-	i = 0;
 	i = ft_strlen_matrix(lex->paths);
-	/*
-	se uno dei token == '|'
-		allora tu fai dup2 di
-	*/
-	pid = fork();
-	if (pid != 0)
-	{
-		waitpid(pid, 0, 0);
-		free(lex->op.pipe);
-		free(lex->op.redirect);
-		return ;
-	}
-	// if (lex->pipe_num > 0)
+	// printf("Current Pipe_Num: %d\n", lex->op.n_pipe);
+	// ft_perror("\n--------------------------\n");
+	// int len;
+	// int	j;
+	// char	*line;
+	// j = 0;
+	// len = ft_strlen_matrix(lex->args);
+	// while (j < len)
 	// {
-	// 		ft_pipe(lex);
+	// 	line = ft_strjoin(lex->args[j], "\n");
+	// 	ft_perror(line, 0);
+	// 	free(line);
+	// 	j++;
 	// }
+	// ft_perror("--------------------------\n\n");
 	if (!lex->absolute_path)
 	{
 		while(i--)
 		{
-			path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
+			path_try = ft_strjoin_path(lex->paths[i], lex->tokens[0]);
 			if (!access(path_try, F_OK))
 			{
-				execve(path_try, lex->tokens, lex->env_copy);
+				execve(path_try, lex->args, lex->env_copy);
 				free(path_try);
 				exit (0);
 			}
