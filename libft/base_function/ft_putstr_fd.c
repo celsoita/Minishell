@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 17:20:50 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:45:27 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 21:39:41 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ void	ft_putstr_fd(char *s, int fd)
 {
 	int	i;
 
+	if (!s)
+	{
+		write(fd, "(null)", 6);
+		return ;
+	}
 	i = 0;
 	while (s[i] != '\0')
 	{

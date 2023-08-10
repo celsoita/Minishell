@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 19:09:09 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 21:20:07 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,24 @@ void	ft_exec_path(t_lexer *lex)
 {
 	char *path_try;
 	int	i;
+	pid_t pid;
 
 	i = ft_strlen_matrix(lex->paths);
+
+	pid = 0;
+	if (lex->op.n_pipe <= 0)
+	{
+		lex->is_executing = true;
+		pid = fork();
+		if (pid != 0)
+		{
+			waitpid(pid, &lex->return_value, 0);
+			lex->is_executing = false;
+			free(lex->op.pipe);
+			free(lex->op.redirect);
+			return ;	// FATHER
+		}
+	}
 	// printf("Current Pipe_Num: %d\n", lex->op.n_pipe);
 	// ft_perror("\n--------------------------\n");
 	// int len;

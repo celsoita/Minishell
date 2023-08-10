@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 18:48:39 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 21:59:10 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef enum s_colors
 }	t_colors;
 
 //main.c
-int		ft_execute(t_lexer *lex);
+void		ft_execute(t_lexer *lex);
 bool	ft_check_is_variable(char	*token);
 
 //ft_prompt.c
@@ -111,7 +111,7 @@ char	**ft_copy_env(char **env);
 void	ft_chdir(t_lexer *lex);
 void	ft_echo(t_lexer *lex);
 char	*ft_expander(t_lexer *lex, char *str);
-void	ft_token_expander(t_lexer *lex);
+// void	ft_token_expander(t_lexer *lex);
 //ft_free.c
 void	ft_free_matrix(char **matrix);
 //ft_matrix_support.c

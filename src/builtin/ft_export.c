@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 12:36:19 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 21:46:07 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	ft_export(t_lexer *lex)
 	int		i;
 	int		y;
 
-	if (lex->tokens[1] == NULL)
+	if (lex->args[1] == NULL)
 	{
 		ft_print_env(lex->env_copy, true);
 		return ;
@@ -34,18 +34,18 @@ void	ft_export(t_lexer *lex)
 	i = 0;
 	x = 0;
 	y = 1;
-	dimension_token = ft_strlen_matrix(lex->tokens);
+	dimension_token = ft_strlen_matrix(lex->args);
 	count = 0;
 	while(y < dimension_token)
 	{
-		if (ft_check_is_variable(lex->tokens[y]) == 1)
+		if (ft_check_is_variable(lex->args[y]) == 1)
 			count++;
 		y++;
 	}
 	y = 1;
 	while(y < dimension_token)
 	{
-		if (ft_check_is_variable(lex->tokens[y]) == 1)
+		if (ft_check_is_variable(lex->args[y]) == 1)
 		{
 			num_string = 0;
 			len_env = 0;
@@ -57,14 +57,14 @@ void	ft_export(t_lexer *lex)
 			{
 				if (i >= num_string)
 				{
-					while (ft_check_is_variable(lex->tokens[y]) == 0)
+					while (ft_check_is_variable(lex->args[y]) == 0)
 						y++;
 					x = 0;
-					len_env = ft_strlen(lex->tokens[y]);
+					len_env = ft_strlen(lex->args[y]);
 					matrix_env[i] = malloc(sizeof(char *) * len_env + 1);
 					while(x < len_env)
 					{
-						matrix_env[i][x] = lex->tokens[y][x];
+						matrix_env[i][x] = lex->args[y][x];
 						x++;
 					}
 					y++;
@@ -97,9 +97,9 @@ void	ft_export(t_lexer *lex)
 	}
 	
 	x = 0;
-	while (lex->tokens[x])
+	while (lex->args[x])
 	{
-		if (!ft_strncmp(lex->tokens[x], "PATH", 4))
+		if (!ft_strncmp(lex->args[x], "PATH", 4))
 		{
 			ft_free_matrix(lex->paths);
 			lex->paths = ft_path_splitter(lex);

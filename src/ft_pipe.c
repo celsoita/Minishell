@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 18:25:23 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/10 21:35:41 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ char	**ft_matrix_shell(t_lexer *lex)
 
 int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 {
-	char	**args;
 	int	pipe_fd[2];
 	int	pid1;
 	int	i;
@@ -118,7 +117,6 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 		printf("bash: Missing command\n");
 		return (1);
 	}
-	args = ft_matrix_shell(lex);
 	if (pipe(pipe_fd) == -1)
 		return (1);
 	if (more)
@@ -136,14 +134,12 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 		ft_perror("ERROR: pipe can't store fds\n");
 		return (1);
 	}
-	lex->args = args;
 	if (pid1 == 0)
 		return (-1);	// -1 for execve
 	waitpid(pid1, 0, 0);
 	dup2(lex->stds.stdin, STDIN_FILENO);
 	dup2(lex->stds.stdout, STDOUT_FILENO);
 	// printf("PADRE OK!\n");
-	ft_free_matrix(args);
 	i = ft_len_matrix_shell(lex) + 1;
 	lex->lenght += i;
 	if (tokens[i - 1] && tokens[i])
