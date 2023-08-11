@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 22:01:22 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/11 11:18:05 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ void	ft_execute(t_lexer *lex)
 		return ;
 	else
 		lex->args = ft_matrix_shell(lex);
+	if (lex->op.n_redirect > 0)
+		ft_redirects(lex);
 	// ft_perror("\n--------------------------\n");
 	// int len;
 	// int	j;
@@ -100,7 +102,7 @@ void	ft_execute(t_lexer *lex)
 	// 	j++;
 	// }
 	// ft_perror("--------------------------\n\n");
-	if (lex->tokens)
+	if (lex->args)
 	{
 		if (ft_check_builtin(lex))
 		{
@@ -174,6 +176,7 @@ int main(int argc, char **argv, char **env)
 		free(prompt);
 		lex.tokens = ft_tokenize(input, &lex);
 		lex.is_executing = false;
+		lex.can_return = false;
 		ft_execute(&lex);
 		if (lex.can_return == true)
 		{

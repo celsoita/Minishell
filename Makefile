@@ -12,6 +12,7 @@ SRC 		= 			./src/main.c \
 						./src/ft_checks.c\
 						./src/ft_little_executer.c\
 						./src/ft_pipe.c\
+						./src/ft_redirects.c\
 						./src/builtin/ft_unset.c\
 						./src/builtin/ft_export.c \
 						./src/builtin/ft_builtin.c\
