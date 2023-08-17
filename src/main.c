@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 16:34:21 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 18:36:14 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,8 @@ void	ft_execute(t_lexer *lex)
 		}
 		waitpid(-1, NULL, 0);
 	}
+	dup2(lex->stds.stdin, STDIN_FILENO);
+	dup2(lex->stds.stdout, STDOUT_FILENO);
 }
 
 int main(int argc, char **argv, char **env)
@@ -234,3 +236,8 @@ int main(int argc, char **argv, char **env)
 	}
 	return (0);
 }
+
+/*
+	TODO:
+		TESTS: echo $PATH|tr ":" " "| cat > ciao
+*/

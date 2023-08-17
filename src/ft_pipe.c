@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 16:34:09 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 18:26:20 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,9 +141,9 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 		ft_perror("LENGHT(%d) pipe(%d)\n", lex->lenght, more);	// REMOVE
 		return (-1);	// -1 for execve
 	}
-	waitpid(pid1, 0, 0);
 	dup2(lex->stds.stdin, STDIN_FILENO);
 	dup2(lex->stds.stdout, STDOUT_FILENO);
+	waitpid(pid1, 0, 0);
 	lex->current_pipe++;
 	// printf("PADRE OK!\n");
 	i = lex->op.pipe[lex->current_pipe - 1] - lex->lenght + 1;

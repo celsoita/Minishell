@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/04 10:34:47 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 12:21:05 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 18:18:19 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,5 @@ void	ft_perror(char *string, ...)
 			ft_putchar_fd(string[i], 2);
 		i++;
 	}
+	va_end(ap);
 }
