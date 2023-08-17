@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 12:32:19 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 16:34:21 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,23 +85,43 @@ void	ft_execute(t_lexer *lex)
 	if (lex->op.n_pipe > 0 && !ft_init_pipe(lex))
 		return ;
 	else
+	{
 		lex->args = ft_matrix_shell(lex);
-	if (lex->op.n_redirect > 0)
-		ft_redirects(lex);
-	// ft_perror("\n--------------------------\n");
-	// int len;
-	// int	j;
-	// char	*line;
-	// j = 0;
-	// len = ft_strlen_matrix(lex->args);
-	// while (j < len)
-	// {
-	// 	line = ft_strjoin(lex->args[j], "\n");
-	// 	ft_perror(line, 0);
-	// 	free(line);
-	// 	j++;
-	// }
-	// ft_perror("--------------------------\n\n");
+		if (lex->op.n_redirect > 0)
+			ft_redirects(lex);
+	}
+	{// ft_print_arguments
+	ft_perror("\n----------TOKENS---------\n");
+	int len;
+	int	j;
+	char	*line;
+	j = 0;
+	len = ft_strlen_matrix(lex->tokens);
+	while (j < len)
+	{
+		line = ft_strjoin(lex->tokens[j], "\n");
+		ft_perror(line, 0);
+		free(line);
+		j++;
+	}
+	ft_perror("--------------------------\n\n");
+	}// END ft_print_arguments
+	{// ft_print_arguments
+	ft_perror("\n--------ARGOMENTI---------\n");
+	int len;
+	int	j;
+	char	*line;
+	j = 0;
+	len = ft_strlen_matrix(lex->args);
+	while (j < len)
+	{
+		line = ft_strjoin(lex->args[j], "\n");
+		ft_perror(line, 0);
+		free(line);
+		j++;
+	}
+	ft_perror("--------------------------\n\n");
+	}// END ft_print_arguments
 	if (lex->args)
 	{
 		if (ft_check_builtin(lex))
@@ -139,7 +159,7 @@ void	ft_execute(t_lexer *lex)
 		dup2(lex->stds.stdin, STDIN_FILENO);
 	if (!access(".temp", F_OK))
 	{
-		if (fork())
+		if (!fork())
 		{
 			lex->args = malloc(sizeof(char *) * (2 + 1));
 			lex->args[0] = "/usr/bin/rm";

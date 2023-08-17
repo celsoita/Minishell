@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:18:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 12:20:19 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 16:32:55 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,49 +34,38 @@
 
 void	ft_redirects(t_lexer *lex)
 {
+	ft_perror("DEBUG: current_pipe[%d](%d)\n", lex->current_pipe, lex->op.pipe[lex->current_pipe]);
+	if (lex->op.pipe[lex->current_pipe] != -1 && lex->op.redirect[lex->current_redirect] > lex->op.pipe[lex->current_pipe])
+		return ;
+	ft_perror("DEBUG: current_redirect[%d](%d)\n", lex->current_redirect, lex->op.redirect[lex->current_redirect]);
+	if (lex->current_redirect >= lex->op.n_redirect)
+		return ;
 	//"<"
 		// open("ciao2", O_CREAT | O_RDONLY, 0777);
 	//"<<"
+	{
+		// HEREDOC
 		char	*buffer;
 		int		fd;
 		int		i;
-		int		j;
-		int		k;
 
-		i = 0;
-		j = 0;
-		while (j < lex->op.n_redirect && lex->tokens[i])	//{1, 7, -1}
+		// cat ciao2 | cat << ciao
+		// pipe{2, -1} redirect{4, -1}
+		ft_perror("DEBUG: token[lenght(%d)](%s) == redirect[current_redirect(%d)](%d)\n", lex->lenght, lex->tokens[lex->lenght], lex->current_redirect, lex->op.redirect[lex->current_redirect] - lex->lenght);
+		i = lex->op.redirect[lex->current_redirect] - lex->lenght;
+		ft_perror("DEBUG: current_redirect[pos(%d)](%s)\n", i, lex->tokens[i]);
+		if (lex->tokens[i][0] == '<' && lex->tokens[i][1] == '<')
 		{
-			printf("DEBUG: lenght(%d) + i(%d) == redirect[%d](%d)\n", lex->lenght, i, j, lex->op.redirect[j]);
-			// HEREDOC
-			if (lex->lenght + i == lex->op.redirect[j] && lex->tokens[i][1] == '<')
-				break ;
-			i++;
-			// printf("AUMENTO DI 1 i(%d)\n", i);
-			k = 0;
-			if (lex->current_pipe < lex->op.n_pipe)	//{5, -1}
-			{
-				if (lex->lenght + i == lex->op.pipe[k])
-				{
-					j++;
-					i = 0;
-					break ;
-				}	
-				k++;
-				// printf("AUMENTO DI 1 k(%d) e RESETTO i(%d) a 0\n", k, i);
-			}
-		}
-		if (lex->lenght + i == lex->op.redirect[j] && lex->tokens[i][1] == '<')
-		{
-			fd = open(".temp", O_RDWR | O_CREAT | O_TRUNC, 0777);
+			lex->current_redirect++;
+			fd = open(".temp", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 			buffer = NULL;
-			printf("HEREDOC ARGUMENT(%s)\n", lex->tokens[i + 1]);
+			ft_perror("HEREDOC ARGUMENT(%s)\n", lex->tokens[i + 1]);
 			while (ft_strlen(buffer) - 1 != ft_strlen(lex->tokens[i + 1]) || ft_strncmp(buffer, lex->tokens[i + 1], ft_strlen(buffer) - 1))
 			{
-				printf("STRCMP(%d)\n", ft_strncmp(buffer, lex->tokens[i + 1], ft_strlen(buffer) - 1));
-				write(fd, buffer, ft_strlen(buffer));
+				// ft_perror("STRCMP(%d)\n", ft_strncmp(buffer, lex->tokens[i + 1], ft_strlen(buffer) - 1));
 				if (buffer)
 				{
+					write(fd, buffer, ft_strlen(buffer));
 					if (ft_strchr(buffer, EOF))
 						break ;
 					free(buffer);
@@ -86,10 +75,14 @@ void	ft_redirects(t_lexer *lex)
 				if (buffer == NULL)
 					break ;
 			}
+			// if (!(ft_strlen(buffer) - 1 != ft_strlen(lex->tokens[i + 1]) || ft_strncmp(buffer, lex->tokens[i + 1], ft_strlen(buffer) - 1)))
+			// 	ft_putchar_fd(EOF, fd);
 			free(buffer);
-			dup2(fd, STDIN_FILENO);
 			close(fd);
+			fd = open(".temp", O_RDONLY, 0777);
+			dup2(fd, STDIN_FILENO);
 		}
+	}
 	//">"
 		// open("ciao2", O_CREAT | O_WRONLY, 0777);
 	//">>"
