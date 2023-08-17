@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/11 11:18:05 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 12:32:19 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,9 +121,9 @@ void	ft_execute(t_lexer *lex)
 		}
 		else if(ft_check_is_executable(lex) && ft_check_syntax_error(lex))
 			ft_exec_path(lex);
-		else
+		else if (lex->args[0] != NULL)
 		{
-			printf("%s: not a command\n", lex->tokens[0]);
+			printf("%s: not a command\n", lex->args[0]);
 			lex->return_value = 127;
 		}
 	}
@@ -135,6 +135,28 @@ void	ft_execute(t_lexer *lex)
 	ft_free_matrix(lex->args);
 	if (lex->is_executing)
 		exit (0);
+	if (lex->stds.stdin != STDIN_FILENO)
+		dup2(lex->stds.stdin, STDIN_FILENO);
+	if (!access(".temp", F_OK))
+	{
+		if (fork())
+		{
+			lex->args = malloc(sizeof(char *) * (2 + 1));
+			lex->args[0] = "/usr/bin/rm";
+			lex->args[1] = ".temp";
+			lex->args[2] = NULL;
+			execve("/usr/bin/rm", lex->args, lex->env_copy);
+			free(lex->cwd);
+			free(lex->op.pipe);
+			free(lex->op.redirect);
+			ft_free_matrix(lex->tokens);
+			ft_free_matrix(lex->args);
+			ft_free_matrix(lex->paths);
+			ft_free_matrix(lex->env_copy);
+			exit (0);
+		}
+		waitpid(-1, NULL, 0);
+	}
 }
 
 int main(int argc, char **argv, char **env)
@@ -175,6 +197,9 @@ int main(int argc, char **argv, char **env)
 		}
 		free(prompt);
 		lex.tokens = ft_tokenize(input, &lex);
+		lex.current_pipe = 0;
+		lex.current_redirect = 0;
+		lex.lenght = 0;
 		lex.is_executing = false;
 		lex.can_return = false;
 		ft_execute(&lex);

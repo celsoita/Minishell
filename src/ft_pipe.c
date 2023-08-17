@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 21:35:41 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 11:16:53 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	waitpid(pid1, 0, 0);
 	dup2(lex->stds.stdin, STDIN_FILENO);
 	dup2(lex->stds.stdout, STDOUT_FILENO);
+	lex->current_pipe++;
 	// printf("PADRE OK!\n");
 	i = ft_len_matrix_shell(lex) + 1;
 	lex->lenght += i;

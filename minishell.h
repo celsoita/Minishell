@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 21:59:10 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/17 10:46:53 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,5 +128,7 @@ int		ft_check_builtin(t_lexer *lex);
 int		ft_len_matrix_shell(t_lexer *lex);
 char	**ft_matrix_shell(t_lexer *lex);
 int		ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more);
+//ft_redirects.c
+void	ft_redirects(t_lexer *lex);
 
 #endif
