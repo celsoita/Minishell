@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/07 16:04:57 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 12:04:35 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,19 @@ bool	ft_check_is_variable(char	*token)
 int	ft_check_builtin(t_lexer *lex)
 {
 	lex->flags = 0;
-	if (!strcmp(lex->tokens[0], "echo"))
+	if (!ft_strcmp(lex->tokens[0], "echo"))
 		lex->flags = 1;
-	if (!strcmp(lex->tokens[0], "cd"))
+	if (!ft_strcmp(lex->tokens[0], "cd"))
 		lex->flags = 2;
-	if (!strcmp(lex->tokens[0], "pwd"))
+	if (!ft_strcmp(lex->tokens[0], "pwd"))
 		lex->flags = 3;
-	if (!strcmp(lex->tokens[0], "export"))
+	if (!ft_strcmp(lex->tokens[0], "export"))
 		lex->flags = 4;
-	if (!strcmp(lex->tokens[0], "unset"))
+	if (!ft_strcmp(lex->tokens[0], "unset"))
 		lex->flags = 5;
-	if (!strcmp(lex->tokens[0], "env"))
+	if (!ft_strcmp(lex->tokens[0], "env"))
 		lex->flags = 6;
-	if (!strcmp(lex->tokens[0], "exit"))
+	if (!ft_strcmp(lex->tokens[0], "exit"))
 		lex->flags = 7;
 	return (lex->flags);
 }

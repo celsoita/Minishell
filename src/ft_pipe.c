@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 18:26:20 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 12:10:16 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	**ft_matrix_shell(t_lexer *lex)
 
 	if (!lex->tokens)
 		return (NULL);
-	matrix = malloc(sizeof(char *) * ft_len_matrix_shell(lex) + 1);
+	matrix = malloc(sizeof(char *) * (ft_len_matrix_shell(lex) + 1));
 	len_matrix = 0;
 	i = 0;
 	while (lex->tokens[i])	// echo ciao >> ciao < text qualcosa

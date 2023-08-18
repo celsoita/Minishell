@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 12:04:56 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 12:51:12 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,9 @@ void	ft_exec_path(t_lexer *lex)
 			waitpid(pid, &lex->return_value, 0);
 			lex->is_executing = false;
 			free(lex->op.pipe);
+			lex->op.pipe = NULL;
 			free(lex->op.redirect);
+			lex->op.redirect = NULL;
 			return ;	// FATHER
 		}
 	}

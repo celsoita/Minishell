@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 18:36:14 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 12:58:18 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,16 +128,7 @@ void	ft_execute(t_lexer *lex)
 		{
 			lex->return_value = ft_exec_builtin(lex);
 			if (lex->can_return == true)
-			{
-				free(lex->cwd);
-				free(lex->op.pipe);
-				free(lex->op.redirect);
-				ft_free_matrix(lex->tokens);
-				ft_free_matrix(lex->args);
-				ft_free_matrix(lex->paths);
-				ft_free_matrix(lex->env_copy);
 				return ;
-			}
 		}
 		else if(ft_check_is_executable(lex) && ft_check_syntax_error(lex))
 			ft_exec_path(lex);
@@ -181,10 +172,29 @@ void	ft_execute(t_lexer *lex)
 	dup2(lex->stds.stdout, STDOUT_FILENO);
 }
 
+char	*ft_input(char *prompt)
+{
+	char	*input;
+
+	input = NULL;
+	while (!input || input[0] == '\0')
+	{
+		free(input);
+		input = readline(prompt);
+		if (!input)
+		{
+			printf("\n");
+			free(prompt);
+			return (input);
+		}
+	}
+	free(prompt);
+	return (input);
+}
+
 int main(int argc, char **argv, char **env)
 {
 	char	*input;
-	char	*prompt;
 	t_lexer	lex;
 
 	(void)argc;
@@ -198,26 +208,13 @@ int main(int argc, char **argv, char **env)
 	lex.cwd = getcwd(NULL, 0);
 	lex.pipe_num = 0;
 	lex.return_value = 0;
+	lex.op.pipe = NULL;
+	lex.op.redirect = NULL;
 	while (1)
 	{
-		prompt = ft_create_prompt_username(&lex, argv[1]);
-		input = NULL;
-		while (!input || input[0] == '\0')
-		{
-			free(input);
-			input = readline(prompt);
-			if (!input)
-			{
-				printf("\n");
-				free(prompt);
-				free(input);
-				free(lex.cwd);
-				ft_free_matrix(lex.paths);
-				ft_free_matrix(lex.env_copy);
-				return (lex.return_value);
-			}
-		}
-		free(prompt);
+		input = ft_input(ft_create_prompt_username(&lex, argv[1]));
+		if (!input)
+			break ;
 		lex.tokens = ft_tokenize(input, &lex);
 		lex.current_pipe = 0;
 		lex.current_redirect = 0;
@@ -227,17 +224,32 @@ int main(int argc, char **argv, char **env)
 		ft_execute(&lex);
 		if (lex.can_return == true)
 		{
-			free(input);
-			return (lex.return_value);
+			ft_free_matrix(lex.tokens);
+			ft_free_matrix(lex.args);
+			break ;
 		}
 		if (input[0])
 			add_history(input);
 		ft_free_matrix(lex.tokens);
+		if (lex.op.pipe)
+			free(lex.op.pipe);
+		if (lex.op.redirect)
+			free(lex.op.redirect);
 	}
-	return (0);
+	free(input);
+	if (lex.op.pipe)
+		free(lex.op.pipe);
+	if (lex.op.redirect)
+		free(lex.op.redirect);
+	free(lex.cwd);
+	ft_free_matrix(lex.paths);
+	ft_free_matrix(lex.env_copy);
+	return (lex.return_value);
 }
 
 /*
 	TODO:
 		TESTS: echo $PATH|tr ":" " "| cat > ciao
 */
+
+// clear && valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell

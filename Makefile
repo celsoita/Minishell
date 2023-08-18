@@ -1,9 +1,9 @@
-NAME = minishell
+NAME		= minishell
 
-CC = cc
+CC			= cc
 
-CFLAGS = -Wall -Wextra -Werror -g
-SRC 		= 			./src/main.c \
+CFLAGS		= -Wall -Wextra -Werror -g
+SRC			= 			./src/main.c \
 						./src/ft_utils.c\
 						./src/ft_prompt.c\
 						./src/ft_lexer.c\
@@ -21,9 +21,9 @@ LIB			= ./libft/libft.a
 
 ASCII_ART_FILE := name_shell.txt
 
-OBJ = $(SRC:.c=.o)
+OBJ			= $(SRC:.c=.o)
 
-HEADER = minishell.h
+HEADER		= minishell.h
 
 all : $(NAME) ascii_art
 
@@ -48,5 +48,4 @@ fclean: clean
 
 re: fclean all
 
-
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

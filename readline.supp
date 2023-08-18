@@ -22,3 +22,11 @@
   ...
   fun:add_history
 }
+{
+  readline
+  Memcheck:Leak
+  ...
+  ...
+  fun:readline
+  fun:ft_input
+}
