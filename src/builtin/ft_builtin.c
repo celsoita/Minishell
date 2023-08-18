@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:46:51 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 15:40:56 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,18 @@ char	*ft_expander(t_lexer *lex, char *str)
 {
 	char	**raw_pointer;
 	char	*res;
-	int	lenght;
-	int	i;
-	//$ciao$mondo
+	int		lenght;
+	int		i;
+
+	if (!str || !str[0])
+		return (NULL);
 	lenght = ft_strlen_matrix(lex->env_copy);
 	raw_pointer = ft_search_str_in_matrix(lex, str, lenght);
 	if (!raw_pointer || !*raw_pointer)
+	{
 		ft_free((void **)&raw_pointer);
+		return (NULL);
+	}
 	res = NULL;
 	i = 0;
 	while ((*raw_pointer)[i])

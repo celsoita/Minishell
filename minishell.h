@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:40:41 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 18:15:50 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,23 +42,23 @@ typedef struct s_ops
 
 typedef struct s_lexer
 {
-	char 	**tokens;
-	char	**global_tokens;
-	char 	**paths;
-	int		flags;
-	char	**env_copy;
-	int		lenght;
-	char	*cwd;
-	bool	absolute_path;
-	int		pipe_num;
-	t_ops	op;
-	t_stds	stds;
-	bool	can_return;
-	int		return_value;
-	int		current_pipe;
-	int		current_redirect;
-	char	**args;
-	bool	is_executing;
+	char 			**tokens;
+	char			**global_tokens;
+	char 			**paths;
+	int				flags;
+	char			**env_copy;
+	int				lenght;
+	char			*cwd;
+	bool			absolute_path;
+	int				pipe_num;
+	t_ops			op;
+	t_stds			stds;
+	bool			can_return;
+	unsigned char	return_value;
+	int				current_pipe;
+	int				current_redirect;
+	char			**args;
+	bool			is_executing;
 }	t_lexer;
 
 typedef	struct s_prompt
@@ -116,6 +116,7 @@ char	*ft_expander(t_lexer *lex, char *str);
 //ft_free.c
 void	ft_free(void **mem);
 void	ft_free_matrix(char **matrix);
+void	ft_free_matrix_len(char **matrix, int len);
 //ft_matrix_support.c
 char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);
 int		ft_strlen_matrix (char **matrix);

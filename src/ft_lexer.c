@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:56:57 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 18:01:18 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,9 @@
 char	*ft_double_quote_control(char *input, char **matrix,int y, int x)
 {
 	y++;
-	if(input[y] !=  '"')
-	{
-		matrix[x] = ft_substr(input,y-1,ft_count_malloc_str(&input[y - 1]));
-	}
-	return(matrix[x]);
+	if (input[y] != '"')
+		matrix[x] = ft_substr(input, y-1, ft_count_malloc_str(&input[y - 1]));
+	return (matrix[x]);
 }
 
 int	ft_count_operators(char *string, char c)
@@ -95,6 +93,7 @@ char	*ft_expand_exit_status(t_lexer *lex)
 	res = ft_itoa(lex->return_value);
 	return (res);
 }
+
 char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 {
 	int		lenght;
@@ -109,7 +108,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	in_quote[0] = false;	// "
 	in_quote[1] = false;	// '
 	variables_found = ft_count_variables(input);
-	// printf("variables_found: %d\t", variables_found);	// REMOVE
+	// ft_perror("variables_found: %d\t", variables_found);	// REMOVE
 	/* COUNT FUNCTION */
 	variables = malloc(sizeof(char *) * (variables_found + 1));
 	variables[variables_found] = NULL;
@@ -123,6 +122,8 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 			if (input[i] == '?')
 				variables[nvar] = ft_expand_exit_status(lex);
+			else if (ft_charinstring(input[i], " \t") || input[i] == '\0')
+				variables[nvar] = ft_strdup("$");
 			else
 				variables[nvar] = ft_expander(lex, &input[i]);
 			if (variables[nvar] && variables[nvar][0])
@@ -174,7 +175,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 	}
 	lex->lenght = i;
-	// printf("Lenght: %d\t", lenght);	// REMOVE
+	// ft_perror("Lenght: %d\t", lenght);	// REMOVE
 	/* WRITE FUNCTION */
 	str = malloc(sizeof(char) * lenght + 1);
 	nvar = 0;
@@ -238,9 +239,8 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 	}
 	str[lenght] = 0;
-	ft_free_matrix(variables);
-	// printf("DEBUG:\tRECEIVED [%s]\n", str);	// REMOVE
-
+	ft_free_matrix_len(variables, variables_found);
+	// ft_perror("DEBUG:\tRECEIVED [%s]\n", str);	// REMOVE
 	return (str);
 }
 
@@ -273,8 +273,8 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	num_string = ft_count_total_string(lex, input);	/* TODO: "a$USERa a" DA FARE IN MODO CHE LA PRIMA STRINGA E' STACCATA DALLA SECONDA!*/
 	if (num_string == 0)
 		return (NULL);
-	// printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);	// REMOVE
-	// printf("Strings: %d\n", num_string);	// REMOVE
+	// ft_perror("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);	// REMOVE
+	// ft_perror("Strings: %d\n", num_string);	// REMOVE
 	matrix = malloc(sizeof(char *) * (num_string + 1));
 	while (num_string--)
 	{

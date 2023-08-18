@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 11:09:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 10:37:07 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 18:10:07 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <stdio.h>	
 # include <stdbool.h>
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 1
 # endif
 
 typedef struct s_list

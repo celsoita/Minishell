@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:53:01 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 19:25:32 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ft_exec_builtin(t_lexer *lex)
 		{
 			if (lex->args[2])
 			{
-				printf("bash: exit: too many argument\n");
+				ft_perror("bash: exit: too many argument\n");
 				lex->can_return = false;
 				lex->return_value = 1;
 			}
@@ -55,14 +55,19 @@ int	ft_exec_builtin(t_lexer *lex)
 
 int	ft_init_pipe(t_lexer *lex)
 {
-	pid_t pid;
+	pid_t	pid;
+	int		i;
 
 	pid = 0;
 	lex->is_executing = true;
+	i = 0;
 	pid = fork();
+	if (pid == -1)
+		lex->return_value = 1;
 	if (pid != 0)
 	{
-		waitpid(pid, &lex->return_value, 0);
+		waitpid(pid, &i, 0);
+		lex->return_value = (unsigned char)i;
 		lex->is_executing = false;
 		ft_free((void **)&lex->op.pipe);
 		ft_free((void **)&lex->op.redirect);
@@ -71,7 +76,8 @@ int	ft_init_pipe(t_lexer *lex)
 	lex->lenght = 0;
 	if (ft_pipe(lex, lex->tokens, 0, 0) != -1)
 	{
-		waitpid(pid, &lex->return_value, 0);
+		waitpid(pid, &i, 0);
+		lex->return_value = (unsigned char)i;
 		ft_free((void **)&lex->cwd);
 		ft_free((void **)&lex->op.pipe);
 		ft_free((void **)&lex->op.redirect);
@@ -79,7 +85,7 @@ int	ft_init_pipe(t_lexer *lex)
 		ft_free_matrix(lex->tokens);
 		ft_free_matrix(lex->paths);
 		ft_free_matrix(lex->env_copy);
-		exit (0);
+		exit (lex->return_value);
 	}
 	lex->args = ft_matrix_shell(lex);
 	return (1);		// CHILD
@@ -148,17 +154,30 @@ void	ft_execute(t_lexer *lex)
 				return ;
 			}
 		}
-		else if(ft_check_is_executable(lex) && ft_check_syntax_error(lex))
+		else if (ft_check_is_executable(lex) && ft_check_syntax_error(lex))
 			ft_exec_path(lex);
+		else if (ft_strchr(lex->args[0], '/'))
+		{
+			if (!access(lex->args[0], F_OK) && access(lex->args[0], X_OK))
+			{
+				ft_perror("%s: Permission denied\n", lex->args[0]);
+				lex->return_value = 126;
+			}
+			else
+			{
+				ft_perror("%s: No such file or directory\n", lex->args[0]);
+				lex->return_value = 127;
+			}
+		}
 		else if (lex->args[0] != NULL)
 		{
-			printf("%s: not a command\n", lex->args[0]);
+			ft_perror("%s: not a command\n", lex->args[0]);
 			lex->return_value = 127;
 		}
 	}
 	else
 	{
-		printf("bash: Missing command\n");
+		ft_perror("bash: Missing command\n");
 		lex->return_value = 1;
 	}
 	ft_free_matrix(lex->args);
@@ -171,7 +190,7 @@ void	ft_execute(t_lexer *lex)
 		ft_free_matrix(lex->tokens);
 		ft_free_matrix(lex->paths);
 		ft_free_matrix(lex->env_copy);
-		exit (0);
+		exit (lex->return_value);
 	}
 	if (lex->stds.stdin != STDIN_FILENO)
 		dup2(lex->stds.stdin, STDIN_FILENO);
@@ -192,7 +211,7 @@ void	ft_execute(t_lexer *lex)
 			ft_free_matrix(lex->args);
 			ft_free_matrix(lex->paths);
 			ft_free_matrix(lex->env_copy);
-			exit (0);
+			exit (lex->return_value);
 		}
 		waitpid(-1, NULL, 0);
 	}
@@ -226,8 +245,8 @@ int main(int argc, char **argv, char **env)
 	t_lexer	lex;
 
 	(void)argc;
-	signal(SIGINT,sigint_handler);
-	signal(SIGQUIT,SIG_IGN);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	lex.stds.stdin = dup(STDIN_FILENO);
 	lex.stds.stdout = dup(STDOUT_FILENO);
 	lex.env_copy = ft_copy_env(env);
@@ -277,7 +296,8 @@ int main(int argc, char **argv, char **env)
 
 /*
 	TODO:
-		TESTS: echo $PATH|tr ":" " "| cat > ciao
+		TESTS:
+				echo $PWD | cat << sium | echo $?
 */
 
 // clear && valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell

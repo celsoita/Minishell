@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:49:06 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 19:20:18 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,12 @@ void	ft_exec_path(t_lexer *lex)
 	{
 		lex->is_executing = true;
 		pid = fork();
+		if (pid == -1)
+			lex->return_value = 1;
 		if (pid != 0)
 		{
-			waitpid(pid, &lex->return_value, 0);
+			waitpid(pid, &i, 0);
+			lex->return_value = (unsigned char)i;
 			lex->is_executing = false;
 			ft_free((void **)&lex->op.pipe);
 			ft_free((void **)&lex->op.redirect);
@@ -87,16 +90,14 @@ void	ft_exec_path(t_lexer *lex)
 			{
 				execve(path_try, lex->args, lex->env_copy);
 				free(path_try);
-				return ;
+				break ;
 			}
 			free(path_try);
 		}
 	}
 	else
-	{
 		execve(lex->args[0], lex->args, lex->env_copy);
-		return ;
-	}
+	lex->return_value = 126;
 }
 void	sigint_handler()
 {

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 15:02:54 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 16:12:47 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,14 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 			if (input[i] == '$' && (i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
 			{
 				i++;
-				temp = ft_expander(lex, &input[i]);
+				if (ft_charinstring(input[i], " \t") || input[i] == '\0')
+				{
+					temp = ft_strdup("$");
+					if (input[i] == '\0')
+						ns++;
+				}
+				else
+					temp = ft_expander(lex, &input[i]);
 				if (!temp || !temp[0])
 				{
 					while (ft_isalnum(input[i]))
@@ -68,7 +75,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 					while (ft_charinstring(input[i], " \t"))
 						i++;
 				}
-				if (!input[i])
+				if (input[i] == '\0')
 					ns--;
 				free(temp);
 			}
@@ -94,7 +101,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 					ns++;
 				while (input[i] == input[i + 1])
 					i++;
-				i++;	// ||ciao||
+				i++;
 				break ;
 			}
 			else if (input[i] != '\0')

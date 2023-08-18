@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 12:04:35 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 19:16:55 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ bool	ft_check_is_executable(t_lexer *lex)
 	while (lex->paths[i])
 	{
 		path_try = ft_strjoin_path(lex->paths[i], lex->tokens[0]);
-		if (!access(path_try, F_OK))
+		if (!access(path_try, F_OK | X_OK))
 		{
 			free(path_try);
 			return (1);
@@ -49,7 +49,7 @@ bool	ft_check_is_executable(t_lexer *lex)
 		i++;
 		free(path_try);
 	}
-	if (!access(lex->tokens[0], F_OK))
+	if (!access(lex->tokens[0], F_OK | X_OK))
 	{
 		lex->absolute_path = true;
 		return (1);

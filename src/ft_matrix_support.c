@@ -6,17 +6,19 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 18:56:06 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/05 19:32:13 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 15:49:27 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix)
+char	**ft_search_str_in_matrix(t_lexer *lex, char *str, int lenght_matrix)
 {
 	int	y;
 	int	x;
 
+	if (!str)
+		return (NULL);
 	if (lenght_matrix == 0)
 		lenght_matrix = ft_strlen_matrix(lex->env_copy);
 	y = 0;
