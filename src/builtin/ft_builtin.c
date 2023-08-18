@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 21:52:52 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:46:51 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ void	ft_chdir(t_lexer *lex)
 	*old_pwd = malloc(sizeof(char) * (7 + ft_strlen(lex->cwd)) + 1);
 	ft_strcpy(*old_pwd, "OLDPWD=");
 	ft_strcpy(&(*old_pwd)[7], lex->cwd);
-	free(lex->cwd);
-	lex->cwd = NULL;
+	ft_free((void **)&lex->cwd);
 	
 	lex->cwd = getcwd(NULL, 0);
 	
@@ -108,10 +107,7 @@ char	*ft_expander(t_lexer *lex, char *str)
 	lenght = ft_strlen_matrix(lex->env_copy);
 	raw_pointer = ft_search_str_in_matrix(lex, str, lenght);
 	if (!raw_pointer || !*raw_pointer)
-	{
-		free(raw_pointer);
-		return (NULL);
-	}
+		ft_free((void **)&raw_pointer);
 	res = NULL;
 	i = 0;
 	while ((*raw_pointer)[i])

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 12:58:18 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:53:01 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,21 @@ int	ft_init_pipe(t_lexer *lex)
 	{
 		waitpid(pid, &lex->return_value, 0);
 		lex->is_executing = false;
-		free(lex->op.pipe);
-		free(lex->op.redirect);
+		ft_free((void **)&lex->op.pipe);
+		ft_free((void **)&lex->op.redirect);
 		return (0);	// FATHER
 	}
 	lex->lenght = 0;
 	if (ft_pipe(lex, lex->tokens, 0, 0) != -1)
 	{
 		waitpid(pid, &lex->return_value, 0);
-		free(lex->op.pipe);
-		free(lex->op.redirect);
+		ft_free((void **)&lex->cwd);
+		ft_free((void **)&lex->op.pipe);
+		ft_free((void **)&lex->op.redirect);
+		lex->tokens = lex->global_tokens;
+		ft_free_matrix(lex->tokens);
+		ft_free_matrix(lex->paths);
+		ft_free_matrix(lex->env_copy);
 		exit (0);
 	}
 	lex->args = ft_matrix_shell(lex);
@@ -82,53 +87,66 @@ int	ft_init_pipe(t_lexer *lex)
 
 void	ft_execute(t_lexer *lex)
 {
-	if (lex->op.n_pipe > 0 && !ft_init_pipe(lex))
-		return ;
+	lex->global_tokens = lex->tokens;
+	if (lex->op.n_pipe > 0)
+	{
+		if (!ft_init_pipe(lex))
+			return ;
+	}
 	else
 	{
 		lex->args = ft_matrix_shell(lex);
 		if (lex->op.n_redirect > 0)
 			ft_redirects(lex);
 	}
-	{// ft_print_arguments
-	ft_perror("\n----------TOKENS---------\n");
-	int len;
-	int	j;
-	char	*line;
-	j = 0;
-	len = ft_strlen_matrix(lex->tokens);
-	while (j < len)
-	{
-		line = ft_strjoin(lex->tokens[j], "\n");
-		ft_perror(line, 0);
-		free(line);
-		j++;
-	}
-	ft_perror("--------------------------\n\n");
-	}// END ft_print_arguments
-	{// ft_print_arguments
-	ft_perror("\n--------ARGOMENTI---------\n");
-	int len;
-	int	j;
-	char	*line;
-	j = 0;
-	len = ft_strlen_matrix(lex->args);
-	while (j < len)
-	{
-		line = ft_strjoin(lex->args[j], "\n");
-		ft_perror(line, 0);
-		free(line);
-		j++;
-	}
-	ft_perror("--------------------------\n\n");
-	}// END ft_print_arguments
+	// {// ft_print_tokens
+	// 	if (lex->tokens)
+	// 		{
+	// 			ft_perror("\n----------TOKENS---------\n");
+	// 			int len;
+	// 			int	j;
+	// 			char	*line;
+	// 			j = 0;
+	// 			len = ft_strlen_matrix(lex->tokens);
+	// 			while (j < len)
+	// 			{
+	// 				line = ft_strjoin(lex->tokens[j], "\n");
+	// 				ft_perror(line, 0);
+	// 				free(line);
+	// 				j++;
+	// 			}
+	// 			ft_perror("--------------------------\n\n");
+	// 		}
+	// 	}// END ft_print_arguments
+	// {// ft_print_arguments
+	// 	if (lex->args)
+	// 	{
+	// 		ft_perror("\n--------ARGOMENTI---------\n");
+	// 		int len;
+	// 		int	j;
+	// 		char	*line;
+	// 		j = 0;
+	// 		len = ft_strlen_matrix(lex->args);
+	// 		while (j < len)
+	// 		{
+	// 			line = ft_strjoin(lex->args[j], "\n");
+	// 			ft_perror(line, 0);
+	// 			free(line);
+	// 			j++;
+	// 		}
+	// 		ft_perror("--------------------------\n\n");
+	// 	}
+	// 	}// END ft_print_arguments
 	if (lex->args)
 	{
 		if (ft_check_builtin(lex))
 		{
 			lex->return_value = ft_exec_builtin(lex);
 			if (lex->can_return == true)
+			{
+				lex->tokens = lex->global_tokens;
 				return ;
+			}
 		}
 		else if(ft_check_is_executable(lex) && ft_check_syntax_error(lex))
 			ft_exec_path(lex);
@@ -145,7 +163,16 @@ void	ft_execute(t_lexer *lex)
 	}
 	ft_free_matrix(lex->args);
 	if (lex->is_executing)
+	{
+		ft_free((void **)&lex->cwd);
+		ft_free((void **)&lex->op.pipe);
+		ft_free((void **)&lex->op.redirect);
+		lex->tokens = lex->global_tokens;
+		ft_free_matrix(lex->tokens);
+		ft_free_matrix(lex->paths);
+		ft_free_matrix(lex->env_copy);
 		exit (0);
+	}
 	if (lex->stds.stdin != STDIN_FILENO)
 		dup2(lex->stds.stdin, STDIN_FILENO);
 	if (!access(".temp", F_OK))
@@ -157,9 +184,10 @@ void	ft_execute(t_lexer *lex)
 			lex->args[1] = ".temp";
 			lex->args[2] = NULL;
 			execve("/usr/bin/rm", lex->args, lex->env_copy);
-			free(lex->cwd);
-			free(lex->op.pipe);
-			free(lex->op.redirect);
+			ft_free((void **)&lex->cwd);
+			ft_free((void **)&lex->op.pipe);
+			ft_free((void **)&lex->op.redirect);
+			lex->tokens = lex->global_tokens;
 			ft_free_matrix(lex->tokens);
 			ft_free_matrix(lex->args);
 			ft_free_matrix(lex->paths);
@@ -232,16 +260,16 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 		ft_free_matrix(lex.tokens);
 		if (lex.op.pipe)
-			free(lex.op.pipe);
+			ft_free((void **)&lex.op.pipe);
 		if (lex.op.redirect)
-			free(lex.op.redirect);
+			ft_free((void **)&lex.op.redirect);
 	}
 	free(input);
 	if (lex.op.pipe)
-		free(lex.op.pipe);
+		ft_free((void **)&lex.op.pipe);
 	if (lex.op.redirect)
-		free(lex.op.redirect);
-	free(lex.cwd);
+		ft_free((void **)&lex.op.redirect);
+	ft_free((void **)&lex.cwd);
 	ft_free_matrix(lex.paths);
 	ft_free_matrix(lex.env_copy);
 	return (lex.return_value);

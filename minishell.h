@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/17 10:46:53 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:40:41 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_ops
 typedef struct s_lexer
 {
 	char 	**tokens;
+	char	**global_tokens;
 	char 	**paths;
 	int		flags;
 	char	**env_copy;
@@ -113,6 +114,7 @@ void	ft_echo(t_lexer *lex);
 char	*ft_expander(t_lexer *lex, char *str);
 // void	ft_token_expander(t_lexer *lex);
 //ft_free.c
+void	ft_free(void **mem);
 void	ft_free_matrix(char **matrix);
 //ft_matrix_support.c
 char	**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);

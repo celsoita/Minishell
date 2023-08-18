@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:01:04 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 21:45:58 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:47:00 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ void	ft_unset(t_lexer *lex, bool exp)
 			return_search = ft_search_str_in_matrix(lex,lex->args[y], lenght);
 			if (return_search && *return_search)
 			{
-				free(*return_search);
-				*return_search = NULL;
+				ft_free((void **)&*return_search);
 				unset_variables++;
 			}
 			return_search = 0;

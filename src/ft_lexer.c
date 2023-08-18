@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 14:51:59 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:56:57 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	in_quote[0] = false;	// "
 	in_quote[1] = false;	// '
 	variables_found = ft_count_variables(input);
-	printf("variables_found: %d\t", variables_found);
+	// printf("variables_found: %d\t", variables_found);	// REMOVE
 	/* COUNT FUNCTION */
 	variables = malloc(sizeof(char *) * (variables_found + 1));
 	variables[variables_found] = NULL;
@@ -174,7 +174,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 	}
 	lex->lenght = i;
-	printf("Lenght: %d\t", lenght);
+	// printf("Lenght: %d\t", lenght);	// REMOVE
 	/* WRITE FUNCTION */
 	str = malloc(sizeof(char) * lenght + 1);
 	nvar = 0;
@@ -239,7 +239,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	}
 	str[lenght] = 0;
 	ft_free_matrix(variables);
-	printf("DEBUG:\tRECEIVED [%s]\n", str);
+	// printf("DEBUG:\tRECEIVED [%s]\n", str);	// REMOVE
 
 	return (str);
 }
@@ -273,8 +273,8 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	num_string = ft_count_total_string(lex, input);	/* TODO: "a$USERa a" DA FARE IN MODO CHE LA PRIMA STRINGA E' STACCATA DALLA SECONDA!*/
 	if (num_string == 0)
 		return (NULL);
-	printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);
-	printf("Strings: %d\n", num_string);
+	// printf("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);	// REMOVE
+	// printf("Strings: %d\n", num_string);	// REMOVE
 	matrix = malloc(sizeof(char *) * (num_string + 1));
 	while (num_string--)
 	{

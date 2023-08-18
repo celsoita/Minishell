@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 21:33:25 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 15:02:54 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	ft_print_env(char **env, bool exp)
 		x = 0;
 		while (env[y][x])
 		{
-			if (exp && env[y][x - 1] == '=')
-				printf("\"");
 			printf("%c",env[y][x]);
+			if (exp && env[y][x] == '=')
+				printf("\"");
 			x++;
 		}
 		if (exp)

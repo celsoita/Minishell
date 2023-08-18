@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 12:10:16 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:52:38 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char	**ft_matrix_shell(t_lexer *lex)
 	if (!lex->tokens)
 		return (NULL);
 	matrix = malloc(sizeof(char *) * (ft_len_matrix_shell(lex) + 1));
+	// ft_perror("DEBUG1: LEN MATRIX SHELL(%d)\n", ft_len_matrix_shell(lex)); // REMOVE
 	len_matrix = 0;
 	i = 0;
 	while (lex->tokens[i])	// echo ciao >> ciao < text qualcosa
@@ -96,6 +97,7 @@ char	**ft_matrix_shell(t_lexer *lex)
 				break ;
 		}
 		matrix[len_matrix] = ft_strdup(lex->tokens[i]);
+		// ft_perror("DEBUG: matrix[len(%d)](%s)\n", len_matrix, matrix[len_matrix]);	//REMOVE
 		len_matrix++;
 		i++;
 	}
@@ -125,7 +127,7 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	if (dup2(pipe_fd[1], STDOUT_FILENO) < 0)
 		return (3);
 	close(pipe_fd[1]);
-	ft_perror("Current Lenght(%d)|Pipe_Pos(%d)|Last_Pipe(%d)|Pipe_Num(%d)\n", lex->lenght, lex->op.pipe[lex->current_pipe], lex->op.pipe[lex->op.n_pipe - 1], lex->op.n_pipe); // REMOVE
+	// ft_perror("DEBUG: Current Lenght(%d)|Pipe_Pos(%d)|Last_Pipe(%d)|Pipe_Num(%d)\n", lex->lenght, lex->op.pipe[lex->current_pipe], lex->op.pipe[lex->op.n_pipe - 1], lex->op.n_pipe); // REMOVE
 	if (lex->current_pipe >= lex->op.n_pipe)
 		dup2(lex->stds.stdout, STDOUT_FILENO);
 	if (lex->op.n_redirect > 0)
@@ -138,7 +140,7 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	}
 	if (pid1 == 0)
 	{
-		ft_perror("LENGHT(%d) pipe(%d)\n", lex->lenght, more);	// REMOVE
+		// ft_perror("DEBUG: LENGHT(%d) pipe(%d)\n", lex->lenght, more);	// REMOVE
 		return (-1);	// -1 for execve
 	}
 	dup2(lex->stds.stdin, STDIN_FILENO);

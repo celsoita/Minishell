@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 12:51:12 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:49:06 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ char	*ft_strjoin_path(char const *s1, char const *s2)
 // questa funzione prova i path in bruteforce
 void	ft_exec_path(t_lexer *lex)
 {
-	char *path_try;
-	int	i;
-	pid_t pid;
+	char	*path_try;
+	int		i;
+	pid_t	pid;
 
 	i = ft_strlen_matrix(lex->paths);
 
@@ -58,10 +58,8 @@ void	ft_exec_path(t_lexer *lex)
 		{
 			waitpid(pid, &lex->return_value, 0);
 			lex->is_executing = false;
-			free(lex->op.pipe);
-			lex->op.pipe = NULL;
-			free(lex->op.redirect);
-			lex->op.redirect = NULL;
+			ft_free((void **)&lex->op.pipe);
+			ft_free((void **)&lex->op.redirect);
 			return ;	// FATHER
 		}
 	}
@@ -89,7 +87,7 @@ void	ft_exec_path(t_lexer *lex)
 			{
 				execve(path_try, lex->args, lex->env_copy);
 				free(path_try);
-				exit (0);
+				return ;
 			}
 			free(path_try);
 		}
@@ -97,7 +95,7 @@ void	ft_exec_path(t_lexer *lex)
 	else
 	{
 		execve(lex->args[0], lex->args, lex->env_copy);
-		exit (0);
+		return ;
 	}
 }
 void	sigint_handler()
