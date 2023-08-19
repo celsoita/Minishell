@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 19:16:55 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 11:44:24 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ bool	ft_check_syntax_error(t_lexer *lex)
 
 bool	ft_check_is_executable(t_lexer *lex)
 {
-	int	i;
+	int		i;
 	char	*path_try;
 
 	if (!lex->paths)

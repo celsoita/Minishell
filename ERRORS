@@ -1,0 +1,16 @@
+RETURN VALUE ERROR:
+	ls <argument>
+	cat <argument>
+	cat <options>
+	wc <argument>
+
+PRINT DOLLAR!:
+	echo "$"
+
+LEAKS:
+	unset PATH
+	cat README.md | cat << a
+	export <arguments>
+	< README.md
+	cat README.md | grep make | more
+

@@ -1,21 +1,21 @@
-NAME		= minishell
+NAME		=	minishell
 
-CC			= cc
+CC			=	cc
 
-CFLAGS		= -Wall -Wextra -Werror -g
-SRC			= 			./src/main.c \
-						./src/ft_utils.c\
-						./src/ft_prompt.c\
-						./src/ft_lexer.c\
-						./src/ft_free.c\
-						./src/ft_matrix_support.c \
-						./src/ft_checks.c\
-						./src/ft_little_executer.c\
-						./src/ft_pipe.c\
-						./src/ft_redirects.c\
-						./src/builtin/ft_unset.c\
-						./src/builtin/ft_export.c \
-						./src/builtin/ft_builtin.c\
+CFLAGS		=	-Wall -Wextra -Werror -g
+SRC			= 	./src/main.c \
+				./src/ft_utils.c\
+				./src/ft_prompt.c\
+				./src/ft_lexer.c\
+				./src/ft_free.c\
+				./src/ft_matrix_support.c \
+				./src/ft_checks.c\
+				./src/ft_little_executer.c\
+				./src/ft_pipe.c\
+				./src/ft_redirects.c\
+				./src/builtin/ft_unset.c\
+				./src/builtin/ft_export.c \
+				./src/builtin/ft_builtin.c\
 
 LIB			= ./libft/libft.a
 
