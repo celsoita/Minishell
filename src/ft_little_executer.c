@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 15:15:10 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:16:22 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,10 @@ void	ft_exec_path(t_lexer *lex)
 	// 	j++;
 	// }
 	// ft_perror("--------------------------\n\n");
+	// ft_perror("JOIN EXEC\n");	// REMOVE
 	if (lex->paths && !lex->absolute_path)
 	{
+		// ft_perror("JOIN EXEC WITH PATH\n");	// REMOVE
 		while (i--)
 		{
 			path_try = ft_strjoin_path(lex->paths[i], lex->args[0]);
@@ -95,27 +97,32 @@ void	ft_exec_path(t_lexer *lex)
 		}
 	}
 	else
+	{
+		// ft_perror("JOIN EXEC WITHOUT PATH\n");	// REMOVE
 		execve(lex->args[0], lex->args, lex->env_copy);
+	}
 	lex->return_value = 126;
 }
-void	sigint_handler()
+
+void	sigint_handler(int sig)
 {
 	rl_on_new_line();
-	write(1,"\n", 1);
+	write(1, "\n", 1);
+	(void)sig;
 }
 
-bool ft_path_try(t_lexer *lex)
+bool	ft_path_try(t_lexer *lex)
 {
-	int	i;
-	char *path_try;
+	int		i;
+	char	*path_try;
 
 	i = 0;
 	i = ft_strlen_matrix(lex->paths);
-	while(i--)
+	while (i--)
 	{
 		path_try = ft_strjoin_path(lex->paths[i],lex->tokens[0]);
 		if (!access(path_try, F_OK))
-			return(1);
+			return (1);
 	}
 	return (0);
 }

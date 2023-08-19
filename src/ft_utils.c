@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 16:12:47 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:09:22 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ void	ft_print_env(char **env, bool exp)
 	y = 0;
 	i = 0;
 	i = ft_strlen_matrix(env);
-	while(y < i)
+	while (y < i)
 	{
 		if (exp)
 			printf("declare -x ");
 		x = 0;
 		while (env[y][x])
 		{
-			printf("%c",env[y][x]);
+			printf("%c", env[y][x]);
 			if (exp && env[y][x] == '=')
 				printf("\"");
 			x++;
@@ -39,6 +39,7 @@ void	ft_print_env(char **env, bool exp)
 		y++;
 	}
 }
+
 //str di es :   echo -n  "ciao mondo"|" banana" 
 // questa funzione conta il numero totale  di stringhe
 int	ft_count_total_string(t_lexer *lex, char *input)
@@ -57,7 +58,8 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 			ns++;
 		while (input[i] && input[i] != ' ' && input[i] != '\t')
 		{
-			if (input[i] == '$' && (i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
+			if (input[i] == '$' && \
+				(i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
 			{
 				i++;
 				if (ft_charinstring(input[i], " \t") || input[i] == '\0')
@@ -82,7 +84,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 			else if (input[i] == '"')
 			{
 				i++;
-				while(input[i] != '"' && input[i])
+				while (input[i] != '"' && input[i])
 					i++;
 				if (input[i])
 					i++;
@@ -90,7 +92,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 			else if (input[i] == '\'')
 			{
 				i++;
-				while(input[i] != '\'' && input[i])
+				while (input[i] != '\'' && input[i])
 					i++;
 				if (input[i])
 					i++;
@@ -111,6 +113,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 	return (ns);
 
 }
+
 //questa funzione serve a contare il numero necessario per malloccare la uso nella mia split modificata
 int	ft_count_malloc_str(char *input)
 {
@@ -126,23 +129,26 @@ int	ft_count_malloc_str(char *input)
 		if (input[i] == '"')
 		{
 			i++;
-			while(input[i] != '"' && input[i])
+			while (input[i] != '"' && input[i])
 				i++;
-			return(i+1);
+			return (i+1);
 		}
 		if (input[i] == 32)
 			return (i);
 		i++;
 	}
-	return (i);	
+	return (i);
 }
-char **ft_path_splitter(t_lexer *lex)
+
+char	**ft_path_splitter(t_lexer *lex)
 {
-	char *path;
-	char **res;
-	
+	char	*path;
+	char	**res;
+
+	res = NULL;
 	path = ft_expander(lex, "PATH");
-	res = ft_split(path, ':');
+	if (path)
+		res = ft_split(path, ':');
 	free(path);
 	return (res);
 }

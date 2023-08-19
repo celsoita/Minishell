@@ -6,17 +6,17 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 18:01:18 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:11:49 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*ft_double_quote_control(char *input, char **matrix,int y, int x)
+char	*ft_double_quote_control(char *input, char **matrix, int y, int x)
 {
 	y++;
 	if (input[y] != '"')
-		matrix[x] = ft_substr(input, y-1, ft_count_malloc_str(&input[y - 1]));
+		matrix[x] = ft_substr(input, y - 1, ft_count_malloc_str(&input[y - 1]));
 	return (matrix[x]);
 }
 
@@ -89,7 +89,8 @@ int	ft_count_variables(char *string)
 //echo $PATH(!ft_alphanum())	-> /bin/...(!ft_alphanum())
 char	*ft_expand_exit_status(t_lexer *lex)
 {
-	char *res;
+	char	*res;
+
 	res = ft_itoa(lex->return_value);
 	return (res);
 }
@@ -116,7 +117,8 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	lenght = 0;
 	i = 0;
 	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
-	{	// SBAGLIATO[ echo a$USERa a ] GIUSTI[ echo a$USER | echo $USERa a | echo $USERa ]
+	{
+		// SBAGLIATO[ echo a$USERa a ] GIUSTI[ echo a$USER | echo $USERa a | echo $USERa ]
 		if (!in_quote[1] && input[i] == '$')
 		{
 			i++;
@@ -244,21 +246,14 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	return (str);
 }
 
-// char	*ft_split_tokens(char *input)
-// {
-// 	int	i;
 
-// 	i = 0;
-// }
-/*DA FARE LA FUNZIONE PER I ARGOMENTI (DOPO IL COMANDO!)*/
 char	**ft_tokenize(char *input, t_lexer *lex)
 {
-	int	x;
-	int	y;
-	int	num_string;
-	char **matrix;
-	// bool	is_command;
-	// is_command = true;
+	int		x;
+	int		y;
+	int		num_string;
+	char	**matrix;
+
 	x = 0;
 	y = 0;
 	lex->op.n_pipe = ft_count_operators(input, '|');
@@ -280,7 +275,6 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	{
 		while (input[y])
 		{
-			
 			if (input[y] != 32 && input[y] != '\t')
 			{
 				matrix[x] = ft_command_split(&input[y], lex, x);

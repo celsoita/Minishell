@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 15:27:31 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:20:53 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	ft_execute(t_lexer *lex)
 	// 		ft_perror("--------------------------\n\n");
 	// 	}
 	// 	}// END ft_print_arguments
-	if (lex->args)
+	if (lex->args && lex->args[0])
 	{
 		if (ft_check_builtin(lex))
 		{

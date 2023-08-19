@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 15:40:56 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:09:56 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,7 @@ void	ft_chdir(t_lexer *lex)
 	ft_strcpy(*old_pwd, "OLDPWD=");
 	ft_strcpy(&(*old_pwd)[7], lex->cwd);
 	ft_free((void **)&lex->cwd);
-	
 	lex->cwd = getcwd(NULL, 0);
-	
 	// Change PWD expansion
 	old_pwd = ft_search_str_in_matrix(lex, "PWD", ft_strlen_matrix(lex->env_copy));
 	free(*old_pwd);
@@ -89,7 +87,7 @@ void	ft_echo(t_lexer *lex)
 		i++;
 		while (lex->args[i])
 		{
-			printf(" %s",lex->args[i]);
+			printf(" %s", lex->args[i]);
 			i++;
 		}
 	}
@@ -121,7 +119,7 @@ char	*ft_expander(t_lexer *lex, char *str)
 		{
 			i++;
 			res = ft_strdup(&(*raw_pointer)[i]);
-			break;
+			break ;
 		}
 		i++;
 	}

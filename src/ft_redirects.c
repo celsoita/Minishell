@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:18:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 17:59:53 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:25:32 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ void	ft_redirects(t_lexer *lex)
 			ft_putstr_fd("> ", lex->stds.stdout);
 			buffer = get_next_line(lex->stds.stdin);
 			if (buffer == NULL)
+			{
+				ft_putchar_fd('\n', lex->stds.stdout);
 				break ;
+			}
 		}
 		ft_free((void **)&buffer);
 		close(fd);

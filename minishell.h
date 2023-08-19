@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 14:50:55 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:16:09 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int			ft_count_total_string(t_lexer *lex, char *input);
 int			ft_count_malloc_str(char *input);
 char		**ft_path_splitter(t_lexer *lex);
 //ft_lexer.c
-char		*ft_double_quote_control(char *input, char **matrix,int y, int x);
+char		*ft_double_quote_control(char *input, char **matrix, int y, int x);
 int			ft_count_operators(char *string, char c);
 char		*ft_command_split(char *input, t_lexer *lex, int current_pos);
 char		**ft_tokenize(char *input, t_lexer *lex);
@@ -103,7 +103,7 @@ char		**ft_tokenize(char *input, t_lexer *lex);
 char		*ft_strjoin_path(char const *s1, char const *s2);
 void		ft_exec_path(t_lexer *lex);
 // bool	ft_check_command(t_lexer *lex);
-void		sigint_handler();
+void		sigint_handler(int sig);
 bool		ft_path_try(t_lexer *lex);
 //ft_export.c
 void		ft_export(t_lexer *lex);
@@ -118,8 +118,9 @@ void		ft_free(void **mem);
 void		ft_free_matrix(char **matrix);
 void		ft_free_matrix_len(char **matrix, int len);
 //ft_matrix_support.c
-char		**ft_search_str_in_matrix(t_lexer *lex,char *str, int lenght_matrix);
-int			ft_strlen_matrix (char **matrix);
+char		**ft_search_str_in_matrix(t_lexer *lex, \
+				char *str, int lenght_matrix);
+int			ft_strlen_matrix(char **matrix);
 //ft_unset.c
 void		ft_unset(t_lexer *lex, bool exp);
 //ft_checks.c
