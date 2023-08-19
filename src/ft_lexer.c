@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:11:49 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 18:07:30 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ int	ft_count_variables(char *string)
 	in_quote[1] = false;	// '
 	i = 0;
 	variables_found = 0;
-	while (string[i] && (string[i] != ' ' || in_quote[0] || in_quote[1]))
+	while (string[i] && (!ft_charinstring(string[i], " \t") \
+		|| in_quote[0] || in_quote[1]))
 	{
 		if (!in_quote[0] && !in_quote[1] && ft_charinstring(string[i], "|<>"))
 			break ;
@@ -124,7 +125,7 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 			i++;
 			if (input[i] == '?')
 				variables[nvar] = ft_expand_exit_status(lex);
-			else if (ft_charinstring(input[i], " \t") || input[i] == '\0')
+			else if (ft_charinstring(input[i], " \t\"$") || input[i] == '\0')
 				variables[nvar] = ft_strdup("$");
 			else
 				variables[nvar] = ft_expander(lex, &input[i]);

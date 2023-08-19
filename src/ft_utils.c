@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:09:22 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 17:59:32 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 				(i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
 			{
 				i++;
-				if (ft_charinstring(input[i], " \t") || input[i] == '\0')
+				if (ft_charinstring(input[i], " \t\"$") || input[i] == '\0')
 				{
 					temp = ft_strdup("$");
 					if (input[i] == '\0')
@@ -131,7 +131,7 @@ int	ft_count_malloc_str(char *input)
 			i++;
 			while (input[i] != '"' && input[i])
 				i++;
-			return (i+1);
+			return (i + 1);
 		}
 		if (input[i] == 32)
 			return (i);
