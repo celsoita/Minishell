@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:50:19 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 19:20:18 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 15:15:10 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	ft_exec_path(t_lexer *lex)
 	pid_t	pid;
 
 	i = ft_strlen_matrix(lex->paths);
-
 	pid = 0;
 	if (lex->op.n_pipe <= 0)
 	{
@@ -59,7 +58,7 @@ void	ft_exec_path(t_lexer *lex)
 		if (pid != 0)
 		{
 			waitpid(pid, &i, 0);
-			lex->return_value = (unsigned char)i;
+			lex->return_value = (unsigned char)WEXITSTATUS(i);
 			lex->is_executing = false;
 			ft_free((void **)&lex->op.pipe);
 			ft_free((void **)&lex->op.redirect);
@@ -81,9 +80,9 @@ void	ft_exec_path(t_lexer *lex)
 	// 	j++;
 	// }
 	// ft_perror("--------------------------\n\n");
-	if (!lex->absolute_path)
+	if (lex->paths && !lex->absolute_path)
 	{
-		while(i--)
+		while (i--)
 		{
 			path_try = ft_strjoin_path(lex->paths[i], lex->args[0]);
 			if (!access(path_try, F_OK))

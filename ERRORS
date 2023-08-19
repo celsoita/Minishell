@@ -8,9 +8,6 @@ PRINT DOLLAR!:
 	echo "$"
 
 LEAKS:
-	unset PATH
-	cat README.md | cat << a
 	export <arguments>
 	< README.md
-	cat README.md | grep make | more
 

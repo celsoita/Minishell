@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 18:40:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/04 10:39:15 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:42:03 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		{
 			pt[j] = s[i];
 			j++;
-		}	
+		}
 		i++;
 	}
 	pt[j] = 0;

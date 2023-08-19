@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/20 10:26:29 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:45:27 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:42:14 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static	void	ft_hexa(unsigned int n, char check)
 		ft_hexa(n % 16, check);
 	}
 	else
-	{	
+	{
 		if (n < 10)
 			n = n + 48;
 		else if (check == 'X')

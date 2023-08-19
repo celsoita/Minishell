@@ -6,7 +6,7 @@
 #    By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 11:46:15 by cschiavo          #+#    #+#              #
-#    Updated: 2023/08/07 12:58:28 by cschiavo         ###   ########.fr        #
+#    Updated: 2023/08/19 13:27:48 by cschiavo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,8 @@ PTF :=	ft_printf/ft_printstring.c\
 
 PER := ft_perror/ft_perror.c
 
-GNL :=	get_next_line/get_next_line_bonus.c\
+GNL :=	2get_next_line/get_next_line.c\
+		2get_next_line/get_next_line_utils.c\
 
 
 BNS :=	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c \

@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:01:04 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:47:00 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 15:25:47 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void	ft_unset(t_lexer *lex, bool exp)
 {
-	int	lenght;
-	int	y;
-	int	x;
+	int		lenght;
+	int		y;
+	int		x;
 	char	**return_search;
-	int	num_token;
-	int	unset_variables;
+	int		num_token;
+	int		unset_variables;
 	char	**matrix;
 
 	if (!lex->args[1])
@@ -57,14 +57,14 @@ void	ft_unset(t_lexer *lex, bool exp)
 		y++;
 	}
 	matrix[y] = NULL;
-	ft_free_matrix(lex->env_copy);
+	ft_free_matrix_len(lex->env_copy, lenght);
 	x = 0;
 	while (lex->args[x])
 	{
 		if (!ft_strncmp(lex->args[x], "PATH", 4))
 		{
 			ft_free_matrix(lex->paths);
-			lex->paths = 0;
+			lex->paths = NULL;
 		}
 		x++;
 	}

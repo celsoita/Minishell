@@ -6,14 +6,14 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/10 10:34:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:45:27 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:35:33 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
 static int	ft_count(char const *s, char c)
-{	
+{
 	int	i;
 	int	sn;
 

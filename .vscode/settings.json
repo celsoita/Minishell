@@ -10,6 +10,7 @@
 		"unistd.h": "c",
 		"signal.h": "c",
 		"fcntl.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"get_next_line.h": "c"
 	}
 }

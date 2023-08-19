@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 18:49:56 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:49:06 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:38:43 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	if (*str == '-' || *str == '+')
-	{	
+	{
 		if (*str == '-')
 			sign *= -1;
 		str++;

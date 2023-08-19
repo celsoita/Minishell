@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>             +#+  +:+       +#+        */
+/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/19 09:36:49 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/03/26 11:14:41 by cschiavo           ###   ########.fr       */
+/*   Created: 2023/08/19 13:42:32 by cschiavo          #+#    #+#             */
+/*   Updated: 2023/08/19 13:42:41 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
 int	ft_conversion(va_list variables, char flag)
-{	
+{
 	int	c;
 
 	c = 0;
@@ -47,7 +47,7 @@ int	ft_printf(const char *str, ...)
 	x = 0;
 	va_start(variables, str);
 	while (str[x] != '\0')
-	{	
+	{
 		if (str[x] == '%')
 		{
 			i += ft_conversion(variables, str[x +1]);

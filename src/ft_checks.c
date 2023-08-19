@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 11:44:24 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 15:12:59 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ bool	ft_check_syntax_error(t_lexer *lex)
 	int	i;
 
 	i = 0;
-	while(lex->tokens[0][i])
+	while (lex->args[0][i])
 	{
-		if (lex->tokens[0][i] == '\'' || lex->tokens[0][i] == '"')
+		if (lex->args[0][i] == '\'' || lex->args[0][i] == '"')
 			return (0);
 		i++;
 	}
@@ -31,25 +31,29 @@ bool	ft_check_is_executable(t_lexer *lex)
 	int		i;
 	char	*path_try;
 
-	if (!lex->paths)
+	if (access(lex->args[0], F_OK) && !lex->paths)
 	{
-		ft_perror("%s: No such file or directory\n", lex->tokens[0]);
+		ft_perror("%s: No such file or directory\n", lex->args[0]);
+		lex->return_value = 127;
 		return (0);
 	}
 	lex->absolute_path = false;
 	i = 0;
-	while (lex->paths[i])
+	if (lex->paths)
 	{
-		path_try = ft_strjoin_path(lex->paths[i], lex->tokens[0]);
-		if (!access(path_try, F_OK | X_OK))
+		while (lex->paths[i])
 		{
+			path_try = ft_strjoin_path(lex->paths[i], lex->args[0]);
+			if (!access(path_try, F_OK | X_OK))
+			{
+				free(path_try);
+				return (1);
+			}
+			i++;
 			free(path_try);
-			return (1);
 		}
-		i++;
-		free(path_try);
 	}
-	if (!access(lex->tokens[0], F_OK | X_OK))
+	if (!access(lex->args[0], F_OK | X_OK))
 	{
 		lex->absolute_path = true;
 		return (1);
@@ -62,11 +66,11 @@ bool	ft_check_is_variable(char	*token)
 	int	x;
 
 	x = 0;
-	while(token[x])
+	while (token[x])
 	{
-		if(token[x] == '$')
-			return(0);
-		if(token[x] == '=' && token[x + 1] != 32)
+		if (token[x] == '$')
+			return (0);
+		if (token[x] == '=' && token[x + 1] != 32)
 			return (1);
 		x++;
 	}

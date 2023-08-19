@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 14:52:38 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 14:47:35 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,9 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	}
 	dup2(lex->stds.stdin, STDIN_FILENO);
 	dup2(lex->stds.stdout, STDOUT_FILENO);
-	waitpid(pid1, 0, 0);
+	waitpid(pid1, &i, 0);
+	lex->return_value = (unsigned char)WEXITSTATUS(i);
+	// ft_perror("%d has returned %d\n", more, lex->return_value);	// REMOVE
 	lex->current_pipe++;
 	// printf("PADRE OK!\n");
 	i = lex->op.pipe[lex->current_pipe - 1] - lex->lenght + 1;
@@ -153,7 +155,6 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	if (lex->op.pipe[lex->current_pipe - 1] != -1)
 		return (ft_pipe(lex, &tokens[i], pipe_fd[0], more + 1));
 	return (0);
-
 }
 // if (pipe(pipedes) == -1)
 // 	ft_perror("ERROR: pipe can't store fds\n");

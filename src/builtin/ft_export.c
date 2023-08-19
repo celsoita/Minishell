@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/10 21:46:07 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:47:47 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,18 +115,17 @@ char	**ft_copy_env(char **env)
 	int		leng_string;
 	int		x;
 	int		y;
-	
+
 	num_string = ft_strlen_matrix(env);
 	matrix_env = malloc(sizeof(char *) * (num_string + 1));
-
 	y = 0;
 	leng_string = 0;
-	while(y < num_string)
+	while (y < num_string)
 	{
 		x = 0;
 		leng_string = ft_strlen(env[y]);
 		matrix_env[y] = malloc(sizeof(char *) * leng_string + 1);
-		while(x < leng_string)
+		while (x < leng_string)
 		{
 			matrix_env[y][x] = env[y][x];
 			x++;
@@ -135,5 +134,5 @@ char	**ft_copy_env(char **env)
 		y++;
 	}
 	matrix_env[y] = NULL;
-	return(matrix_env);
+	return (matrix_env);
 }

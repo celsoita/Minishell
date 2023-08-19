@@ -6,12 +6,12 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 10:01:26 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:49:17 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:35:00 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_tolower(int arg)
-{	
+{
 	if (arg >= 65 && arg <= 90)
 		arg += 32;
 	return (arg);

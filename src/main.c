@@ -6,7 +6,7 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/18 19:25:32 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 15:27:31 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	ft_init_pipe(t_lexer *lex)
 	if (pid != 0)
 	{
 		waitpid(pid, &i, 0);
-		lex->return_value = (unsigned char)i;
+		lex->return_value = (unsigned char)WEXITSTATUS(i);
 		lex->is_executing = false;
 		ft_free((void **)&lex->op.pipe);
 		ft_free((void **)&lex->op.redirect);
@@ -76,8 +76,8 @@ int	ft_init_pipe(t_lexer *lex)
 	lex->lenght = 0;
 	if (ft_pipe(lex, lex->tokens, 0, 0) != -1)
 	{
-		waitpid(pid, &i, 0);
-		lex->return_value = (unsigned char)i;
+		// waitpid(pid, &i, 0);
+		// lex->return_value = (unsigned char)i;
 		ft_free((void **)&lex->cwd);
 		ft_free((void **)&lex->op.pipe);
 		ft_free((void **)&lex->op.redirect);
@@ -85,7 +85,8 @@ int	ft_init_pipe(t_lexer *lex)
 		ft_free_matrix(lex->tokens);
 		ft_free_matrix(lex->paths);
 		ft_free_matrix(lex->env_copy);
-		exit (lex->return_value);
+		// ft_perror("LAST CHILD RETURN(%d)\n", lex->return_value);	// REMOVE
+		exit (lex->return_value);	// LAST CHILD
 	}
 	lex->args = ft_matrix_shell(lex);
 	return (1);		// CHILD
@@ -156,7 +157,7 @@ void	ft_execute(t_lexer *lex)
 		}
 		else if (ft_check_is_executable(lex) && ft_check_syntax_error(lex))
 			ft_exec_path(lex);
-		else if (ft_strchr(lex->args[0], '/'))
+		else if (lex->paths && ft_strchr(lex->args[0], '/'))
 		{
 			if (!access(lex->args[0], F_OK) && access(lex->args[0], X_OK))
 			{
@@ -169,7 +170,7 @@ void	ft_execute(t_lexer *lex)
 				lex->return_value = 127;
 			}
 		}
-		else if (lex->args[0] != NULL)
+		else if (lex->paths && lex->args[0] != NULL)
 		{
 			ft_perror("%s: not a command\n", lex->args[0]);
 			lex->return_value = 127;
@@ -190,6 +191,7 @@ void	ft_execute(t_lexer *lex)
 		ft_free_matrix(lex->tokens);
 		ft_free_matrix(lex->paths);
 		ft_free_matrix(lex->env_copy);
+		// ft_perror("EXIT STATUS(%d)\n", lex->return_value);	// REMOVE
 		exit (lex->return_value);
 	}
 	if (lex->stds.stdin != STDIN_FILENO)
@@ -239,7 +241,7 @@ char	*ft_input(char *prompt)
 	return (input);
 }
 
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
 	char	*input;
 	t_lexer	lex;
@@ -297,7 +299,7 @@ int main(int argc, char **argv, char **env)
 /*
 	TODO:
 		TESTS:
-				echo $PWD | cat << sium | echo $?
+				NO ERRORS!
 */
 
 // clear && valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell

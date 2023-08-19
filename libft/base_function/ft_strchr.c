@@ -6,10 +6,9 @@
 /*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 10:26:07 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/08 14:45:27 by cschiavo         ###   ########.fr       */
+/*   Updated: 2023/08/19 13:36:10 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 char	*ft_strchr(const char *s, int i)
 {

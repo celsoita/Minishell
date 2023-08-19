@@ -1,7 +1,0 @@
-a.out
-asd
-celso.txt
-file.txt
-gino.txt
-out
-pipe.c
