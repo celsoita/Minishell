@@ -6,74 +6,40 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 16:41:55 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 20:49:26 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
 /*
-	'-':	Return to OLDPWD
-	'--':	Like '~' return to HOME
-	'.':	Current dir
-	'..':	Directory previous current
-	'/':	Move to root
+	lex->flags:
+	1:	echo
+	2:	cd
+	3:	pwd
+	4:	export
+	5:	unset
+	6:	env
+	7:	exit
 */
-void	ft_chdir(t_lexer *lex)
+int	ft_exec_builtin(t_lexer *lex)
 {
-	char	*old_cwd;
-	char	**old_pwd;
-
-	if (lex->op.n_pipe > 0)
-	{
-		if (lex->args[1] && lex->args[1][0] == '-')
-		{
-			old_cwd = ft_expander(lex, "OLDPWD");
-			printf("%s\n", old_cwd);
-			free(old_cwd);
-		}
-		return ;
-	}
-	if (ft_strlen_matrix(lex->args) - 1 > 1)
-		return (ft_perror("cd: too many arguments\n"));
-	old_cwd = lex->cwd;
-	if (!lex->args[1])
-		old_cwd = ft_expander(lex, "HOME");
-	else
-	{
-		if (lex->args[1][0] == '/')
-			old_cwd = ft_strdup(lex->args[1]);
-		else if (lex->args[1][0] == '-')
-		{
-			if (lex->args[1][1] == '-')
-				old_cwd = ft_expander(lex, "HOME");
-			else
-			{
-				old_cwd = ft_expander(lex, "OLDPWD");
-				printf("%s\n", old_cwd);
-			}
-		}
-		else
-			old_cwd = ft_strjoin_path(old_cwd, lex->args[1]);
-	}
-	if (chdir(old_cwd) == -1)
-		ft_perror("cd: %s: Not a directory\n", lex->args[1]);
-	free(old_cwd);
-
-	// Change OLDPWD expansion
-	old_pwd = ft_search_str_in_env(lex, "OLDPWD", ft_strlen_matrix(lex->env_copy));
-	free(*old_pwd);
-	*old_pwd = malloc(sizeof(char) * (7 + ft_strlen(lex->cwd)) + 1);
-	ft_strcpy(*old_pwd, "OLDPWD=");
-	ft_strcpy(&(*old_pwd)[7], lex->cwd);
-	ft_free((void **)&lex->cwd);
-	lex->cwd = getcwd(NULL, 0);
-	// Change PWD expansion
-	old_pwd = ft_search_str_in_env(lex, "PWD", ft_strlen_matrix(lex->env_copy));
-	free(*old_pwd);
-	*old_pwd = malloc(sizeof(char) * (4 + ft_strlen(lex->cwd)) + 1);
-	ft_strcpy(*old_pwd, "PWD=");
-	ft_strcpy(&(*old_pwd)[4], lex->cwd);
+	lex->can_return = false;
+	if (lex->flags == 1)
+		ft_echo(lex);
+	if (lex->flags == 2)
+		ft_chdir(lex);
+	if (lex->flags == 3)
+		printf("%s\n", lex->cwd);
+	if (lex->flags == 4)
+		ft_export(lex);
+	if (lex->flags == 5)
+		ft_unset(lex, false);
+	if (lex->flags == 6)
+		ft_print_env(lex->env_copy, false);
+	if (lex->flags == 7)
+		ft_exit(lex);
+	return (lex->return_value);
 }
 
 /*
@@ -106,6 +72,22 @@ void	ft_echo(t_lexer *lex)
 		printf("\n");
 }
 
+bool	ft_expander_check(t_lexer *lex, char *str, char ***raw_pointer)
+{
+	int	lenght;
+
+	if (!str || !str[0])
+		return (1);
+	lenght = ft_strlen_matrix(lex->env_copy);
+	*raw_pointer = ft_search_str_in_env(lex, str, lenght);
+	if (!(*raw_pointer) || !*(*raw_pointer))
+	{
+		ft_free((void **)&(*raw_pointer));
+		return (1);
+	}
+	return (0);
+}
+
 /*VARIABLES POSSIBILITIES!*/
 //echo $PATH					-> /bin/...
 //echo $PATH$PATH				-> /bin/.../bin/...
@@ -120,18 +102,11 @@ char	*ft_expander(t_lexer *lex, char *str)
 {
 	char	**raw_pointer;
 	char	*res;
-	int		lenght;
 	int		i;
 
-	if (!str || !str[0])
+	raw_pointer = NULL;
+	if (ft_expander_check(lex, str, &raw_pointer))
 		return (NULL);
-	lenght = ft_strlen_matrix(lex->env_copy);
-	raw_pointer = ft_search_str_in_env(lex, str, lenght);
-	if (!raw_pointer || !*raw_pointer)
-	{
-		ft_free((void **)&raw_pointer);
-		return (NULL);
-	}
 	res = NULL;
 	i = 0;
 	while ((*raw_pointer)[i])

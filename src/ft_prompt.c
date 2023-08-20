@@ -6,39 +6,30 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 10:10:23 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 21:03:12 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_colors	ft_colors(char *color)
+char	*ft_input(char *prompt)
 {
-	int	i;
+	char	*input;
 
-	i = 0;
-	while (color[i])
+	input = NULL;
+	while (!input || input[0] == '\0')
 	{
-		color[i] = ft_toupper(color[i]);
-		i++;
+		free(input);
+		input = readline(prompt);
+		if (!input)
+		{
+			printf("\n");
+			free(prompt);
+			return (input);
+		}
 	}
-	if (!ft_strncmp(color, "GRAY", 4))
-		return (GRAY);
-	if (!ft_strncmp(color, "RED", 3))
-		return (RED);
-	if (!ft_strncmp(color, "GREEN", 5))
-		return (GREEN);
-	if (!ft_strncmp(color, "YELLOW", 6))
-		return (YELLOW);
-	if (!ft_strncmp(color, "BLUE", 4))
-		return (BLUE);
-	if (!ft_strncmp(color, "PURPLE", 6))
-		return (PURPLE);
-	if (!ft_strncmp(color, "CYAN", 4))
-		return (CYAN);
-	if (!ft_strncmp(color, "WHITE", 5))
-		return (WHITE);
-	return (DEFAULT);
+	free(prompt);
+	return (input);
 }
 
 void	ft_create_hostname(t_prompt *prompt)
@@ -61,14 +52,35 @@ void	ft_create_hostname(t_prompt *prompt)
 	while (raw_hostname[i] != '.')
 		i++;
 	prompt->hostname = malloc(sizeof(char) * i + 1);
-	i = 0;
-	while (raw_hostname[i] != '.')
-	{
+	i = -1;
+	while (raw_hostname[++i] != '.')
 		prompt->hostname[i] = raw_hostname[i];
-		i++;
-	}
 	prompt->hostname[i] = '\0';
 	free(raw_hostname);
+}
+
+void	ft_create_prompt_color(t_prompt *prompt)
+{
+	char	*temp;
+
+	if (ft_strncmp(prompt->color, "0", 2))
+	{
+		temp = ft_strjoin("\e[1;", prompt->color);
+		free(prompt->color);
+		prompt->color = ft_strjoin(temp, "m");
+		free(temp);
+		temp = prompt->hostname;
+		prompt->hostname = ft_strjoin("\e[0m@", temp);
+	}
+	else
+	{
+		free(prompt->color);
+		prompt->color = malloc(1);
+		prompt->color[0] = 0;
+		temp = prompt->hostname;
+		prompt->hostname = ft_strjoin("@", temp);
+	}
+	free(temp);
 }
 
 char	*ft_create_prompt_username(t_prompt *prompt)
@@ -78,25 +90,7 @@ char	*ft_create_prompt_username(t_prompt *prompt)
 
 	if (!prompt->color)
 		prompt->color = ft_itoa(DEFAULT);
-	if (ft_strncmp(prompt->color, "0", 2))
-	{
-		temp = ft_strjoin("\e[1;", prompt->color);
-		free(prompt->color);
-		prompt->color = ft_strjoin(temp, "m");
-		free(temp);
-		temp = prompt->hostname;
-		prompt->hostname = ft_strjoin("\e[0m@", temp);
-		free(temp);
-	}
-	else
-	{
-		free(prompt->color);
-		prompt->color = malloc(1);
-		prompt->color[0] = 0;
-		temp = prompt->hostname;
-		prompt->hostname = ft_strjoin("@", temp);
-		free(temp);
-	}
+	ft_create_prompt_color(prompt);
 	temp = ft_strjoin(prompt->color, prompt->username);
 	free(prompt->color);
 	free(prompt->username);

@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 17:58:02 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 21:03:43 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,20 @@ typedef struct s_pv
 	int	more;
 }	t_pv;
 
-typedef enum s_colors
+/* Export Variables */
+typedef struct s_ev
+{
+	char	**matrix_env;
+	int		len_env;
+	int		num_str;
+	int		dimension_token;
+	int		c;
+	int		x;
+	int		i;
+	int		y;
+}	t_ev;
+
+typedef enum s_clrs
 {
 	DEFAULT	= 0,
 	GRAY	= 30,
@@ -110,15 +123,19 @@ typedef enum s_colors
 	PURPLE	= 35,
 	CYAN	= 36,
 	WHITE	= 37
-}	t_colors;
+}	t_clrs;
 
 // ============================PROTOTYPE========================================
-// -------------main.c-------------
+// -------------ft_execute.c-------------
 /* Execute the commands */
 void	ft_execute(t_lexer *lex);
 
 //-------------ft_prompt.c-------------
+char	*ft_input(char *prompt);
 char	*ft_create_prompt(t_lexer *lex, char *color);
+
+//-------------ft_colors.c-------------
+t_clrs	ft_colors(char *color);
 
 //-------------ft_utils.c-------------
 char	**ft_copy_env(char **env);
@@ -154,6 +171,7 @@ void	sigint_handler(int sig);
 void	ft_export(t_lexer *lex);
 
 //-------------ft_builtin.c-------------
+int		ft_exec_builtin(t_lexer *lex);
 void	ft_chdir(t_lexer *lex);
 void	ft_echo(t_lexer *lex);
 /* Expand variables with their content */
