@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 10:47:38 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 13:31:04 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,33 +104,4 @@ void	ft_export(t_lexer *lex)
 		}
 		x++;
 	}
-}
-
-char	**ft_copy_env(char **env)
-{
-	char	**matrix_env;
-	int		num_string;
-	int		leng_string;
-	int		x;
-	int		y;
-
-	num_string = ft_strlen_matrix(env);
-	matrix_env = malloc(sizeof(char *) * (num_string + 1));
-	y = 0;
-	leng_string = 0;
-	while (y < num_string)
-	{
-		x = 0;
-		leng_string = ft_strlen(env[y]);
-		matrix_env[y] = malloc(sizeof(char *) * leng_string + 1);
-		while (x < leng_string)
-		{
-			matrix_env[y][x] = env[y][x];
-			x++;
-		}
-		matrix_env[y][x] = '\0';
-		y++;
-	}
-	matrix_env[y] = NULL;
-	return (matrix_env);
 }

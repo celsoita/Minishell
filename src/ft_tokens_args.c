@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 11:34:14 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 11:34:46 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 13:06:33 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,11 @@ char	**ft_tokens_args(t_lexer *lex)
 			while (lex->op.redirect[n_temp] > -1)
 			{
 				if (i + lex->lenght == lex->op.redirect[n_temp])
-					i += 2;
+				{
+					i++;
+					if (lex->tokens[i])
+						i++;
+				}
 				n_temp++;
 			}
 		}

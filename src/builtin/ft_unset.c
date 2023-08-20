@@ -6,13 +6,13 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:01:04 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 11:45:14 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 13:23:36 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_unset_free(t_lexer *lex, int unset_variables, int lenght, int y)
+void	ft_unset_free(t_lexer *lex, int *unset_variables, int lenght, int y)
 {
 	char	**return_search;
 
@@ -20,7 +20,7 @@ void	ft_unset_free(t_lexer *lex, int unset_variables, int lenght, int y)
 	if (return_search && *return_search)
 	{
 		ft_free((void **)&*return_search);
-		unset_variables++;
+		(*unset_variables)++;
 	}
 	return_search = 0;
 }
@@ -72,7 +72,7 @@ void	ft_unset(t_lexer *lex, bool exp)
 	{
 		if (!ft_charinstring('=', lex->args[y]) || \
 			(exp && ft_charinstring('=', lex->args[y])))
-			ft_unset_free(lex, unset_variables, lenght, y);
+			ft_unset_free(lex, &unset_variables, lenght, y);
 		else if (!exp)
 			ft_perror("unset: `%s': not a valid identifier\n", lex->args[y]);
 		y++;

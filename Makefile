@@ -7,6 +7,7 @@ SRC			=	./src/builtin/ft_unset.c\
 				./src/builtin/ft_export.c \
 				./src/builtin/ft_builtin.c\
 				./src/ft_checks.c\
+				./src/ft_counts.c\
 				./src/ft_free.c\
 				./src/ft_lexer.c\
 				./src/ft_little_executer.c\

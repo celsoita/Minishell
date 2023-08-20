@@ -6,11 +6,29 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:26:24 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 10:12:12 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 13:32:30 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+char	**ft_copy_env(char **env)
+{
+	char	**matrix_env;
+	int		num_string;
+	int		y;
+
+	num_string = ft_strlen_matrix(env);
+	matrix_env = malloc(sizeof(char *) * (num_string + 1));
+	y = 0;
+	while (y < num_string)
+	{
+		matrix_env[y] = ft_strdup(env[y]);
+		y++;
+	}
+	matrix_env[y] = NULL;
+	return (matrix_env);
+}
 
 void	ft_print_env(char **env, bool exp)
 {
@@ -38,105 +56,6 @@ void	ft_print_env(char **env, bool exp)
 		printf("\n");
 		y++;
 	}
-}
-
-//str di es :   echo -n  "ciao mondo"|" banana" 
-// questa funzione conta il numero totale  di stringhe
-int	ft_count_total_string(t_lexer *lex, char *input)
-{
-	char	*temp;
-	int		i;
-	int		ns;
-
-	i = 0;
-	ns = 0;
-	while (input[i] != 0)
-	{
-		while (input[i] == ' ' || input[i] == '\t')
-			i++;
-		if (input[i])
-			ns++;
-		while (input[i] && input[i] != ' ' && input[i] != '\t')
-		{
-			if (input[i] == '$' && \
-				(i == 0 || (input[i - 1] == ' ' || input[i - 1] == '\t')))
-			{
-				i++;
-				if (ft_charinstring(input[i], " \t\"$") || input[i] == '\0')
-				{
-					temp = ft_strdup("$");
-					if (input[i] == '\0')
-						ns++;
-				}
-				else
-					temp = ft_expander(lex, &input[i]);
-				if (!temp || !temp[0])
-				{
-					while (ft_isalnum(input[i]))
-						i++;
-					while (ft_charinstring(input[i], " \t"))
-						i++;
-				}
-				if (input[i] == '\0')
-					ns--;
-				free(temp);
-			}
-			else if (input[i] == '"')
-			{
-				i++;
-				while (input[i] != '"' && input[i])
-					i++;
-				if (input[i])
-					i++;
-			}
-			else if (input[i] == '\'')
-			{
-				i++;
-				while (input[i] != '\'' && input[i])
-					i++;
-				if (input[i])
-					i++;
-			}
-			else if (ft_charinstring(input[i], "|<>"))
-			{
-				if (i > 0 && !ft_charinstring(input[i - 1], " \t|<>"))
-					ns++;
-				while (input[i] == input[i + 1])
-					i++;
-				i++;
-				break ;
-			}
-			else if (input[i] != '\0')
-				i++;
-		}
-	}
-	return (ns);
-
-}
-
-int	ft_count_malloc_str(char *input)
-{
-	int	i;
-
-	i = 0;
-	while (input[i] == 32)
-		i++;
-	if (input[i] == 124)
-		return (1);
-	while (input[i] != 32 && input[i])
-	{
-		if (input[i] == '"')
-		{
-			i++;
-			while (input[i] != '"' && input[i])
-				i++;
-			return (i + 1);
-		}
-		if (input[i] == 32)
-			return (i);
-		i++;
-	}
-	return (i);
 }
 
 char	**ft_path_splitter(t_lexer *lex)

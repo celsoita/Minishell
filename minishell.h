@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 11:36:49 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 13:35:04 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,8 @@ void	ft_execute(t_lexer *lex);
 char	*ft_create_prompt(t_lexer *lex, char *color);
 
 //-------------ft_utils.c-------------
+char	**ft_copy_env(char **env);
 void	ft_print_env(char **env, bool exp);
-int		ft_count_total_string(t_lexer *lex, char *input);
-/* Count how much to malloc from a string */
-int		ft_count_malloc_str(char *input);
 char	**ft_path_splitter(t_lexer *lex);
 
 //-------------ft_lexer.c-------------
@@ -120,7 +118,6 @@ void	sigint_handler(int sig);
 	1+	Arguments: Set a Environment Variable
 */
 void	ft_export(t_lexer *lex);
-char	**ft_copy_env(char **env);
 
 //-------------ft_builtin.c-------------
 void	ft_chdir(t_lexer *lex);
@@ -147,6 +144,11 @@ bool	ft_check_syntax_error(t_lexer *lex);
 bool	ft_check_is_executable(t_lexer *lex);
 bool	ft_check_is_variable(char *token);
 int		ft_check_builtin(t_lexer *lex);
+
+//-------------ft_checks.c-------------
+int		ft_count_total_string(t_lexer *lex, char *input);
+/* Count how much to malloc from a string */
+int		ft_count_malloc_str(char *input);
 
 //-------------ft_pipe.c-------------
 int		ft_init_pipe(t_lexer *lex);
