@@ -3,35 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redirects.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/11 11:18:09 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:25:32 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/11 11:18:09 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 11:38:25 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-/*
-	"<"
-		PRENDE IL ARGOMENTO CON OPEN
-			'cat < ciao2' => ciao
-	"<<"
-		PRENDE INPUT DAL HEREDOC
-			cat << here
-			cat ciao | cat << here
-			echo ciao | cat << here
-		PRENDE PRIMA IL PRIMO E DOPO IL SECONDO
-			cat << here1 > ciao | cat << here2
-		NON PRENDE L'INPUT SE HA UN ARGOMENTO
-			cat << here1 ciao2 >> ciao
-	">" e ">>"
-		SCRIVE TUTTO NEL ARGOMENTO DI ">"/">>"
-			cat ciao2 ciao2 ciao2 ciao2 > ciaofile.txt
-		NON LO PASSA AL STDOUT DEL "|" MA DEL ">"/">>"
-			cat ciao2 > ciaofile.txt | cat
-*/
-
+/* REDIRECTIONS: '>' '>>' '<' '<<' */
 void	ft_redirects(t_lexer *lex)
 {
 	char	*buffer;

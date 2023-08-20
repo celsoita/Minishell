@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/28 20:10:15 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:20:53 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/07/28 20:10:15 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 11:43:55 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,45 +53,6 @@ int	ft_exec_builtin(t_lexer *lex)
 	return (lex->return_value);
 }
 
-int	ft_init_pipe(t_lexer *lex)
-{
-	pid_t	pid;
-	int		i;
-
-	pid = 0;
-	lex->is_executing = true;
-	i = 0;
-	pid = fork();
-	if (pid == -1)
-		lex->return_value = 1;
-	if (pid != 0)
-	{
-		waitpid(pid, &i, 0);
-		lex->return_value = (unsigned char)WEXITSTATUS(i);
-		lex->is_executing = false;
-		ft_free((void **)&lex->op.pipe);
-		ft_free((void **)&lex->op.redirect);
-		return (0);	// FATHER
-	}
-	lex->lenght = 0;
-	if (ft_pipe(lex, lex->tokens, 0, 0) != -1)
-	{
-		// waitpid(pid, &i, 0);
-		// lex->return_value = (unsigned char)i;
-		ft_free((void **)&lex->cwd);
-		ft_free((void **)&lex->op.pipe);
-		ft_free((void **)&lex->op.redirect);
-		lex->tokens = lex->global_tokens;
-		ft_free_matrix(lex->tokens);
-		ft_free_matrix(lex->paths);
-		ft_free_matrix(lex->env_copy);
-		// ft_perror("LAST CHILD RETURN(%d)\n", lex->return_value);	// REMOVE
-		exit (lex->return_value);	// LAST CHILD
-	}
-	lex->args = ft_matrix_shell(lex);
-	return (1);		// CHILD
-}
-
 void	ft_execute(t_lexer *lex)
 {
 	lex->global_tokens = lex->tokens;
@@ -102,7 +63,7 @@ void	ft_execute(t_lexer *lex)
 	}
 	else
 	{
-		lex->args = ft_matrix_shell(lex);
+		lex->args = ft_tokens_args(lex);
 		if (lex->op.n_redirect > 0)
 			ft_redirects(lex);
 	}
@@ -261,7 +222,7 @@ int	main(int argc, char **argv, char **env)
 	lex.op.redirect = NULL;
 	while (1)
 	{
-		input = ft_input(ft_create_prompt_username(&lex, argv[1]));
+		input = ft_input(ft_create_prompt(&lex, argv[1]));
 		if (!input)
 			break ;
 		lex.tokens = ft_tokenize(input, &lex);

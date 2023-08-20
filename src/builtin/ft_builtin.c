@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_builtin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/03 19:07:44 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:09:56 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/03 19:07:44 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 10:54:44 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
+/*
+	'-':	Return to OLDPWD
+	'--':	Like '~' return to HOME
+	'.':	Current dir
+	'..':	Directory previous current
+	'/':	Move to root
+*/
 void	ft_chdir(t_lexer *lex)
 {
 	char	*old_cwd;
@@ -54,7 +61,7 @@ void	ft_chdir(t_lexer *lex)
 	free(old_cwd);
 
 	// Change OLDPWD expansion
-	old_pwd = ft_search_str_in_matrix(lex, "OLDPWD", ft_strlen_matrix(lex->env_copy));
+	old_pwd = ft_search_str_in_env(lex, "OLDPWD", ft_strlen_matrix(lex->env_copy));
 	free(*old_pwd);
 	*old_pwd = malloc(sizeof(char) * (7 + ft_strlen(lex->cwd)) + 1);
 	ft_strcpy(*old_pwd, "OLDPWD=");
@@ -62,13 +69,17 @@ void	ft_chdir(t_lexer *lex)
 	ft_free((void **)&lex->cwd);
 	lex->cwd = getcwd(NULL, 0);
 	// Change PWD expansion
-	old_pwd = ft_search_str_in_matrix(lex, "PWD", ft_strlen_matrix(lex->env_copy));
+	old_pwd = ft_search_str_in_env(lex, "PWD", ft_strlen_matrix(lex->env_copy));
 	free(*old_pwd);
 	*old_pwd = malloc(sizeof(char) * (4 + ft_strlen(lex->cwd)) + 1);
 	ft_strcpy(*old_pwd, "PWD=");
 	ft_strcpy(&(*old_pwd)[4], lex->cwd);
 }
 
+/*
+	FLAGS:
+		'-n':	Print in same line (NO '\n')
+*/
 void	ft_echo(t_lexer *lex)
 {
 	int	i;
@@ -83,7 +94,7 @@ void	ft_echo(t_lexer *lex)
 		i++;
 	if (lex->args[i])
 	{
-		printf("%s",lex->args[i]);
+		printf("%s", lex->args[i]);
 		i++;
 		while (lex->args[i])
 		{
@@ -95,6 +106,16 @@ void	ft_echo(t_lexer *lex)
 		printf("\n");
 }
 
+/*VARIABLES POSSIBILITIES!*/
+//echo $PATH					-> /bin/...
+//echo $PATH$PATH				-> /bin/.../bin/...
+//echo "$PATH"					-> /bin/...
+//echo '$PATH'					-> $PATH
+//echo "'$PATH'"				-> '/bin/...'
+//echo "'"'$PATH'"'"			-> '$PATH'
+//echo "$PATH"ciao				-> /bin/...ciao
+//echo $PATH(ft_alphanum())		-> 
+//echo $PATH(!ft_alphanum())	-> /bin/...(!ft_alphanum())
 char	*ft_expander(t_lexer *lex, char *str)
 {
 	char	**raw_pointer;
@@ -105,7 +126,7 @@ char	*ft_expander(t_lexer *lex, char *str)
 	if (!str || !str[0])
 		return (NULL);
 	lenght = ft_strlen_matrix(lex->env_copy);
-	raw_pointer = ft_search_str_in_matrix(lex, str, lenght);
+	raw_pointer = ft_search_str_in_env(lex, str, lenght);
 	if (!raw_pointer || !*raw_pointer)
 	{
 		ft_free((void **)&raw_pointer);

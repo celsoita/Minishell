@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_prompt.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/27 14:24:48 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/09 17:02:35 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/07/27 14:24:48 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 10:10:23 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ void	ft_create_hostname(t_prompt *prompt)
 	}
 	close(fd);
 	i = 0;
-	while(raw_hostname[i] != '.')
+	while (raw_hostname[i] != '.')
 		i++;
 	prompt->hostname = malloc(sizeof(char) * i + 1);
 	i = 0;
-	while(raw_hostname[i] != '.')
+	while (raw_hostname[i] != '.')
 	{
 		prompt->hostname[i] = raw_hostname[i];
 		i++;
@@ -71,7 +71,7 @@ void	ft_create_hostname(t_prompt *prompt)
 	free(raw_hostname);
 }
 
-char	*ft_create_prompt(t_prompt *prompt)
+char	*ft_create_prompt_username(t_prompt *prompt)
 {
 	char	*completed_prompt;
 	char	*temp;
@@ -109,7 +109,7 @@ char	*ft_create_prompt(t_prompt *prompt)
 	return (completed_prompt);
 }
 
-char	*ft_create_prompt_username(t_lexer *lex, char *color)
+char	*ft_create_prompt(t_lexer *lex, char *color)
 {
 	t_prompt	*prompt;
 
@@ -126,5 +126,5 @@ char	*ft_create_prompt_username(t_lexer *lex, char *color)
 		prompt->username[0] = '\0';
 	}
 	ft_create_hostname(prompt);
-	return(ft_create_prompt(prompt));
+	return (ft_create_prompt_username(prompt));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/27 14:26:24 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 17:59:32 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/07/27 14:26:24 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 10:12:12 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int	ft_count_total_string(t_lexer *lex, char *input)
 
 }
 
-//questa funzione serve a contare il numero necessario per malloccare la uso nella mia split modificata
 int	ft_count_malloc_str(char *input)
 {
 	int	i;

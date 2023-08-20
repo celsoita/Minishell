@@ -3,31 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lexer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/01 13:45:02 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 18:07:30 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/01 13:45:02 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 10:25:08 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*ft_double_quote_control(char *input, char **matrix, int y, int x)
-{
-	y++;
-	if (input[y] != '"')
-		matrix[x] = ft_substr(input, y - 1, ft_count_malloc_str(&input[y - 1]));
-	return (matrix[x]);
-}
-
+/* Operators: '|' '>'('>>') '<'('<<') */
 int	ft_count_operators(char *string, char c)
 {
 	int		i;
 	int		ops_found;
 	bool	in_quote[2];
 
-	in_quote[0] = false;	// "
-	in_quote[1] = false;	// '
+	in_quote[0] = false;
+	in_quote[1] = false;
 	i = 0;
 	ops_found = 0;
 	while (string[i])
@@ -73,21 +66,7 @@ int	ft_count_variables(char *string)
 	return (variables_found);
 }
 
-//questa funzione divide in piu' stringhe  l' input
-//quindi prima controlliamo il $ 
-//"e""c"h"o ciao "mo'n'd"
-//echo echo ciao
-//"ec'h'o" ciao => ec'h'o
-/*VARIABLES POSSIBILITIES!*/
-//echo $PATH					-> /bin/...
-//echo $PATH$PATH				-> /bin/.../bin/...
-//echo "$PATH"					-> /bin/...
-//echo '$PATH'					-> $PATH
-//echo "'$PATH'"				-> '/bin/...'
-//echo "'"'$PATH'"'"			-> '$PATH'
-//echo "$PATH"ciao				-> /bin/...ciao
-//echo $PATH(ft_alphanum())		-> 
-//echo $PATH(!ft_alphanum())	-> /bin/...(!ft_alphanum())
+//questa funzione divide in piu' stringhe l'input
 char	*ft_expand_exit_status(t_lexer *lex)
 {
 	char	*res;
@@ -117,9 +96,9 @@ char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 	nvar = 0;
 	lenght = 0;
 	i = 0;
-	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
+	while (input[i] && (!ft_charinstring(input[i], " \t") || \
+		in_quote[0] || in_quote[1]))
 	{
-		// SBAGLIATO[ echo a$USERa a ] GIUSTI[ echo a$USER | echo $USERa a | echo $USERa ]
 		if (!in_quote[1] && input[i] == '$')
 		{
 			i++;
@@ -266,7 +245,7 @@ char	**ft_tokenize(char *input, t_lexer *lex)
 	lex->op.redirect[lex->op.n_redirect] = -1;
 	lex->current_pipe = 0;
 	lex->current_redirect = 0;
-	num_string = ft_count_total_string(lex, input);	/* TODO: "a$USERa a" DA FARE IN MODO CHE LA PRIMA STRINGA E' STACCATA DALLA SECONDA!*/
+	num_string = ft_count_total_string(lex, input);
 	if (num_string == 0)
 		return (NULL);
 	// ft_perror("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);	// REMOVE

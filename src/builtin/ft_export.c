@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/02 11:52:36 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 13:47:47 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/02 11:52:36 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 10:47:38 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-//funzione che duplica matrice e aggiunge stringhe passate
 void	ft_export(t_lexer *lex)
 {
 	char	**matrix_env;
@@ -36,14 +35,14 @@ void	ft_export(t_lexer *lex)
 	y = 1;
 	dimension_token = ft_strlen_matrix(lex->args);
 	count = 0;
-	while(y < dimension_token)
+	while (y < dimension_token)
 	{
 		if (ft_check_is_variable(lex->args[y]) == 1)
 			count++;
 		y++;
 	}
 	y = 1;
-	while(y < dimension_token)
+	while (y < dimension_token)
 	{
 		if (ft_check_is_variable(lex->args[y]) == 1)
 		{
@@ -53,7 +52,7 @@ void	ft_export(t_lexer *lex)
 			matrix_env = malloc (sizeof(char *) * (num_string + count + 1));
 			i = 0;
 			x = 0;
-			while(i < num_string + count)
+			while (i < num_string + count)
 			{
 				if (i >= num_string)
 				{
@@ -62,7 +61,7 @@ void	ft_export(t_lexer *lex)
 					x = 0;
 					len_env = ft_strlen(lex->args[y]);
 					matrix_env[i] = malloc(sizeof(char *) * len_env + 1);
-					while(x < len_env)
+					while (x < len_env)
 					{
 						matrix_env[i][x] = lex->args[y][x];
 						x++;
@@ -75,7 +74,7 @@ void	ft_export(t_lexer *lex)
 					len_env = ft_strlen(lex->env_copy[i]);
 					matrix_env[i] = malloc(sizeof(char *) * ft_strlen(lex->env_copy[i]) + 1);
 
-					while(x < len_env)
+					while (x < len_env)
 					{
 						matrix_env[i][x] = lex->env_copy[i][x];
 						x++;
@@ -95,7 +94,6 @@ void	ft_export(t_lexer *lex)
 		lex->env_copy = NULL;
 		lex->env_copy = matrix_env;
 	}
-	
 	x = 0;
 	while (lex->args[x])
 	{
@@ -107,7 +105,7 @@ void	ft_export(t_lexer *lex)
 		x++;
 	}
 }
-//funzione che mi copia una matrice
+
 char	**ft_copy_env(char **env)
 {
 	char	**matrix_env;

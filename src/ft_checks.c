@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_checks.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/05 19:07:10 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 15:12:59 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/05 19:07:10 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 11:44:09 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,11 @@ bool	ft_check_syntax_error(t_lexer *lex)
 	return (1);
 }
 
-bool	ft_check_is_executable(t_lexer *lex)
+bool	ft_check_is_executable_path(t_lexer *lex)
 {
 	int		i;
 	char	*path_try;
 
-	if (access(lex->args[0], F_OK) && !lex->paths)
-	{
-		ft_perror("%s: No such file or directory\n", lex->args[0]);
-		lex->return_value = 127;
-		return (0);
-	}
-	lex->absolute_path = false;
 	i = 0;
 	if (lex->paths)
 	{
@@ -53,6 +46,20 @@ bool	ft_check_is_executable(t_lexer *lex)
 			free(path_try);
 		}
 	}
+	return (0);
+}
+
+bool	ft_check_is_executable(t_lexer *lex)
+{
+	if (access(lex->args[0], F_OK) && !lex->paths)
+	{
+		ft_perror("%s: No such file or directory\n", lex->args[0]);
+		lex->return_value = 127;
+		return (0);
+	}
+	lex->absolute_path = false;
+	if (ft_check_is_executable_path(lex))
+		return (1);
 	if (!access(lex->args[0], F_OK | X_OK))
 	{
 		lex->absolute_path = true;
@@ -61,7 +68,7 @@ bool	ft_check_is_executable(t_lexer *lex)
 	return (0);
 }
 
-bool	ft_check_is_variable(char	*token)
+bool	ft_check_is_variable(char *token)
 {
 	int	x;
 

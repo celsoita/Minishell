@@ -3,106 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/07 16:28:01 by cschiavo          #+#    #+#             */
-/*   Updated: 2023/08/19 14:47:35 by cschiavo         ###   ########.fr       */
+/*   Created: 2023/08/07 16:28:01 by CUOGL'attim       #+#    #+#             */
+/*   Updated: 2023/08/20 11:36:16 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_len_matrix_shell(t_lexer *lex)
+int	ft_init_pipe(t_lexer *lex)
 {
-	int	i;
-	int	lenght;
-	int	n_temp;
-
-	lenght = 0;
-	i = 0;
-	while (lex->tokens[i])
-	{
-		// echo ciao > out mondo][ echo ciao ">" out 
-		if (lex->tokens[i][0] == '|') // | => "|" // || => "||"
-		{
-			n_temp = 0;
-			while (lex->op.pipe[n_temp] > -1)
-			{
-				if (i + lex->lenght == lex->op.pipe[n_temp])
-					break ;
-				n_temp++;
-			}
-			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp])
-				break ;
-
-		}
-		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
-		{
-			n_temp = 0;
-			while (lex->op.redirect[n_temp] > -1)
-			{
-				if (i + lex->lenght == lex->op.redirect[n_temp])
-				{
-					lenght -= 1;
-					if (lex->tokens[i + 1] != NULL)
-						lenght -= 1;
-					break ;
-				}
-				n_temp++;
-			}
-		}
-		i++;
-	}
-	lenght += i;
-	return (lenght);
-}
-
-char	**ft_matrix_shell(t_lexer *lex)
-{
-	char	**matrix;
+	pid_t	pid;
 	int		i;
-	int		len_matrix;
-	int		n_temp;
 
-	if (!lex->tokens)
-		return (NULL);
-	matrix = malloc(sizeof(char *) * (ft_len_matrix_shell(lex) + 1));
-	// ft_perror("DEBUG1: LEN MATRIX SHELL(%d)\n", ft_len_matrix_shell(lex)); // REMOVE
-	len_matrix = 0;
+	pid = 0;
+	lex->is_executing = true;
 	i = 0;
-	while (lex->tokens[i])	// echo ciao >> ciao < text qualcosa
+	pid = fork();
+	if (pid == -1)
+		lex->return_value = 1;
+	if (pid != 0)
 	{
-		if (lex->tokens[i][0] == '>' || lex->tokens[i][0] == '<')
-		{
-			n_temp = 0;
-			while (lex->op.redirect[n_temp] > -1)
-			{
-				if (i + lex->lenght == lex->op.redirect[n_temp])
-					i += 2;
-				n_temp++;
-			}
-		}
-		if (lex->tokens[i] == NULL)
-			break ;
-		if (lex->tokens[i][0] == '|')
-		{
-			n_temp = 0;
-			while (lex->op.pipe[n_temp] > -1)
-			{
-				if (i + lex->lenght == lex->op.pipe[n_temp])
-					break ;
-				n_temp++;
-			}
-			if (lex->op.pipe[n_temp] && i + lex->lenght == lex->op.pipe[n_temp])
-				break ;
-		}
-		matrix[len_matrix] = ft_strdup(lex->tokens[i]);
-		// ft_perror("DEBUG: matrix[len(%d)](%s)\n", len_matrix, matrix[len_matrix]);	//REMOVE
-		len_matrix++;
-		i++;
+		waitpid(pid, &i, 0);
+		lex->return_value = (unsigned char)WEXITSTATUS(i);
+		lex->is_executing = false;
+		ft_free((void **)&lex->op.pipe);
+		ft_free((void **)&lex->op.redirect);
+		return (0);
 	}
-	matrix[len_matrix] = NULL;
-	return (matrix);
+	lex->lenght = 0;
+	if (ft_pipe(lex, lex->tokens, 0, 0) != -1)
+	{
+		ft_free((void **)&lex->cwd);
+		ft_free((void **)&lex->op.pipe);
+		ft_free((void **)&lex->op.redirect);
+		lex->tokens = lex->global_tokens;
+		ft_free_matrix(lex->tokens);
+		ft_free_matrix(lex->paths);
+		ft_free_matrix(lex->env_copy);
+		exit (lex->return_value);
+	}
+	lex->args = ft_tokens_args(lex);
+	return (1);
 }
 
 int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
@@ -111,7 +54,7 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	int	pid1;
 	int	i;
 
-	lex->tokens = tokens;	// cat << aio
+	lex->tokens = tokens;
 	if (!tokens || !lex->env_copy)
 		return (0);
 	if (!tokens[0])
@@ -141,7 +84,7 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	if (pid1 == 0)
 	{
 		// ft_perror("DEBUG: LENGHT(%d) pipe(%d)\n", lex->lenght, more);	// REMOVE
-		return (-1);	// -1 for execve
+		return (-1);
 	}
 	dup2(lex->stds.stdin, STDIN_FILENO);
 	dup2(lex->stds.stdout, STDOUT_FILENO);
@@ -149,12 +92,9 @@ int	ft_pipe(t_lexer *lex, char **tokens, int old_fd, int more)
 	lex->return_value = (unsigned char)WEXITSTATUS(i);
 	// ft_perror("%d has returned %d\n", more, lex->return_value);	// REMOVE
 	lex->current_pipe++;
-	// printf("PADRE OK!\n");
 	i = lex->op.pipe[lex->current_pipe - 1] - lex->lenght + 1;
 	lex->lenght += i;
 	if (lex->op.pipe[lex->current_pipe - 1] != -1)
 		return (ft_pipe(lex, &tokens[i], pipe_fd[0], more + 1));
 	return (0);
 }
-// if (pipe(pipedes) == -1)
-// 	ft_perror("ERROR: pipe can't store fds\n");
