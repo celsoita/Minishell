@@ -1,58 +1,91 @@
-NAME		=	minishell
+NAME			= minishell
 
-CC			=	cc
+CC				= cc
 
-CFLAGS		=	-Wall -Wextra -Werror -g
-SRC			=	./src/builtin/ft_unset.c\
-				./src/builtin/ft_export.c\
-				./src/builtin/ft_builtin.c\
-				./src/ft_chdir.c\
-				./src/ft_checks.c\
-				./src/ft_colors.c\
-				./src/ft_counts.c\
-				./src/ft_execute.c\
-				./src/ft_free.c\
-				./src/ft_lexer_write.c\
-				./src/ft_lexer.c\
-				./src/ft_little_executer.c\
-				./src/ft_matrix_support.c\
-				./src/ft_pipe.c\
-				./src/ft_prompt.c\
-				./src/ft_redirects.c\
-				./src/ft_tokenize.c\
-				./src/ft_tokens_args.c\
-				./src/ft_utils.c\
-				./src/main.c
+CFLAGS			= -Wall -Wextra -Werror
+SRC				= ft_unset.c \
+				ft_export.c \
+				ft_builtin.c \
+				ft_chdir.c \
+				ft_checks.c \
+				ft_colors.c \
+				ft_counts.c \
+				ft_execute.c \
+				ft_free.c \
+				ft_lexer_write.c \
+				ft_lexer.c \
+				ft_little_executer.c \
+				ft_matrix_support.c \
+				ft_pipe.c \
+				ft_prompt.c \
+				ft_redirects.c \
+				ft_tokenize.c \
+				ft_tokens_args.c \
+				ft_utils.c \
+				main.c
 
-LIB			= ./libft/libft.a
+SRCS			= ${addprefix ${PRE}, ${SRC}}
 
-ASCII_ART_FILE := name_shell.txt
+DIR_OBJS		= objs/
 
-OBJ			= $(SRC:.c=.o)
+PRE				= src/
+OBJS			= ${SRCS:.c=.o}
+PRE_OBJS		= ${addprefix ${DIR_OBJS}, ${OBJ}}
 
-HEADER		= minishell.h
+LIB				= ./libft/libft.a
 
-all : $(NAME) ascii_art
+ASCII_ART_FILE	:= name_shell.txt
 
-%.o:%.c $(HEADER)
-	$(CC) $(CFLAGS) -c  $< -o $@
+OBJ				= $(SRC:.c=.o)
 
-$(NAME): $(OBJ)
-	@make -sC ./libft
-	@$(CC) $(CFLAGS) $(OBJ) -lreadline -o $(NAME) $(LIB)
+HEADER			= minishell.h
 
-ascii_art: $(ASCII_ART_FILE)
-		@echo "$$(cat $(ASCII_ART_FILE))"
+all:			$(NAME)
+
+%.o:%.c			$(HEADER)
+				@$(CC) $(CFLAGS) -c  $< -o $@
+
+$(NAME):		
+				@if [ ! -f ${NAME} ]; then \
+					make -s ${OBJS} dup_obj ${PRE_OBJS}; \
+					make -sC ./libft; \
+					$(CC) $(CFLAGS) $(PRE_OBJS) -lreadline -o $(NAME) $(LIB); \
+					make -s ascii_art; \
+				fi
+
+dup_obj:
+				@mkdir -p ${DIR_OBJS}
+				@mv ${OBJS} ${DIR_OBJS}
+
+loading:
+				@echo -ne 'LOADING\033[0;5m...\r'
+				@sleep 1
+				@echo -ne '\033[0;32m⦗❚❚❚❚❚❚                   ⦘(25%)\r'
+				@sleep 0.2
+				@echo -ne '⦗❚❚❚❚❚❚❚❚❚❚❚❚❚            ⦘(50%)\r'
+				@sleep 0.2
+				@echo -ne '⦗❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚     ⦘(75%)\r'
+				@sleep 0.2
+				@echo -ne '⦗❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚❚⦘(100%)\033[0m\r'
+				@sleep 0.2
+
+ascii_art:		loading $(ASCII_ART_FILE)
+				@echo "$$(cat $(ASCII_ART_FILE))"
 
 clean:
-	@make -sC ./libft clean 
-	@rm -rf $(OBJ)
+				@make -sC ./libft clean
+				@if [ -d ${DIR_OBJS} ]; then \
+					rm -rf ${DIR_OBJS}; \
+					echo 'REMOVED OBJS'; \
+				fi
 
-fclean: clean
-	@rm -rf $(OBJ)
-	@make -sC ./libft fclean
-	@rm -f $(NAME)
+fclean:			clean
+				@make -sC ./libft fclean
+				@if [ -f ${NAME} ]; then \
+					rm -f ${NAME}; \
+					echo 'MINISHELL UNINSTALLED'; \
+				fi
 
-re: fclean all
+re:				fclean all
 
-.PHONY: all clean fclean re
+.PHONY			= all clean fclean re

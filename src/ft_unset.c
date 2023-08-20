@@ -6,11 +6,11 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/05 19:01:04 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 13:23:36 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 21:51:31 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../minishell.h"
 
 void	ft_unset_free(t_lexer *lex, int *unset_variables, int lenght, int y)
 {

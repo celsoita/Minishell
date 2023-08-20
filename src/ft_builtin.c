@@ -6,11 +6,11 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 20:49:26 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 21:51:13 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../minishell.h"
 
 /*
 	lex->flags:

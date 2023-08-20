@@ -6,11 +6,11 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 11:52:36 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 20:30:57 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 21:51:27 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../minishell.h"
 
 void	ft_export_reset(t_lexer *lex, char **matrix_env, int i)
 {

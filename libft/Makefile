@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+         #
+#    By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 11:46:15 by cschiavo          #+#    #+#              #
-#    Updated: 2023/08/19 13:27:48 by cschiavo         ###   ########.fr        #
+#    Updated: 2023/08/20 21:58:21 by CUOGL'attim      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,7 +78,6 @@ all: $(NAME)
 $(NAME): $(OBJ_S)
 	ar -rcs $@ $^ 
 
-
 %.o:%.c
 	@$(CC) -c $(CFLAG) -I. $< -o $@
 clean:
@@ -90,7 +89,6 @@ fclean:	clean
 	/bin/rm -f $(NAME)
 
 re: fclean all
-
 
 bonus: $(OBJ_B)
 	ar -rcs $(NAME) $^
