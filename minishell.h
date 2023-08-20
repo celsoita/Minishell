@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 17:54:09 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 13:35:04 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 17:58:02 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,34 @@ typedef struct s_prompt
 	char	*color;
 }	t_prompt;
 
+typedef struct s_temp
+{
+	int	x;
+	int	y;
+}	t_temp;
+
+/* Lexer Variables */
+typedef struct s_lv
+{
+	int		lenght;
+	int		i;
+	int		j;
+	int		nvar;
+	char	*str;
+	char	**variables;
+	int		variables_found;
+	bool	in_quote[2];
+}	t_lv;
+
+/* Pipe Variables */
+typedef struct s_pv
+{
+	int	pipe_fd[2];
+	int	pid1;
+	int	i;
+	int	more;
+}	t_pv;
+
 typedef enum s_colors
 {
 	DEFAULT	= 0,
@@ -98,10 +126,16 @@ void	ft_print_env(char **env, bool exp);
 char	**ft_path_splitter(t_lexer *lex);
 
 //-------------ft_lexer.c-------------
+char	*ft_command_split(char *input, t_lexer *lex, int current_pos);
+
+//-------------ft_lexer_write.c-------------
+void	ft_lexer_write(char *input, t_lexer *lex, t_lv *lv, int current_pos);
+
+//-------------ft_tokenize.c-------------
+int		ft_count_variables(char *string);
+char	*ft_expand_exit_status(t_lexer *lex);
 /* Conunt how much PIPE('|') or REDIRACTIONS('>' '>>' '<' '<<') in string */
 int		ft_count_operators(char *string, char c);
-/* TODO: DIVIDE (Split tokens) */
-char	*ft_command_split(char *input, t_lexer *lex, int current_pos);
 /* Create a matrix with the tokens from input */
 char	**ft_tokenize(char *input, t_lexer *lex);
 
@@ -124,6 +158,7 @@ void	ft_chdir(t_lexer *lex);
 void	ft_echo(t_lexer *lex);
 /* Expand variables with their content */
 char	*ft_expander(t_lexer *lex, char *str);
+void	ft_exit(t_lexer *lex);
 
 //-------------ft_free.c-------------
 /* Free variable and set it to NULL */
@@ -145,7 +180,7 @@ bool	ft_check_is_executable(t_lexer *lex);
 bool	ft_check_is_variable(char *token);
 int		ft_check_builtin(t_lexer *lex);
 
-//-------------ft_checks.c-------------
+//-------------ft_counts.c-------------
 int		ft_count_total_string(t_lexer *lex, char *input);
 /* Count how much to malloc from a string */
 int		ft_count_malloc_str(char *input);

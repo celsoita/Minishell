@@ -6,50 +6,59 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:10:15 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 11:43:55 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 16:42:07 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+bool	ft_empty_redirections(t_lexer *lex)
+{
+	char	*arg;
+
+	lex->current_redirect = 0;
+	while (lex->current_redirect < lex->op.n_redirect)
+	{
+		arg = lex->tokens[lex->op.redirect[lex->current_redirect] + 1];
+		if (!arg || arg[0] == '|' || arg[0] == '>' || arg[0] == '<')
+		{
+			ft_perror("bash: syntax error near unexpected token `%s'\n", \
+				lex->tokens[lex->op.redirect[lex->current_redirect]]);
+			return (1);
+		}
+		lex->current_redirect++;
+	}
+	lex->current_redirect = 0;
+	return (0);
+}
+
+/*
+	lex->flags:
+	1:	echo
+	2:	cd
+	3:	pwd
+	4:	export
+	5:	unset
+	6:	env
+	7:	exit
+*/
 int	ft_exec_builtin(t_lexer *lex)
 {
 	lex->can_return = false;
-	//echo
 	if (lex->flags == 1)
 		ft_echo(lex);
-	//cd
 	if (lex->flags == 2)
 		ft_chdir(lex);
-	//pwd
 	if (lex->flags == 3)
 		printf("%s\n", lex->cwd);
-	//export
 	if (lex->flags == 4)
 		ft_export(lex);
-	//unset
 	if (lex->flags == 5)
 		ft_unset(lex, false);
-	//env
 	if (lex->flags == 6)
 		ft_print_env(lex->env_copy, false);
-	//exit
 	if (lex->flags == 7)
-	{
-		lex->can_return = true;
-		if (lex->args[1])
-		{
-			if (lex->args[2])
-			{
-				ft_perror("bash: exit: too many argument\n");
-				lex->can_return = false;
-				lex->return_value = 1;
-			}
-			else
-				lex->return_value = ft_atoi(lex->args[1]) % 256;
-		}
-		printf("exit\n");
-	}
+		ft_exit(lex);
 	return (lex->return_value);
 }
 
@@ -226,31 +235,29 @@ int	main(int argc, char **argv, char **env)
 		if (!input)
 			break ;
 		lex.tokens = ft_tokenize(input, &lex);
-		lex.current_pipe = 0;
-		lex.current_redirect = 0;
-		lex.lenght = 0;
-		lex.is_executing = false;
-		lex.can_return = false;
-		ft_execute(&lex);
-		if (lex.can_return == true)
+		if (!ft_empty_redirections(&lex))
 		{
-			ft_free_matrix(lex.tokens);
-			ft_free_matrix(lex.args);
-			break ;
+			lex.current_pipe = 0;
+			lex.lenght = 0;
+			lex.is_executing = false;
+			lex.can_return = false;
+			ft_execute(&lex);
+			if (lex.can_return == true)
+			{
+				ft_free_matrix(lex.tokens);
+				ft_free_matrix(lex.args);
+				break ;
+			}
 		}
 		if (input[0])
 			add_history(input);
 		ft_free_matrix(lex.tokens);
-		if (lex.op.pipe)
-			ft_free((void **)&lex.op.pipe);
-		if (lex.op.redirect)
-			ft_free((void **)&lex.op.redirect);
+		ft_free((void **)&lex.op.pipe);
+		ft_free((void **)&lex.op.redirect);
 	}
 	free(input);
-	if (lex.op.pipe)
-		ft_free((void **)&lex.op.pipe);
-	if (lex.op.redirect)
-		ft_free((void **)&lex.op.redirect);
+	ft_free((void **)&lex.op.pipe);
+	ft_free((void **)&lex.op.redirect);
 	ft_free((void **)&lex.cwd);
 	ft_free_matrix(lex.paths);
 	ft_free_matrix(lex.env_copy);

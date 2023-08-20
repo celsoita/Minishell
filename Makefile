@@ -4,17 +4,19 @@ CC			=	cc
 
 CFLAGS		=	-Wall -Wextra -Werror -g
 SRC			=	./src/builtin/ft_unset.c\
-				./src/builtin/ft_export.c \
+				./src/builtin/ft_export.c\
 				./src/builtin/ft_builtin.c\
 				./src/ft_checks.c\
 				./src/ft_counts.c\
 				./src/ft_free.c\
+				./src/ft_lexer_write.c\
 				./src/ft_lexer.c\
 				./src/ft_little_executer.c\
-				./src/ft_matrix_support.c \
+				./src/ft_matrix_support.c\
 				./src/ft_pipe.c\
 				./src/ft_prompt.c\
 				./src/ft_redirects.c\
+				./src/ft_tokenize.c\
 				./src/ft_tokens_args.c\
 				./src/ft_utils.c\
 				./src/main.c

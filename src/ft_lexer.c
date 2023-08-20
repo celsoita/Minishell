@@ -6,268 +6,113 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 13:45:02 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 10:25:08 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 17:41:35 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-/* Operators: '|' '>'('>>') '<'('<<') */
-int	ft_count_operators(char *string, char c)
+void	ft_lexer_count_var(char *input, t_lv *lv)
 {
-	int		i;
-	int		ops_found;
-	bool	in_quote[2];
-
-	in_quote[0] = false;
-	in_quote[1] = false;
-	i = 0;
-	ops_found = 0;
-	while (string[i])
+	if (lv->variables[lv->nvar] && lv->variables[lv->nvar][0])
 	{
-		if (!in_quote[1] && !in_quote[0] && string[i] == c)
+		lv->lenght += ft_strlen(lv->variables[lv->nvar]);
+		if (input[lv->i] == '?')
+			lv->i++;
+		else
+			while (ft_isalnum(input[lv->i]))
+				lv->i++;
+	}
+	else
+	{
+		if (lv->i - 1 == 0 || input[lv->i - 2] == ' ' || \
+			input[lv->i - 2] == '\t')
 		{
-			ops_found++;
-			while (string[i] == string[i + 1])
-				i++;
+			while (ft_isalnum(input[lv->i]))
+				lv->i++;
+			while (ft_charinstring(input[lv->i], " \t"))
+				lv->i++;
 		}
-		if (string[i] == '\"' && !in_quote[1])
-			in_quote[0] = !in_quote[0];
-		else if (string[i] == '\'' && !in_quote[0])
-			in_quote[1] = !in_quote[1];
-		i++;
+		else
+			while (ft_isalnum(input[lv->i]))
+				lv->i++;
 	}
-	return (ops_found);
+	lv->i--;
+	lv->nvar++;
 }
 
-int	ft_count_variables(char *string)
+bool	ft_lexer_count_op_quote(char *input, t_lv *lv)
 {
-	int		i;
-	int		variables_found;
-	bool	in_quote[2];
-
-	in_quote[0] = false;	// "
-	in_quote[1] = false;	// '
-	i = 0;
-	variables_found = 0;
-	while (string[i] && (!ft_charinstring(string[i], " \t") \
-		|| in_quote[0] || in_quote[1]))
+	if (ft_charinstring(input[lv->i], "|<>") && \
+			!lv->in_quote[0] && !lv->in_quote[1])
 	{
-		if (!in_quote[0] && !in_quote[1] && ft_charinstring(string[i], "|<>"))
-			break ;
-		if (!in_quote[1] && string[i] == '$')
-			variables_found++;
-		if (string[i] == '\"' && !in_quote[1])
-			in_quote[0] = !in_quote[0];
-		else if (string[i] == '\'' && !in_quote[0])
-			in_quote[1] = !in_quote[1];
-		i++;
+		if (lv->i == 0)
+		{
+			while (input[lv->i] == input[lv->i + 1])
+			{
+				lv->lenght++;
+				lv->i++;
+			}
+			lv->lenght++;
+			lv->i++;
+		}
+		return (1);
 	}
-	return (variables_found);
+	else if (input[lv->i] == '\"' && !lv->in_quote[1])
+		lv->in_quote[0] = !lv->in_quote[0];
+	else if (input[lv->i] == '\'' && !lv->in_quote[0])
+		lv->in_quote[1] = !lv->in_quote[1];
+	else if ((input[lv->i] != '\"' && input[lv->i] != '\'') || \
+			lv->in_quote[0] || lv->in_quote[1])
+		lv->lenght++;
+	return (0);
 }
 
-//questa funzione divide in piu' stringhe l'input
-char	*ft_expand_exit_status(t_lexer *lex)
+void	ft_lexer_count(char *input, t_lexer *lex, t_lv *lv)
 {
-	char	*res;
-
-	res = ft_itoa(lex->return_value);
-	return (res);
+	while (input[lv->i] && (!ft_charinstring(input[lv->i], " \t") || \
+		lv->in_quote[0] || lv->in_quote[1]))
+	{
+		if (!lv->in_quote[1] && input[lv->i] == '$')
+		{
+			lv->i++;
+			if (input[lv->i] == '?')
+				lv->variables[lv->nvar] = ft_expand_exit_status(lex);
+			else if (ft_charinstring(input[lv->i], " \t\"$") || \
+					input[lv->i] == '\0')
+				lv->variables[lv->nvar] = ft_strdup("$");
+			else
+				lv->variables[lv->nvar] = ft_expander(lex, &input[lv->i]);
+			ft_lexer_count_var(input, lv);
+		}
+		else if (ft_lexer_count_op_quote(input, lv))
+			break ;
+		if (input[lv->i])
+			lv->i++;
+	}
+	lex->lenght = lv->i;
 }
 
 char	*ft_command_split(char *input, t_lexer *lex, int current_pos)
 {
-	int		lenght;
-	int		i;
-	int		j;
-	int		nvar;
-	char	*str;
-	char	**variables;
-	int		variables_found;
-	bool	in_quote[2];
+	t_lv	lv;
 
-	in_quote[0] = false;	// "
-	in_quote[1] = false;	// '
-	variables_found = ft_count_variables(input);
-	// ft_perror("variables_found: %d\t", variables_found);	// REMOVE
-	/* COUNT FUNCTION */
-	variables = malloc(sizeof(char *) * (variables_found + 1));
-	variables[variables_found] = NULL;
-	nvar = 0;
-	lenght = 0;
-	i = 0;
-	while (input[i] && (!ft_charinstring(input[i], " \t") || \
-		in_quote[0] || in_quote[1]))
-	{
-		if (!in_quote[1] && input[i] == '$')
-		{
-			i++;
-			if (input[i] == '?')
-				variables[nvar] = ft_expand_exit_status(lex);
-			else if (ft_charinstring(input[i], " \t\"$") || input[i] == '\0')
-				variables[nvar] = ft_strdup("$");
-			else
-				variables[nvar] = ft_expander(lex, &input[i]);
-			if (variables[nvar] && variables[nvar][0])
-			{
-				lenght += ft_strlen(variables[nvar]);
-				if (input[i] == '?')
-					i++;
-				else
-					while (ft_isalnum(input[i]))
-						i++;
-			}
-			else
-			{
-				if (i - 1 == 0 || input[i - 2] == ' ' || input[i - 2] == '\t')
-				{
-					while (ft_isalnum(input[i]))
-						i++;
-					while (ft_charinstring(input[i], " \t"))
-						i++;
-				}
-				else
-					while (ft_isalnum(input[i]))
-						i++;
-			}
-			i--;
-			nvar++;
-		}
-		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
-		{
-			if (i == 0)
-			{
-				while (input[i] == input[i + 1])
-				{
-					lenght++;
-					i++;
-				}
-				lenght++;
-				i++;
-			}
-			break ;
-		}
-		else if (input[i] == '\"' && !in_quote[1])
-			in_quote[0] = !in_quote[0];
-		else if (input[i] == '\'' && !in_quote[0])
-			in_quote[1] = !in_quote[1];
-		else if ((input[i] != '\"' && input[i] != '\'') || in_quote[0] || in_quote[1])
-			lenght++;
-		if (input[i])
-			i++;
-	}
-	lex->lenght = i;
-	// ft_perror("Lenght: %d\t", lenght);	// REMOVE
-	/* WRITE FUNCTION */
-	str = malloc(sizeof(char) * lenght + 1);
-	nvar = 0;
-	in_quote[0] = false;
-	in_quote[1] = false;
-	lenght = 0;
-	i = 0;
-	while (input[i] && (!ft_charinstring(input[i], " \t") || in_quote[0] || in_quote[1]))
-	{
-		if (!in_quote[1] && input[i] == '$')
-		{
-			i++;
-			if (variables[nvar] && variables[nvar][0])
-			{
-				j = 0;
-				while (variables[nvar] && variables[nvar][j])
-					str[lenght++] = variables[nvar][j++];
-				if (input[i] == '?')
-					i++;
-				else
-					while (ft_isalnum(input[i]))
-						i++;
-			}
-			else
-			{
-				if (i - 1 == 0 || input[i - 2] == ' ' || input[i - 2] == '\t')
-				{
-					while (ft_isalnum(input[i]))
-						i++;
-					while (ft_charinstring(input[i], " \t"))
-						i++;
-				}
-				else
-					while (ft_isalnum(input[i]))
-						i++;
-			}
-			i--;
-			nvar++;
-		}
-		else if (ft_charinstring(input[i], "|<>") && !in_quote[0] && !in_quote[1])
-		{
-			if (i == 0)
-			{
-				if (input[i] == '|')
-					lex->op.pipe[lex->current_pipe++] = current_pos;
-				else
-					lex->op.redirect[lex->current_redirect++] = current_pos;
-				str[lenght++] = input[i];
-				while (input[i] && input[i] == input[i + 1])
-					str[lenght++] = input[i++];
-			}
-			break ;
-		}
-		else if (input[i] == '\"' && !in_quote[1])
-			in_quote[0] = !in_quote[0];
-		else if (input[i] == '\'' && !in_quote[0])
-			in_quote[1] = !in_quote[1];
-		else if ((input[i] != '\"' && input[i] != '\'') || in_quote[0] || in_quote[1])
-			str[lenght++] = input[i];
-		if (input[i])
-			i++;
-	}
-	str[lenght] = 0;
-	ft_free_matrix_len(variables, variables_found);
-	// ft_perror("DEBUG:\tRECEIVED [%s]\n", str);	// REMOVE
-	return (str);
+	lv.in_quote[0] = false;
+	lv.in_quote[1] = false;
+	lv.variables_found = ft_count_variables(input);
+	lv.variables = malloc(sizeof(char *) * (lv.variables_found + 1));
+	lv.variables[lv.variables_found] = NULL;
+	lv.nvar = 0;
+	lv.lenght = 0;
+	lv.i = 0;
+	ft_lexer_count(input, lex, &lv);
+	lv.str = malloc(sizeof(char) * lv.lenght + 1);
+	lv.nvar = 0;
+	lv.in_quote[0] = false;
+	lv.in_quote[1] = false;
+	lv.lenght = 0;
+	lv.i = 0;
+	ft_lexer_write(input, lex, &lv, current_pos);
+	ft_free_matrix_len(lv.variables, lv.variables_found);
+	return (lv.str);
 }
-
-
-char	**ft_tokenize(char *input, t_lexer *lex)
-{
-	int		x;
-	int		y;
-	int		num_string;
-	char	**matrix;
-
-	x = 0;
-	y = 0;
-	lex->op.n_pipe = ft_count_operators(input, '|');
-	lex->op.n_redirect = ft_count_operators(input, '>');
-	lex->op.n_redirect += ft_count_operators(input, '<');
-	lex->op.pipe = malloc(sizeof(int) * (lex->op.n_pipe + 1));
-	lex->op.pipe[lex->op.n_pipe] = -1;
-	lex->op.redirect = malloc(sizeof(int) * (lex->op.n_redirect + 1));
-	lex->op.redirect[lex->op.n_redirect] = -1;
-	lex->current_pipe = 0;
-	lex->current_redirect = 0;
-	num_string = ft_count_total_string(lex, input);
-	if (num_string == 0)
-		return (NULL);
-	// ft_perror("Pipes: %d | Redirects: %d | ", lex->op.n_pipe, lex->op.n_redirect);	// REMOVE
-	// ft_perror("Strings: %d\n", num_string);	// REMOVE
-	matrix = malloc(sizeof(char *) * (num_string + 1));
-	while (num_string--)
-	{
-		while (input[y])
-		{
-			if (input[y] != 32 && input[y] != '\t')
-			{
-				matrix[x] = ft_command_split(&input[y], lex, x);
-				y += lex->lenght;
-				break ;
-			}
-			y++;
-		}
-		x++;
-	}
-	matrix[x] = 0;
-	return (matrix);
-}
-/* TODO: QUANDO NON C'E' UN COMANDO DARGLI ERRORE:
-	bash: syntax error near unexpected token `>' or `<' or `|'
-*/

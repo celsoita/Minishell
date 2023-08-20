@@ -6,7 +6,7 @@
 /*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 19:07:44 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 10:54:44 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/08/20 16:41:55 by CUOGL'attim      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,4 +145,21 @@ char	*ft_expander(t_lexer *lex, char *str)
 		i++;
 	}
 	return (res);
+}
+
+void	ft_exit(t_lexer *lex)
+{
+	lex->can_return = true;
+	if (lex->args[1])
+	{
+		if (lex->args[2])
+		{
+			ft_perror("bash: exit: too many argument\n");
+			lex->can_return = false;
+			lex->return_value = 1;
+		}
+		else
+			lex->return_value = ft_atoi(lex->args[1]) % 256;
+	}
+	printf("exit\n");
 }
