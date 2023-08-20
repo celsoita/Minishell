@@ -6,7 +6,7 @@
 #    By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 11:46:15 by cschiavo          #+#    #+#              #
-#    Updated: 2023/08/20 21:58:21 by CUOGL'attim      ###   ########.fr        #
+#    Updated: 2023/08/20 22:17:07 by CUOGL'attim      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,9 +60,8 @@ PTF :=	ft_printf/ft_printstring.c\
 
 PER := ft_perror/ft_perror.c
 
-GNL :=	2get_next_line/get_next_line.c\
-		2get_next_line/get_next_line_utils.c\
-
+GNL :=	get_next_line/get_next_line.c\
+		get_next_line/get_next_line_utils.c\
 
 BNS :=	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c \
 	ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c
@@ -80,10 +79,12 @@ $(NAME): $(OBJ_S)
 
 %.o:%.c
 	@$(CC) -c $(CFLAG) -I. $< -o $@
+
 clean:
 	/bin/rm -f base_function/*.o
 	/bin/rm -f ft_printf/*.o
 	/bin/rm -f get_next_line/*.o
+	/bin/rm -f ft_perror/*.o
 
 fclean:	clean
 	/bin/rm -f $(NAME)
