@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_prompt.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: CUOGL'attim <CUOGL'attim@student.42.fr>    +#+  +:+       +#+        */
+/*   By: cschiavo <cschiavo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 14:24:48 by CUOGL'attim       #+#    #+#             */
-/*   Updated: 2023/08/20 21:03:12 by CUOGL'attim      ###   ########.fr       */
+/*   Updated: 2023/09/13 01:06:13 by cschiavo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,25 +35,15 @@ char	*ft_input(char *prompt)
 void	ft_create_hostname(t_prompt *prompt)
 {
 	char	*raw_hostname;
-	char	*line;
 	int		fd;
 	int		i;
 
 	fd = open("/etc/hostname", O_RDONLY);
 	raw_hostname = get_next_line(fd);
-	line = get_next_line(fd);
-	while (line)
-	{
-		free(line);
-		line = get_next_line(fd);
-	}
 	close(fd);
-	i = 0;
-	while (raw_hostname[i] != '.')
-		i++;
-	prompt->hostname = malloc(sizeof(char) * i + 1);
+	prompt->hostname = malloc(sizeof(char) * ft_strlen(raw_hostname));
 	i = -1;
-	while (raw_hostname[++i] != '.')
+	while (raw_hostname[++i] != '\n')
 		prompt->hostname[i] = raw_hostname[i];
 	prompt->hostname[i] = '\0';
 	free(raw_hostname);

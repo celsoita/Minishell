@@ -2,7 +2,7 @@ NAME			= minishell
 
 CC				= cc
 
-CFLAGS			= -Wall -Wextra -Werror
+CFLAGS			= -Wall -Wextra -Werror -g
 SRC				= ft_unset.c \
 				ft_export.c \
 				ft_builtin.c \
